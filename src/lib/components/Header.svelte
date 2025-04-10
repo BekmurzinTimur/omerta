@@ -2,7 +2,7 @@
 	import { onMount } from "svelte";
 
 
-	import { gameState, startTime, stopTime } from "./stores/gameStore.svelte";
+	import { gameState, startTime, stopTime } from "../stores/gameStore.svelte";
     onMount(() => {
         startTime()
         return () => {
