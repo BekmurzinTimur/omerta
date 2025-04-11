@@ -1,3 +1,4 @@
+import { SvelteMap } from 'svelte/reactivity';
 import {
 	type GameState as GameStateInterface,
 	type Player,
@@ -66,15 +67,15 @@ const createInitialState = () => {
 	playerOne.units = units;
 
 	// Create maps for efficient lookups
-	const playerMap = new Map<string, Player>();
+	const playerMap = new SvelteMap<string, Player>();
 	playerMap.set(playerOne.id, playerOne);
 
-	const territoryMap = new Map<string, Territory>();
+	const territoryMap = new SvelteMap<string, Territory>();
 	territories.forEach((territory) => {
 		territoryMap.set(territory.id, territory);
 	});
 
-	const unitMap = new Map<string, Unit>();
+	const unitMap = new SvelteMap<string, Unit>();
 	units.forEach((unit) => {
 		unitMap.set(unit.id, unit);
 	});
