@@ -196,6 +196,8 @@ class GameState {
 	}
 }
 
+export type GameStateType = InstanceType<typeof GameState>;
+
 // Create and export a single instance of GameState
 const gameState = new GameState();
 export default gameState;

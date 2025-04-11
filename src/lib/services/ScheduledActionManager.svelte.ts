@@ -1,9 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 import { type ScheduledAction, ScheduledActionType } from '../models/ActionModels';
 import gameState from './GameState.svelte';
-import type { Player, Territory } from '$lib/models/GameModels';
+import type { GameState, Player, Territory } from '$lib/models/GameModels';
 
-let state = gameState.state;
+let state: GameState = gameState.state;
 
 // Collection of scheduled actions
 let scheduledActions = $state<ScheduledAction[]>([]);
@@ -62,14 +62,14 @@ const setupInitialScheduledActions = (): void => {
 		interval: 5,
 		nextExecutionTick: 5,
 		isRecurring: true,
-		execute: (gameState) => {
+		execute: (state: GameState) => {
 			// For each player, generate income based on their territories
-			gameState.players.forEach((player: Player) => {
+			state.players.forEach((player: Player) => {
 				let totalProduction = 0;
 
 				// Calculate total production from territories
 				player.territories.forEach((territory: Territory) => {
-					const territoryData = gameState.territories.get(territory.id);
+					const territoryData = state.territories.get(territory.id);
 					if (territoryData) {
 						totalProduction += territoryData.resources.production;
 					}
@@ -96,9 +96,9 @@ const setupInitialScheduledActions = (): void => {
 		interval: 1,
 		nextExecutionTick: 1,
 		isRecurring: true,
-		execute: (gameState) => {
+		execute: (state: GameState) => {
 			// Find all territories being captured
-			gameState.territories.forEach((territory: Territory) => {
+			state.territories.forEach((territory: Territory) => {
 				if (territory.isBeingCaptured && territory.captureInitiator) {
 					// Increase capture progress
 					const newProgress = territory.captureProgress + 10; // 10% per tick
@@ -106,7 +106,7 @@ const setupInitialScheduledActions = (): void => {
 					if (newProgress >= 100) {
 						// Capture complete
 						const playerId = territory.captureInitiator;
-						const player = gameState.players.get(playerId);
+						const player = state.players.get(playerId);
 
 						if (player) {
 							// Update territory owner
@@ -142,9 +142,9 @@ const setupInitialScheduledActions = (): void => {
 		interval: 10,
 		nextExecutionTick: 10,
 		isRecurring: true,
-		execute: (gameState) => {
+		execute: (state: GameState) => {
 			// For each player, collect maintenance costs for units
-			gameState.players.forEach((player: Player) => {
+			state.players.forEach((player: Player) => {
 				let totalMaintenance = 0;
 
 				// Calculate total maintenance cost
