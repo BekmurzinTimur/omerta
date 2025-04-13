@@ -1,28 +1,42 @@
-<footer class="bg-gray-800 text-white py-4">
-  <div class="container mx-auto">
-    <div class="flex flex-col md:flex-row justify-between items-center">
-      <div class="mb-4 md:mb-0">
-        <p class="text-lg font-semibold">Interactive Grid Map Demo</p>
-        <p class="text-sm text-gray-400">© 2025 All rights reserved</p>
-      </div>
-      
-      <div class="flex space-x-6">
-        <div>
-          <h3 class="font-medium mb-2">Resources</h3>
-          <ul class="text-sm space-y-1">
-            <li><a href="#" class="hover:text-blue-300">Documentation</a></li>
-            <li><a href="#" class="hover:text-blue-300">API Reference</a></li>
-          </ul>
-        </div>
-        
-        <div>
-          <h3 class="font-medium mb-2">Company</h3>
-          <ul class="text-sm space-y-1">
-            <li><a href="#" class="hover:text-blue-300">About</a></li>
-            <li><a href="#" class="hover:text-blue-300">Contact</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
+<script lang="ts">
+	import {
+		getAllUnits,
+		getAssociates,
+		getLocalPlayer,
+		hireUnit
+	} from '../services/GameController.svelte';
+	import UnitCard from './UnitCard.svelte';
+	// Get all units in the game
+	let units = $derived(getAllUnits());
+	let associates = $derived(getAssociates());
+	// Get the local player
+	let player = $derived(getLocalPlayer());
+	// Hire a new unit
+	const onHireUnitClick = (unitId: string) => {
+		hireUnit(unitId);
+	};
+</script>
+
+<footer class="flex gap-4 bg-gray-800 px-4 py-4 text-white">
+	<!-- Units list -->
+	<div class="units mb-6 w-full flex-grow overflow-x-auto rounded-lg bg-gray-700 p-3">
+		<div class="flex gap-2">
+			{#if units.length > 0}
+				{#each units as unit}
+					<UnitCard {unit} />
+				{/each}
+			{:else}
+				<p class="text-sm text-gray-400">No units available</p>
+			{/if}
+
+			<div class="border border-dashed border-white bg-gray-800 text-white shadow-lg"></div>
+			{#if associates.length > 0}
+				{#each associates as unit}
+					<UnitCard {unit} />
+				{/each}
+			{:else}
+				<p class="text-sm text-gray-400">No associates available</p>
+			{/if}
+		</div>
+	</div>
 </footer>

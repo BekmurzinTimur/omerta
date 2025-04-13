@@ -1,5 +1,7 @@
 // Game entity models and interfaces
 
+import type { IUnit } from './UnitModels';
+
 // Player model
 export interface Player {
 	id: string;
@@ -9,7 +11,7 @@ export interface Player {
 		manpower: number;
 	};
 	territories: Territory[];
-	units: Unit[];
+	units: IUnit[];
 }
 
 // Territory model
@@ -30,38 +32,12 @@ export interface Territory {
 	captureInitiator: string | null;
 }
 
-// Unit model
-export interface Unit {
-	id: string;
-	type: UnitType;
-	ownerId: string;
-	position: {
-		x: number;
-		y: number;
-	};
-	status: UnitStatus;
-	strength: number;
-	maintenanceCost: number;
-}
-
-export enum UnitType {
-	INFANTRY = 'INFANTRY',
-	TANK = 'TANK',
-	AIRCRAFT = 'AIRCRAFT'
-}
-
-export enum UnitStatus {
-	IDLE = 'IDLE',
-	MOVING = 'MOVING',
-	ATTACKING = 'ATTACKING',
-	DEFENDING = 'DEFENDING'
-}
-
 // Overall game state
 export interface GameState {
 	players: Map<string, Player>;
 	territories: Map<string, Territory>;
-	units: Map<string, Unit>;
+	units: Map<string, IUnit>;
+	availableUnits: Map<string, IUnit>;
 	currentDate: Date;
 	isRunning: boolean;
 	tickCount: number;

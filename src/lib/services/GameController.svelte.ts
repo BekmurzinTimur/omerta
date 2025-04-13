@@ -3,7 +3,6 @@ import {
 	createStartCaptureAction,
 	createHireUnitAction
 } from './ActionManager.svelte';
-import { UnitType } from '../models/GameModels';
 import gameState from './GameState.svelte';
 
 let state = gameState.state;
@@ -20,8 +19,8 @@ const startCapturingTerritory = (territoryId: string): void => {
 };
 
 // Hire a new unit
-const hireUnit = (unitType: UnitType, position: { x: number; y: number }): void => {
-	const action = createHireUnitAction(LOCAL_PLAYER_ID, unitType, position);
+const hireUnit = (unitId: string): void => {
+	const action = createHireUnitAction(LOCAL_PLAYER_ID, unitId);
 	queueAction(action);
 };
 
@@ -58,6 +57,11 @@ const getAllUnits = () => {
 	return Array.from(state.units.values());
 };
 
+// Get all units
+const getAssociates = () => {
+	return Array.from(state.availableUnits.values());
+};
+
 // Get units owned by the local player
 const getPlayerUnits = () => {
 	const player = getLocalPlayer();
@@ -85,6 +89,7 @@ export {
 	getNeutralTerritories,
 	getCapturableTerritories,
 	getAllUnits,
+	getAssociates,
 	getPlayerUnits,
 	getCurrentDateFormatted
 };

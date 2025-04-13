@@ -6,8 +6,9 @@ import {
 	type StartCaptureAction,
 	type HireUnitAction
 } from '../models/ActionModels';
-import { UnitStatus, UnitType } from '../models/GameModels';
+import { type GameState } from '../models/GameModels';
 import gameState from './GameState.svelte';
+import { UnitRank } from '$lib/models/UnitModels';
 
 // Queue of actions waiting to be processed
 let actionQueue = $state<Action[]>([]);
@@ -121,53 +122,29 @@ const processStartCaptureAction = (action: StartCaptureAction): void => {
 
 // Process a HireUnitAction
 const processHireUnitAction = (action: HireUnitAction): void => {
-	const { playerId, unitType, position } = action;
+	const { playerId, unitId } = action;
 	const player = gameState.state.players.get(playerId);
+	const unit = gameState.state.availableUnits.get(unitId);
 
 	if (!player) {
 		throw new Error(`Player ${playerId} not found`);
 	}
 
-	// Check unit costs
-	const unitCosts = {
-		[UnitType.INFANTRY]: 100,
-		[UnitType.TANK]: 300,
-		[UnitType.AIRCRAFT]: 500
-	};
-
-	const cost = unitCosts[unitType as UnitType];
-
-	if (player.resources.money < cost) {
-		throw new Error(`Player ${playerId} cannot afford unit type ${unitType}`);
+	if (!unit) {
+		throw new Error(`Unit ${unitId} not found`);
 	}
-
-	// Deduct resources
-	gameState.updatePlayer(playerId, {
-		resources: {
-			...player.resources,
-			money: player.resources.money - cost
-		}
-	});
-
-	// Create new unit
-	const newUnit = {
-		id: uuidv4(),
-		type: unitType as UnitType,
-		ownerId: playerId,
-		position,
-		status: UnitStatus.IDLE,
-		strength: unitType === UnitType.INFANTRY ? 10 : unitType === UnitType.TANK ? 30 : 50,
-		maintenanceCost: unitType === UnitType.INFANTRY ? 5 : unitType === UnitType.TANK ? 15 : 25
-	};
-
+	unit.rank = UnitRank.SOLDIER;
 	// Add unit to state
-	gameState.state.units.set(newUnit.id, newUnit);
+	gameState.state.units.set(unit.id, unit);
+
+	// Remove unit from the pull of associates
+	gameState.state.availableUnits.delete(unit.id);
 
 	// Add unit to player's units
-	const updatedUnits = [...player.units, newUnit];
+	const updatedUnits = [...player.units, unit];
 	gameState.updatePlayer(playerId, { units: updatedUnits });
 
-	console.log(`Player ${playerId} hired a new ${unitType} unit`);
+	console.log(`Player ${playerId} hired ${unit.name} unit`);
 };
 
 // Create action creators (factory functions)
@@ -196,30 +173,20 @@ const createStartCaptureAction = (playerId: string, territoryId: string): StartC
 };
 
 // Create a hire unit action
-const createHireUnitAction = (
-	playerId: string,
-	unitType: UnitType,
-	position: { x: number; y: number }
-): HireUnitAction => {
+const createHireUnitAction = (playerId: string, unitId: string): HireUnitAction => {
 	return {
 		id: uuidv4(),
 		type: ActionType.HIRE_UNIT,
 		playerId,
-		unitType,
-		position,
+		unitId,
 		timestamp: Date.now(),
 		status: ActionStatus.PENDING,
-		validate: (gameState) => {
+		validate: (gameState: GameState) => {
 			const player = gameState.players.get(playerId);
 			if (!player) return false;
 
-			const unitCosts = {
-				[UnitType.INFANTRY]: 100,
-				[UnitType.TANK]: 300,
-				[UnitType.AIRCRAFT]: 500
-			};
-
-			return player.resources.money >= unitCosts[unitType];
+			const unit = gameState.availableUnits.get(unitId);
+			return unit?.ownerId === undefined;
 		}
 	};
 };

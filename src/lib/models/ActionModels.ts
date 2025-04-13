@@ -63,9 +63,5 @@ export interface StartCaptureAction extends Action {
 // Hire unit action
 export interface HireUnitAction extends Action {
 	type: ActionType.HIRE_UNIT;
-	unitType: string;
-	position: {
-		x: number;
-		y: number;
-	};
+	unitId: string;
 }

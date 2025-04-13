@@ -44,7 +44,7 @@
 	);
 
 	// Calculate cell size based on zoom level
-	let cellSize: number = $derived(50 * zoom);
+	let cellSize: number = $derived(100 * zoom);
 
 	let containerRef: HTMLDivElement;
 

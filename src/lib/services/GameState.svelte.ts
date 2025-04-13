@@ -2,11 +2,10 @@ import { SvelteMap } from 'svelte/reactivity';
 import {
 	type GameState as GameStateInterface,
 	type Player,
-	type Territory,
-	type Unit,
-	UnitStatus,
-	UnitType
+	type Territory
 } from '../models/GameModels';
+import { UnitRank, type IUnit } from '$lib/models/UnitModels';
+import { mockUnits } from '$lib/const/mockData';
 
 const createInitialState = () => {
 	// Start date: January 1, 1960, 00:00
@@ -49,18 +48,38 @@ const createInitialState = () => {
 	playerOne.territories = territories.filter((t) => t.ownerId === 'player1');
 
 	// Create initial units
-	const units: Unit[] = [
+	const units: IUnit[] = [
 		{
 			id: 'unit1',
-			type: UnitType.INFANTRY,
+			name: 'John Doe',
 			ownerId: 'player1',
-			position: {
-				x: 0,
-				y: 0
+			rank: UnitRank.SOLDIER,
+			skills: {
+				Force: 3,
+				Brains: 5,
+				Cunning: 6,
+				Influence: 9
 			},
-			status: UnitStatus.IDLE,
-			strength: 10,
-			maintenanceCost: 5
+			experience: 50,
+			loyalty: 75,
+			heat: 20,
+			level: 3
+		},
+		{
+			id: 'unit2',
+			name: 'Jack Doe',
+			ownerId: 'player1',
+			rank: UnitRank.CAPO,
+			skills: {
+				Force: 4,
+				Brains: 6,
+				Cunning: 7,
+				Influence: 10
+			},
+			experience: 4,
+			loyalty: 5,
+			heat: 80,
+			level: 6
 		}
 	];
 
@@ -75,17 +94,24 @@ const createInitialState = () => {
 		territoryMap.set(territory.id, territory);
 	});
 
-	const unitMap = new SvelteMap<string, Unit>();
+	const unitMap = new SvelteMap<string, IUnit>();
 	units.forEach((unit) => {
 		unitMap.set(unit.id, unit);
 	});
+
+	const availableUnits = new SvelteMap<string, IUnit>();
+	mockUnits.forEach((unit) => {
+		availableUnits.set(unit.id, unit);
+	});
+
 	return {
 		players: playerMap,
 		territories: territoryMap,
 		units: unitMap,
 		currentDate: startDate,
 		isRunning: false,
-		tickCount: 0
+		tickCount: 0,
+		availableUnits
 	};
 };
 /**
@@ -154,7 +180,7 @@ class GameState {
 	/**
 	 * Update a unit
 	 */
-	updateUnit(unitId: string, updates: Partial<Unit>): void {
+	updateUnit(unitId: string, updates: Partial<IUnit>): void {
 		const unit = this.state.units.get(unitId);
 		if (unit) {
 			this.state.units.set(unitId, { ...unit, ...updates });
@@ -178,7 +204,7 @@ class GameState {
 	/**
 	 * Get a unit by ID
 	 */
-	getUnit(unitId: string): Unit | undefined {
+	getUnit(unitId: string): IUnit | undefined {
 		return this.state.units.get(unitId);
 	}
 
@@ -192,7 +218,7 @@ class GameState {
 	/**
 	 * Get all units
 	 */
-	getAllUnits(): Unit[] {
+	getAllUnits(): IUnit[] {
 		return Array.from(this.state.units.values());
 	}
 }

@@ -1,20 +1,28 @@
 <script>
-	import { onMount } from "svelte";
-
-
-	import { gameState, startTime, stopTime } from "../stores/gameStore.svelte";
-    onMount(() => {
-        startTime()
-        return () => {
-            stopTime()
-        }
-    })
+	import gameState from '../services/GameState.svelte';
+	import gameService from '../services/GameService.svelte';
+	let state = gameState.state;
+	// Format the current game date
+	let formattedDate = $derived(gameState.formatGameDate(state.currentDate));
 </script>
+
 <!-- Header.svelte - Slim header component -->
-<header class="bg-blue-600 text-white p-2 shadow-md">
-    <div class="container mx-auto">
-      <h1 class="text-xl font-bold"> {gameState.date.toLocaleDateString('ru-RU')} {gameState.date.toLocaleTimeString('ru-RU')}</h1>
-      <button onclick={stopTime}>Pause</button>
-      <button onclick={startTime}>Play</button>
-    </div>
-  </header>
+<div class="game-header flex items-center justify-between bg-gray-800 p-4 text-white">
+	<div></div>
+	<div class="flex items-center space-x-4">
+		<div class="flex items-center space-x-4">
+			<span class="text-green-400">{formattedDate}</span>
+		</div>
+
+		<span class="text-sm">Tick: {state.tickCount}</span>
+		<span class="text-sm">FPS: {gameService.currentFps}</span>
+		<button
+			class="rounded px-4 py-2 text-sm font-medium {gameService.isRunning
+				? 'bg-red-600 hover:bg-red-700'
+				: 'bg-green-600 hover:bg-green-700'}"
+			onclick={() => gameService.toggleGameLoop()}
+		>
+			{gameService.isRunning ? 'Pause' : 'Start'}
+		</button>
+	</div>
+</div>

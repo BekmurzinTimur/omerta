@@ -135,36 +135,6 @@ const setupInitialScheduledActions = (): void => {
 		}
 	});
 
-	// Collect maintenance costs every 10 ticks
-	addScheduledAction({
-		id: 'maintenance-costs',
-		type: ScheduledActionType.MAINTENANCE_COST,
-		interval: 10,
-		nextExecutionTick: 10,
-		isRecurring: true,
-		execute: (state: GameState) => {
-			// For each player, collect maintenance costs for units
-			state.players.forEach((player: Player) => {
-				let totalMaintenance = 0;
-
-				// Calculate total maintenance cost
-				player.units.forEach((unit) => {
-					totalMaintenance += unit.maintenanceCost;
-				});
-
-				// Update player's money
-				gameState.updatePlayer(player.id, {
-					resources: {
-						...player.resources,
-						money: player.resources.money - totalMaintenance
-					}
-				});
-
-				console.log(`Collected ${totalMaintenance} maintenance costs from player ${player.id}`);
-			});
-		}
-	});
-
 	console.log('Initial scheduled actions set up');
 };
 
