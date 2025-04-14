@@ -5,9 +5,6 @@
 	import UnitCardBig from './UnitCardBig.svelte';
 
 	let { unit }: { unit: IUnit } = $props();
-	$effect(() => {
-		console.log('small card', unit);
-	});
 
 	function addNewWindow() {
 		addWindow({

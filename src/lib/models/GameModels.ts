@@ -12,6 +12,7 @@ export interface Player {
 	};
 	territories: Territory[];
 	units: IUnit[];
+	color: string;
 }
 
 // Territory model

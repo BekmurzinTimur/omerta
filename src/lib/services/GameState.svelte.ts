@@ -20,28 +20,31 @@ const createInitialState = () => {
 			manpower: 500
 		},
 		territories: [],
-		units: []
+		units: [],
+		color: '#ff0000'
 	};
 
 	// Create initial territories
 	const territories: Territory[] = [];
-	for (let i = 0; i < 10; i++) {
-		territories.push({
-			id: `territory${i}`,
-			name: `Territory ${i}`,
-			ownerId: i < 3 ? 'player1' : null, // Player 1 starts with 3 territories
-			position: {
-				x: Math.floor(i / 3) * 100,
-				y: (i % 3) * 100
-			},
-			resources: {
-				production: 5 + Math.floor(Math.random() * 10),
-				manpower: 2 + Math.floor(Math.random() * 5)
-			},
-			isBeingCaptured: false,
-			captureProgress: 0,
-			captureInitiator: null
-		});
+	for (let x = 0; x < 10; x++) {
+		for (let y = 0; y < 10; y++) {
+			territories.push({
+				id: `territory_${x}-${y}`,
+				name: `Territory ${x}-${y}`,
+				ownerId: x === 4 && y === 3 ? 'player1' : null, // Player 1 starts with 1 territory
+				position: {
+					x: x,
+					y: y
+				},
+				resources: {
+					production: 5 + Math.floor(Math.random() * 10),
+					manpower: 2 + Math.floor(Math.random() * 5)
+				},
+				isBeingCaptured: false,
+				captureProgress: 0,
+				captureInitiator: null
+			});
+		}
 	}
 
 	// Assign owned territories to player

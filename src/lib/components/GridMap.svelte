@@ -1,5 +1,7 @@
 <!-- GridMap.svelte - Interactive grid map component with TypeScript -->
 <script lang="ts">
+	import { getPlayerColor, getPlayerTerritories } from '$lib/services/GameController.svelte';
+	import { convertCellIdToTerritory, convertTerritoryToCellId } from '$lib/utils/mapUtils';
 	import { onMount } from 'svelte';
 
 	// Define props for background image
@@ -33,6 +35,12 @@
 
 	// Store only the ID of the selected cell
 	let selectedCellId: number | null = $state(null);
+	let selectedTerritory: string | null = $derived(convertCellIdToTerritory(selectedCellId));
+	let playerTerritories = $derived(getPlayerTerritories());
+	let playerCells = $derived(
+		playerTerritories.map((territory) => convertTerritoryToCellId(territory.id))
+	);
+	let playerColor = $derived(getPlayerColor());
 
 	// Create a grid of cells (without selected property)
 	let cells: Cell[] = $state(
@@ -125,6 +133,9 @@
 			};
 		}
 	});
+	$effect(() => {
+		console.log(playerCells.includes(64), playerColor);
+	});
 </script>
 
 <div
@@ -150,9 +161,8 @@
 
 		{#each cells as cell (cell.id)}
 			<div
-				class="absolute cursor-pointer border border-gray-300 transition-colors duration-200"
+				class={`absolute cursor-pointer border border-gray-300 transition-colors duration-200 ${playerCells.includes(cell.id) ? `bg-[${playerColor}]` : ''} `}
 				class:bg-blue-500={selectedCellId === cell.id}
-				class:bg-white={selectedCellId !== cell.id}
 				class:shadow-md={selectedCellId === cell.id}
 				style="
           width: {cellSize}px;

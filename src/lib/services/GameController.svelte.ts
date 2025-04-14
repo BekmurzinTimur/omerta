@@ -29,6 +29,11 @@ const getLocalPlayer = () => {
 	return state.players.get(LOCAL_PLAYER_ID);
 };
 
+const getPlayerColor = () => {
+	const player = getLocalPlayer();
+	return player ? player.color : '';
+};
+
 // Get all territories
 const getAllTerritories = () => {
 	return Array.from(state.territories.values());
@@ -91,5 +96,6 @@ export {
 	getAllUnits,
 	getAssociates,
 	getPlayerUnits,
-	getCurrentDateFormatted
+	getCurrentDateFormatted,
+	getPlayerColor
 };

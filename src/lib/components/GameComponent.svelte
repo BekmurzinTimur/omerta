@@ -64,8 +64,8 @@
 
 				<!-- Territory capture section -->
 				<div class="action-group mb-4">
-					<h4 class="mb-1 text-sm text-gray-300">Capture Territory</h4>
-					<div class="space-y-2">
+					<h4 class="mb-1 text-sm text-gray-300">Territory</h4>
+					<!-- <div class="space-y-2">
 						{#if capturableTerritories.length > 0}
 							{#each capturableTerritories as territory}
 								<button
@@ -79,7 +79,7 @@
 						{:else}
 							<p class="text-sm text-gray-400">No territories available to capture</p>
 						{/if}
-					</div>
+					</div> -->
 				</div>
 			</div>
 		</div>
