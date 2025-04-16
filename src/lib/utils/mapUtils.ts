@@ -1,5 +1,5 @@
-export const convertCellIdToTerritory = (cellId: number | null): string | null => {
-	if (cellId === null) return null;
+export const convertCellIdToTerritory = (cellId: number | null): string => {
+	if (cellId === null) return 'not_found';
 	// Validate the input
 	if (cellId < 0 || cellId >= 400 || !Number.isInteger(cellId)) {
 		throw new Error('Cell ID must be an integer between 0 and 399');

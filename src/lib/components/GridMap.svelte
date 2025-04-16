@@ -26,16 +26,16 @@
 
 	// Define grid dimensions
 	let gridSize: GridSize = $state({ width: 20, height: 20 });
-
+	let {
+		selectedCellId,
+		onSelect
+	}: { selectedCellId: number | null; onSelect: (cellid: number | null) => void } = $props();
 	// Grid position and zoom state
 	let position: Position = $state({ x: 0, y: 0 });
 	let zoom: number = $state(1);
 	let isDragging: boolean = $state(false);
 	let dragStart: Position = $state({ x: 0, y: 0 });
 
-	// Store only the ID of the selected cell
-	let selectedCellId: number | null = $state(null);
-	let selectedTerritory: string | null = $derived(convertCellIdToTerritory(selectedCellId));
 	let playerTerritories = $derived(getPlayerTerritories());
 	let playerCells = $derived(
 		playerTerritories.map((territory) => convertTerritoryToCellId(territory.id))
@@ -112,10 +112,9 @@
 	function selectCell(cellId: number): void {
 		// If the cell is already selected, deselect it
 		if (selectedCellId === cellId) {
-			selectedCellId = null;
+			onSelect(null);
 		} else {
-			// Otherwise, select this cell (which automatically deselects the previous)
-			selectedCellId = cellId;
+			onSelect(cellId);
 		}
 	}
 
@@ -162,8 +161,9 @@
 		{#each cells as cell (cell.id)}
 			<div
 				class={`absolute cursor-pointer border border-gray-300 transition-colors duration-200 ${playerCells.includes(cell.id) ? `bg-[${playerColor}]` : ''} `}
-				class:bg-blue-500={selectedCellId === cell.id}
-				class:shadow-md={selectedCellId === cell.id}
+				class:outline-solid={selectedCellId === cell.id}
+				class:outline-2={selectedCellId === cell.id}
+				class:outline-blue-500={selectedCellId === cell.id}
 				style="
           width: {cellSize}px;
           height: {cellSize}px;

@@ -5,6 +5,7 @@
 		getLocalPlayer,
 		hireUnit
 	} from '../services/GameController.svelte';
+	import Draggable from './DragAndDrop/Draggable.svelte';
 	import UnitCard from './UnitCard.svelte';
 	// Get all units in the game
 	let units = $derived(getAllUnits());
@@ -23,7 +24,16 @@
 		<div class="flex gap-2">
 			{#if units.length > 0}
 				{#each units as unit}
-					<UnitCard {unit} />
+					<Draggable
+						item={{
+							id: unit.id,
+							type: 'unit',
+							data: unit
+						}}
+						zoneId="source"
+					>
+						<UnitCard {unit} />
+					</Draggable>
 				{/each}
 			{:else}
 				<p class="text-sm text-gray-400">No units available</p>

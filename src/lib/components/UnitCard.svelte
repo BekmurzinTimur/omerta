@@ -1,11 +1,10 @@
 <script lang="ts">
 	import type { IUnit } from '$lib/models/UnitModels';
-	import Test from './DialogWindows/Test.svelte';
 	import { addWindow } from './DialogWindows/windowStore.svelte';
 	import UnitCardBig from './UnitCardBig.svelte';
 
 	let { unit }: { unit: IUnit } = $props();
-
+	//mobsters/1.png
 	function addNewWindow() {
 		addWindow({
 			id: `window-${Date.now()}`,

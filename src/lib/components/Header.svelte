@@ -1,6 +1,7 @@
 <script>
 	import gameState from '../services/GameState.svelte';
 	import gameService from '../services/GameService.svelte';
+	import Resources from './Resources.svelte';
 	let state = gameState.state;
 	// Format the current game date
 	let formattedDate = $derived(gameState.formatGameDate(state.currentDate));
@@ -8,7 +9,9 @@
 
 <!-- Header.svelte - Slim header component -->
 <div class="game-header flex items-center justify-between bg-gray-800 p-4 text-white">
-	<div></div>
+	<div>
+		<Resources />
+	</div>
 	<div class="flex items-center space-x-4">
 		<div class="flex items-center space-x-4">
 			<span class="text-green-400">{formattedDate}</span>

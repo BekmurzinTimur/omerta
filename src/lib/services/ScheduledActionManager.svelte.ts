@@ -1,7 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import { type ScheduledAction, ScheduledActionType } from '../models/ActionModels';
 import gameState from './GameState.svelte';
-import type { GameState, Player, Territory } from '$lib/models/GameModels';
+import type { GameState, Player } from '$lib/models/GameModels';
+import type { ITerritory } from '$lib/models/TerritoryModel';
 
 let state: GameState = gameState.state;
 
@@ -65,18 +66,16 @@ const setupInitialScheduledActions = (): void => {
 		execute: (state: GameState) => {
 			// For each player, generate income based on their territories
 			state.players.forEach((player: Player) => {
-				let totalProduction = 0;
+				let income = 0;
 
 				// Calculate total production from territories
-				player.territories.forEach((territory: Territory) => {
+				player.territories.forEach((territory: ITerritory) => {
 					const territoryData = state.territories.get(territory.id);
 					if (territoryData) {
-						totalProduction += territoryData.resources.production;
+						income += territoryData.resources.income;
 					}
 				});
 
-				// Update player's money
-				const income = totalProduction * 10; // 10 money per production point
 				gameState.updatePlayer(player.id, {
 					resources: {
 						...player.resources,
@@ -98,7 +97,7 @@ const setupInitialScheduledActions = (): void => {
 		isRecurring: true,
 		execute: (state: GameState) => {
 			// Find all territories being captured
-			state.territories.forEach((territory: Territory) => {
+			state.territories.forEach((territory: ITerritory) => {
 				if (territory.isBeingCaptured && territory.captureInitiator) {
 					// Increase capture progress
 					const newProgress = territory.captureProgress + 10; // 10% per tick

@@ -7,7 +7,7 @@ export interface ITerritory {
 		y: number;
 	};
 	resources: {
-		production: number;
+		income: number;
 		manpower: number;
 	};
 	isBeingCaptured: boolean;

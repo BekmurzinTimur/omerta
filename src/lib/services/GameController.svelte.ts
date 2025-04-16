@@ -36,7 +36,7 @@ const getPlayerColor = () => {
 
 // Get all territories
 const getAllTerritories = () => {
-	return Array.from(state.territories.values());
+	return state.territories;
 };
 
 // Get territories owned by the local player

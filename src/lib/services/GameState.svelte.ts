@@ -1,11 +1,8 @@
 import { SvelteMap } from 'svelte/reactivity';
-import {
-	type GameState as GameStateInterface,
-	type Player,
-	type Territory
-} from '../models/GameModels';
+import { type GameState as GameStateInterface, type Player } from '../models/GameModels';
 import { UnitRank, type IUnit } from '$lib/models/UnitModels';
 import { mockUnits } from '$lib/const/mockData';
+import type { ITerritory } from '$lib/models/TerritoryModel';
 
 const createInitialState = () => {
 	// Start date: January 1, 1960, 00:00
@@ -25,19 +22,19 @@ const createInitialState = () => {
 	};
 
 	// Create initial territories
-	const territories: Territory[] = [];
-	for (let x = 0; x < 10; x++) {
-		for (let y = 0; y < 10; y++) {
+	const territories: ITerritory[] = [];
+	for (let x = 0; x < 20; x++) {
+		for (let y = 0; y < 20; y++) {
 			territories.push({
 				id: `territory_${x}-${y}`,
 				name: `Territory ${x}-${y}`,
-				ownerId: x === 4 && y === 3 ? 'player1' : null, // Player 1 starts with 1 territory
+				ownerId: x === 10 && y === 10 ? 'player1' : null, // Player 1 starts with 1 territory
 				position: {
 					x: x,
 					y: y
 				},
 				resources: {
-					production: 5 + Math.floor(Math.random() * 10),
+					income: 5 + Math.floor(Math.random() * 10),
 					manpower: 2 + Math.floor(Math.random() * 5)
 				},
 				isBeingCaptured: false,
@@ -92,7 +89,7 @@ const createInitialState = () => {
 	const playerMap = new SvelteMap<string, Player>();
 	playerMap.set(playerOne.id, playerOne);
 
-	const territoryMap = new SvelteMap<string, Territory>();
+	const territoryMap = new SvelteMap<string, ITerritory>();
 	territories.forEach((territory) => {
 		territoryMap.set(territory.id, territory);
 	});
@@ -173,7 +170,7 @@ class GameState {
 	/**
 	 * Update a territory
 	 */
-	updateTerritory(territoryId: string, updates: Partial<Territory>): void {
+	updateTerritory(territoryId: string, updates: Partial<ITerritory>): void {
 		const territory = this.state.territories.get(territoryId);
 		if (territory) {
 			this.state.territories.set(territoryId, { ...territory, ...updates });
@@ -200,7 +197,7 @@ class GameState {
 	/**
 	 * Get a territory by ID
 	 */
-	getTerritory(territoryId: string): Territory | undefined {
+	getTerritory(territoryId: string): ITerritory | undefined {
 		return this.state.territories.get(territoryId);
 	}
 
@@ -214,8 +211,8 @@ class GameState {
 	/**
 	 * Get all territories
 	 */
-	getAllTerritories(): Territory[] {
-		return Array.from(this.state.territories.values());
+	getAllTerritories(): Map<string, ITerritory> {
+		return this.state.territories;
 	}
 
 	/**
