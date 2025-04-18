@@ -87,7 +87,7 @@ const createInitialState = () => {
 			level: 6,
 			cut: 10,
 			status: UnitStatus.IDLE,
-			image: 1
+			image: 2
 		}
 	];
 
