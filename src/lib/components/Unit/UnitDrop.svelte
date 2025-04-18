@@ -3,7 +3,11 @@
 	import { type IUnit } from '$lib/models/UnitModels';
 
 	// Unit is optional, this slot can be empty
-	let { unit, confirmed }: { unit?: IUnit; confirmed?: boolean } = $props();
+	let {
+		unit,
+		confirmed,
+		onRemove
+	}: { unit?: IUnit; confirmed?: boolean; onRemove: (unitId: string) => void } = $props();
 </script>
 
 <!-- Unit assignment slot - 150x150 square for unit assignment -->
@@ -32,6 +36,13 @@
 				class="absolute top-2 right-2 rounded-full bg-yellow-500 px-1 py-0.5 text-xs font-bold text-black"
 			>
 				Pending
+			</div>
+		{:else}
+			<div
+				class="pointer-events-auto absolute top-2 right-2 cursor-pointer rounded-full bg-red-500/50 px-1 py-0.5 text-xs font-bold text-black hover:bg-red-500"
+				onclick={() => onRemove(unit.id)}
+			>
+				Remove
 			</div>
 		{/if}
 	{:else}

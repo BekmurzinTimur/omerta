@@ -56,10 +56,10 @@
 >
 	<!-- Header with background image -->
 	<div
-		class="relative flex h-36 flex-col justify-end border-b border-gray-700 px-4 pb-3"
+		class="relative flex h-36 flex-col justify-end border-b border-gray-700 px-4 py-3"
 		style="background:url('/mobsters/{unit.image}.png') center/cover"
 	>
-		<div class="mb-2 text-sm leading-snug font-bold drop-shadow">
+		<div class="mb-2 mb-auto text-sm leading-snug font-bold drop-shadow">
 			<div class="mb-1 flex items-center gap-2">
 				<div
 					class="flex h-6 w-6 flex-col items-center justify-center rounded-full bg-amber-600 text-lg leading-0 font-bold"
@@ -116,6 +116,6 @@
 
 	<!-- Footer -->
 	<div class="mt-auto flex items-center justify-between bg-gray-900 px-4 py-2 text-xs">
-		<span>ID: {unit.id}</span>
+		<span>{unit.status}</span>
 	</div>
 </div>

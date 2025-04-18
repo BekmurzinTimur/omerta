@@ -4,7 +4,8 @@
 	import {
 		assignUnitToTerritory,
 		getLocalPlayer,
-		getPlayerTerritories
+		getPlayerTerritories,
+		removeUnitFromTerritory
 	} from '$lib/services/GameController.svelte';
 	import { type DraggableItem, type DropResult } from './DragAndDrop/DragAndDropTypes';
 	import DropZone from './DragAndDrop/DropZone.svelte';
@@ -29,6 +30,11 @@
 		if (territory.managerId === unitId) return console.log('Same unit', item);
 		assignUnitToTerritory(unitId, territory.id);
 	}
+	function handleRemove(unitId: string) {
+		if (!territory?.id) return;
+		removeUnitFromTerritory(unitId, territory.id);
+		droppedItem = null;
+	}
 </script>
 
 <!-- Actions -->
@@ -41,7 +47,7 @@
 			<div>Income: ${territory.resources.income}</div>
 			{#if territory.ownerId === player?.id}
 				<DropZone id="target" onDrop={handleDrop} accepts={['unit']}>
-					<UnitDrop unit={droppedItem?.data} {confirmed} />
+					<UnitDrop unit={droppedItem?.data} {confirmed} onRemove={handleRemove} />
 				</DropZone>
 			{/if}
 		{:else}

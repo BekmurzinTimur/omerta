@@ -15,9 +15,9 @@ export enum CoreAttribute {
 }
 export enum UnitStatus {
 	IDLE = 'Idle',
-	MISSION = 'On a mission',
-	TERRITORY = 'Oversees a territory',
-	BUSINESS = 'Manages a business'
+	MISSION = 'Mission',
+	TERRITORY = 'Territory',
+	BUSINESS = 'Business'
 }
 
 export interface IUnit {

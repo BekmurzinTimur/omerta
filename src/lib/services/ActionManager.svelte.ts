@@ -9,9 +9,8 @@ import {
 } from '../models/ActionModels';
 import { type GameState } from '../models/GameModels';
 import gameState from './GameState.svelte';
-import type { AssignToTerritory } from '../models/ActionModels';
+import type { AssignToTerritory, RemoveFromTerritoryAction } from '../models/ActionModels';
 import { UnitStatus, UnitRank } from '$lib/models/UnitModels';
-
 // Queue of actions waiting to be processed
 let actionQueue = $state<Action[]>([]);
 
@@ -74,6 +73,9 @@ const processActions = (): void => {
 					break;
 				case ActionType.ASSIGN_TO_TERRITORY:
 					processAssignToTerritoryAction(action as AssignToTerritory);
+					break;
+				case ActionType.REMOVE_FROM_TERRITORY:
+					processRemoveFromTerritoryAction(action as RemoveFromTerritoryAction);
 					break;
 				// Add more cases as needed
 				default:
@@ -179,6 +181,34 @@ const processAssignToTerritoryAction = (action: AssignToTerritory): void => {
 	console.log(`Player ${playerId} assigned ${unit.name} to oversee territory ${territory.name}`);
 };
 
+const processRemoveFromTerritoryAction = (action: RemoveFromTerritoryAction): void => {
+	const { playerId, unitId, territoryId } = action;
+
+	const player = gameState.state.players.get(playerId);
+	if (!player) throw new Error(`Player ${playerId} not found`);
+
+	const unit = gameState.state.units.get(unitId);
+	if (!unit) throw new Error(`Unit ${unitId} not found`);
+	if (unit.ownerId !== playerId)
+		throw new Error(`Unit ${unitId} does not belong to player ${playerId}`);
+
+	const territory = gameState.state.territories.get(territoryId);
+	if (!territory) throw new Error(`Territory ${territoryId} not found`);
+	if (territory.ownerId !== playerId)
+		throw new Error(`Territory ${territoryId} is not owned by player ${playerId}`);
+
+	if (territory.managerId !== unitId)
+		throw new Error(`Unit ${unitId} is not managing territory ${territoryId}`);
+
+	// ── Apply state changes ────────────────────────────────────
+	const updatedUnit = { ...unit, status: UnitStatus.IDLE };
+	gameState.state.units.set(unitId, updatedUnit);
+
+	gameState.updateTerritory(territoryId, { managerId: null });
+
+	console.log(`Player ${playerId} removed ${unit.name} from territory ${territory.name}`);
+};
+
 // Create action creators (factory functions)
 
 // Create a start capture action
@@ -255,6 +285,37 @@ const createAssignToTerritoryAction = (
 	};
 };
 
+const createRemoveFromTerritoryAction = (
+	playerId: string,
+	unitId: string,
+	territoryId: string
+): RemoveFromTerritoryAction => {
+	return {
+		id: uuidv4(),
+		type: ActionType.REMOVE_FROM_TERRITORY,
+		playerId,
+		unitId,
+		territoryId,
+		timestamp: Date.now(),
+		status: ActionStatus.PENDING,
+		validate: (state: GameState) => {
+			const player = state.players.get(playerId);
+			if (!player) return false;
+
+			const unit = state.units.get(unitId);
+			const territory = state.territories.get(territoryId);
+
+			return (
+				unit !== undefined &&
+				territory !== undefined &&
+				unit.ownerId === playerId &&
+				territory.ownerId === playerId &&
+				territory.managerId === unitId
+			);
+		}
+	};
+};
+
 // Export the action manager functions
 export {
 	queueAction,
@@ -263,5 +324,6 @@ export {
 	getPlayerActionHistory,
 	createStartCaptureAction,
 	createHireUnitAction,
-	createAssignToTerritoryAction
+	createAssignToTerritoryAction,
+	createRemoveFromTerritoryAction
 };

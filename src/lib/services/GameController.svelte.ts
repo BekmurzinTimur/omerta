@@ -1,11 +1,13 @@
 //GameController.svelte.ts
+
+import gameState from './GameState.svelte';
 import {
 	queueAction,
 	createStartCaptureAction,
-	createHireUnitAction
+	createHireUnitAction,
+	createAssignToTerritoryAction,
+	createRemoveFromTerritoryAction
 } from './ActionManager.svelte';
-import gameState from './GameState.svelte';
-import { createAssignToTerritoryAction } from './ActionManager.svelte';
 
 let state = gameState.state;
 // This controller acts as an interface between the UI and the game systems
@@ -28,6 +30,11 @@ const hireUnit = (unitId: string): void => {
 
 const assignUnitToTerritory = (unitId: string, territoryId: string): void => {
 	const action = createAssignToTerritoryAction(LOCAL_PLAYER_ID, unitId, territoryId);
+	queueAction(action);
+};
+
+const removeUnitFromTerritory = (unitId: string, territoryId: string): void => {
+	const action = createRemoveFromTerritoryAction(LOCAL_PLAYER_ID, unitId, territoryId);
 	queueAction(action);
 };
 
@@ -110,5 +117,6 @@ export {
 	getPlayerUnits,
 	getCurrentDateFormatted,
 	getPlayerColor,
-	assignUnitToTerritory
+	assignUnitToTerritory,
+	removeUnitFromTerritory
 };

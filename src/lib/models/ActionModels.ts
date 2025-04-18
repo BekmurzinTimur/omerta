@@ -17,6 +17,7 @@ export enum ActionType {
 	CANCEL_CAPTURE = 'CANCEL_CAPTURE',
 
 	ASSIGN_TO_TERRITORY = 'ASSIGN_TO_TERRITORY',
+	REMOVE_FROM_TERRITORY = 'REMOVE_FROM_TERRITORY',
 
 	// Unit actions
 	HIRE_UNIT = 'HIRE_UNIT',
@@ -71,6 +72,13 @@ export interface HireUnitAction extends Action {
 // Assign to territory unit action
 export interface AssignToTerritory extends Action {
 	type: ActionType.ASSIGN_TO_TERRITORY;
+	unitId: string;
+	territoryId: string;
+}
+
+// Remove‑from‑territory unit action
+export interface RemoveFromTerritoryAction extends Action {
+	type: ActionType.REMOVE_FROM_TERRITORY;
 	unitId: string;
 	territoryId: string;
 }
