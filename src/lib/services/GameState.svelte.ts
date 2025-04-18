@@ -1,6 +1,6 @@
 import { SvelteMap } from 'svelte/reactivity';
 import { type GameState as GameStateInterface, type Player } from '../models/GameModels';
-import { UnitRank, type IUnit } from '$lib/models/UnitModels';
+import { UnitRank, UnitStatus, type IUnit } from '$lib/models/UnitModels';
 import { mockUnits } from '$lib/const/mockData';
 import type { ITerritory } from '$lib/models/TerritoryModel';
 
@@ -65,6 +65,7 @@ const createInitialState = () => {
 			heat: 20,
 			level: 3,
 			cut: 10,
+			status: UnitStatus.IDLE,
 			image: 1
 		},
 		{
@@ -83,6 +84,7 @@ const createInitialState = () => {
 			heat: 80,
 			level: 6,
 			cut: 10,
+			status: UnitStatus.IDLE,
 			image: 1
 		}
 	];

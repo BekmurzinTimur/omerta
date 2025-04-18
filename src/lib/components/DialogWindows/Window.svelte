@@ -160,7 +160,7 @@
 		</button>
 	</div>
 
-	<div class="flex-grow overflow-auto p-4">
+	<div class="flex-grow overflow-auto">
 		<slot name="content"></slot>
 	</div>
 </div>

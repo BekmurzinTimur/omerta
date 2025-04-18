@@ -12,6 +12,12 @@ export enum CoreAttribute {
 	CUNNING = 'Cunning', // Survival skills, awareness, connections, practical knowledge
 	INFLUENCE = 'Influence' // Charisma, respect, ability to command others
 }
+export enum UnitStatus {
+	IDLE = 'Idle',
+	MISSION = 'On a mission',
+	TERRITORY = 'Oversees a territory',
+	BUSINESS = 'Manages a business'
+}
 
 export interface IUnit {
 	id: string;
@@ -26,4 +32,5 @@ export interface IUnit {
 	heat: number;
 	cut: number;
 	image: number;
+	status: UnitStatus;
 }

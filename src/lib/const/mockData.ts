@@ -1,4 +1,4 @@
-import { UnitRank, type IUnit } from '$lib/models/UnitModels';
+import { UnitRank, UnitStatus, type IUnit } from '$lib/models/UnitModels';
 
 export const mockUnits: IUnit[] = [
 	{
@@ -18,6 +18,7 @@ export const mockUnits: IUnit[] = [
 		heat: 35,
 		level: 4,
 		cut: 10,
+		status: UnitStatus.IDLE,
 		image: 1
 	},
 	{
@@ -37,6 +38,7 @@ export const mockUnits: IUnit[] = [
 		heat: 15,
 		level: 7,
 		cut: 10,
+		status: UnitStatus.IDLE,
 		image: 1
 	},
 	{
@@ -56,6 +58,7 @@ export const mockUnits: IUnit[] = [
 		heat: 40,
 		level: 8,
 		cut: 10,
+		status: UnitStatus.IDLE,
 		image: 1
 	},
 	{
@@ -75,6 +78,7 @@ export const mockUnits: IUnit[] = [
 		heat: 30,
 		level: 2,
 		cut: 10,
+		status: UnitStatus.IDLE,
 		image: 1
 	},
 	{
@@ -94,6 +98,7 @@ export const mockUnits: IUnit[] = [
 		heat: 10,
 		level: 9,
 		cut: 10,
+		status: UnitStatus.IDLE,
 		image: 1
 	},
 	{
@@ -113,6 +118,7 @@ export const mockUnits: IUnit[] = [
 		heat: 45,
 		level: 3,
 		cut: 10,
+		status: UnitStatus.IDLE,
 		image: 1
 	},
 	{
@@ -132,6 +138,7 @@ export const mockUnits: IUnit[] = [
 		heat: 25,
 		level: 6,
 		cut: 10,
+		status: UnitStatus.IDLE,
 		image: 1
 	},
 	{
@@ -151,6 +158,7 @@ export const mockUnits: IUnit[] = [
 		heat: 60,
 		level: 10,
 		cut: 10,
+		status: UnitStatus.IDLE,
 		image: 1
 	},
 	{
@@ -170,6 +178,7 @@ export const mockUnits: IUnit[] = [
 		heat: 20,
 		level: 5,
 		cut: 10,
+		status: UnitStatus.IDLE,
 		image: 1
 	},
 	{
@@ -189,6 +198,7 @@ export const mockUnits: IUnit[] = [
 		heat: 5,
 		level: 1,
 		cut: 10,
+		status: UnitStatus.IDLE,
 		image: 1
 	}
 ];
