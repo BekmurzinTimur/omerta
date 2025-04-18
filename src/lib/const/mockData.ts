@@ -8,7 +8,7 @@ export const mockUnits: IUnit[] = [
 		ownerId: undefined,
 		rank: UnitRank.ASSOCIATE,
 		skills: {
-			Force: 7,
+			Muscle: 7,
 			Brains: 4,
 			Cunning: 5,
 			Influence: 3
@@ -16,7 +16,9 @@ export const mockUnits: IUnit[] = [
 		experience: 42,
 		loyalty: 80,
 		heat: 35,
-		level: 4
+		level: 4,
+		cut: 10,
+		image: 1
 	},
 	{
 		id: '_unit2',
@@ -25,7 +27,7 @@ export const mockUnits: IUnit[] = [
 		ownerId: undefined,
 		rank: UnitRank.ASSOCIATE,
 		skills: {
-			Force: 2,
+			Muscle: 2,
 			Brains: 8,
 			Cunning: 7,
 			Influence: 6
@@ -33,7 +35,9 @@ export const mockUnits: IUnit[] = [
 		experience: 78,
 		loyalty: 65,
 		heat: 15,
-		level: 7
+		level: 7,
+		cut: 10,
+		image: 1
 	},
 	{
 		id: '_unit3',
@@ -42,7 +46,7 @@ export const mockUnits: IUnit[] = [
 		ownerId: undefined,
 		rank: UnitRank.ASSOCIATE,
 		skills: {
-			Force: 5,
+			Muscle: 5,
 			Brains: 9,
 			Cunning: 8,
 			Influence: 7
@@ -50,7 +54,9 @@ export const mockUnits: IUnit[] = [
 		experience: 95,
 		loyalty: 90,
 		heat: 40,
-		level: 8
+		level: 8,
+		cut: 10,
+		image: 1
 	},
 	{
 		id: '_unit4',
@@ -59,7 +65,7 @@ export const mockUnits: IUnit[] = [
 		ownerId: undefined,
 		rank: UnitRank.ASSOCIATE,
 		skills: {
-			Force: 6,
+			Muscle: 6,
 			Brains: 3,
 			Cunning: 4,
 			Influence: 5
@@ -67,7 +73,9 @@ export const mockUnits: IUnit[] = [
 		experience: 20,
 		loyalty: 45,
 		heat: 30,
-		level: 2
+		level: 2,
+		cut: 10,
+		image: 1
 	},
 	{
 		id: '_unit5',
@@ -76,7 +84,7 @@ export const mockUnits: IUnit[] = [
 		ownerId: undefined,
 		rank: UnitRank.ASSOCIATE,
 		skills: {
-			Force: 3,
+			Muscle: 3,
 			Brains: 10,
 			Cunning: 9,
 			Influence: 8
@@ -84,7 +92,9 @@ export const mockUnits: IUnit[] = [
 		experience: 120,
 		loyalty: 85,
 		heat: 10,
-		level: 9
+		level: 9,
+		cut: 10,
+		image: 1
 	},
 	{
 		id: '_unit6',
@@ -93,7 +103,7 @@ export const mockUnits: IUnit[] = [
 		ownerId: undefined,
 		rank: UnitRank.ASSOCIATE,
 		skills: {
-			Force: 9,
+			Muscle: 9,
 			Brains: 2,
 			Cunning: 3,
 			Influence: 4
@@ -101,7 +111,9 @@ export const mockUnits: IUnit[] = [
 		experience: 38,
 		loyalty: 70,
 		heat: 45,
-		level: 3
+		level: 3,
+		cut: 10,
+		image: 1
 	},
 	{
 		id: '_unit7',
@@ -110,7 +122,7 @@ export const mockUnits: IUnit[] = [
 		ownerId: undefined,
 		rank: UnitRank.ASSOCIATE,
 		skills: {
-			Force: 6,
+			Muscle: 6,
 			Brains: 7,
 			Cunning: 9,
 			Influence: 5
@@ -118,7 +130,9 @@ export const mockUnits: IUnit[] = [
 		experience: 85,
 		loyalty: 75,
 		heat: 25,
-		level: 6
+		level: 6,
+		cut: 10,
+		image: 1
 	},
 	{
 		id: '_unit8',
@@ -127,7 +141,7 @@ export const mockUnits: IUnit[] = [
 		ownerId: undefined,
 		rank: UnitRank.ASSOCIATE,
 		skills: {
-			Force: 8,
+			Muscle: 8,
 			Brains: 8,
 			Cunning: 8,
 			Influence: 10
@@ -135,7 +149,9 @@ export const mockUnits: IUnit[] = [
 		experience: 150,
 		loyalty: 100,
 		heat: 60,
-		level: 10
+		level: 10,
+		cut: 10,
+		image: 1
 	},
 	{
 		id: '_unit9',
@@ -144,7 +160,7 @@ export const mockUnits: IUnit[] = [
 		ownerId: undefined,
 		rank: UnitRank.ASSOCIATE,
 		skills: {
-			Force: 5,
+			Muscle: 5,
 			Brains: 6,
 			Cunning: 8,
 			Influence: 7
@@ -152,7 +168,9 @@ export const mockUnits: IUnit[] = [
 		experience: 55,
 		loyalty: 60,
 		heat: 20,
-		level: 5
+		level: 5,
+		cut: 10,
+		image: 1
 	},
 	{
 		id: '_unit10',
@@ -161,7 +179,7 @@ export const mockUnits: IUnit[] = [
 		ownerId: undefined,
 		rank: UnitRank.ASSOCIATE,
 		skills: {
-			Force: 4,
+			Muscle: 4,
 			Brains: 5,
 			Cunning: 6,
 			Influence: 2
@@ -169,6 +187,8 @@ export const mockUnits: IUnit[] = [
 		experience: 15,
 		loyalty: 50,
 		heat: 5,
-		level: 1
+		level: 1,
+		cut: 10,
+		image: 1
 	}
 ];

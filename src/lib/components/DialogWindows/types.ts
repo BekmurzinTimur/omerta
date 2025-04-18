@@ -1,3 +1,5 @@
+import type { Component } from 'svelte';
+
 export interface WindowPosition {
 	x: number;
 	y: number;
@@ -9,7 +11,7 @@ export interface WindowSize {
 }
 
 export interface WindowContentComponent {
-	component: any; // Svelte component type
+	component: Component<any>; // Svelte component type
 	props: Record<string, any>;
 }
 

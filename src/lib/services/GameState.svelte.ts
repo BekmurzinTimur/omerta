@@ -55,7 +55,7 @@ const createInitialState = () => {
 			ownerId: 'player1',
 			rank: UnitRank.SOLDIER,
 			skills: {
-				Force: 3,
+				Muscle: 3,
 				Brains: 5,
 				Cunning: 6,
 				Influence: 9
@@ -63,7 +63,9 @@ const createInitialState = () => {
 			experience: 50,
 			loyalty: 75,
 			heat: 20,
-			level: 3
+			level: 3,
+			cut: 10,
+			image: 1
 		},
 		{
 			id: 'unit2',
@@ -71,7 +73,7 @@ const createInitialState = () => {
 			ownerId: 'player1',
 			rank: UnitRank.CAPO,
 			skills: {
-				Force: 4,
+				Muscle: 4,
 				Brains: 6,
 				Cunning: 7,
 				Influence: 10
@@ -79,7 +81,9 @@ const createInitialState = () => {
 			experience: 4,
 			loyalty: 5,
 			heat: 80,
-			level: 6
+			level: 6,
+			cut: 10,
+			image: 1
 		}
 	];
 
