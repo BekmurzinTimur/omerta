@@ -3,6 +3,8 @@
 	import type { IUnit } from '$lib/models/UnitModels';
 	import {
 		assignUnitToTerritory,
+		getAllUnits,
+		getAllUnitsMap,
 		getLocalPlayer,
 		getPlayerTerritories,
 		removeUnitFromTerritory
@@ -17,6 +19,7 @@
 	let confirmed = $derived(droppedUnit?.id === territory?.managerId);
 	let player = $derived(getLocalPlayer());
 
+	let assignedUnit = $derived(getAllUnitsMap().get(territory?.managerId || ''));
 	// Handle drop events
 	function handleDrop(result: DropResult) {
 		const { item } = result;
@@ -32,6 +35,17 @@
 		removeUnitFromTerritory(unitId, territory.id);
 		droppedItem = null;
 	}
+	$effect(() => {
+		if (!assignedUnit) {
+			droppedItem = null;
+			return;
+		}
+		droppedItem = {
+			id: assignedUnit.id,
+			type: 'unit',
+			data: assignedUnit
+		};
+	});
 </script>
 
 <!-- Actions -->
@@ -43,7 +57,7 @@
 			<div>Owner: {territory.ownerId ? territory.ownerId : 'no one'}</div>
 			<div>Income: ${territory.resources.income}</div>
 			{#if territory.ownerId === player?.id}
-				<DropZone id="target" onDrop={handleDrop} accepts={['unit']}>
+				<DropZone id="territory{territory.id}" onDrop={handleDrop} accepts={['unit']}>
 					<UnitDrop unit={droppedItem?.data} {confirmed} onRemove={handleRemove} />
 				</DropZone>
 			{/if}

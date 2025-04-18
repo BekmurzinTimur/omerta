@@ -30,19 +30,8 @@
 	let playerTerritories = $derived(getPlayerTerritories());
 	let playerCells = $derived(playerTerritories.map((territory) => territory.id));
 	let playerColor = $derived(getPlayerColor());
-
-	// Create a grid of cells (without selected property)
-	// let cells: Cell[] = $state(
-	// 	Array.from({ length: gridSize.width * gridSize.height }, (_, i) => ({
-	// 		id: i,
-	// 		x: i % gridSize.width,
-	// 		y: Math.floor(i / gridSize.width)
-	// 	}))
-	// );
-
 	let cells: Cell[] = $derived(
 		Array.from(territories, ([id, territory], i) => {
-			console.log(id, i, territory);
 			return {
 				id: territory.id,
 				x: territory.position.x,
@@ -112,7 +101,6 @@
 
 	// Toggle cell selection
 	function selectCell(cellId: string): void {
-		console.log({ cellId });
 		// If the cell is already selected, deselect it
 		if (selectedCellId === cellId) {
 			onSelect(null);
