@@ -1,17 +1,33 @@
 <script lang="ts">
 	import type { ITerritory } from '$lib/models/TerritoryModel';
+	import type { IUnit } from '$lib/models/UnitModels';
+	import {
+		assignUnitToTerritory,
+		getLocalPlayer,
+		getPlayerTerritories
+	} from '$lib/services/GameController.svelte';
 	import { type DraggableItem, type DropResult } from './DragAndDrop/DragAndDropTypes';
 	import DropZone from './DragAndDrop/DropZone.svelte';
+	import UnitDrop from './Unit/UnitDrop.svelte';
 
 	let { territory }: { territory?: ITerritory } = $props();
+	let droppedItem = $state<DraggableItem | null>(null);
+	let droppedUnit = $derived<IUnit | null>(droppedItem?.data);
+	let confirmed = $derived(droppedUnit?.id === territory?.managerId);
+	let player = $derived(getLocalPlayer());
 
-	const droppedItems = $state<DraggableItem[]>([]);
-
+	$effect(() => {
+		console.log({ territory, droppedItem, droppedUnit, confirmed });
+	});
 	// Handle drop events
 	function handleDrop(result: DropResult) {
 		const { item } = result;
-		droppedItems.push(item);
-		console.log('DROPPED', item);
+		droppedItem = item;
+		const unitId = (item.data as IUnit).id;
+		if (!unitId) return;
+		if (!territory?.id) return;
+		if (territory.managerId === unitId) return console.log('Same unit', item);
+		assignUnitToTerritory(unitId, territory.id);
 	}
 </script>
 
@@ -21,21 +37,13 @@
 	<div class="action-group mb-4">
 		{#if territory}
 			<h4 class="text-lg">{territory.name}</h4>
-			<div>Owner: {territory.ownerId ? territory.ownerId : 'noone'}</div>
+			<div>Owner: {territory.ownerId ? territory.ownerId : 'no one'}</div>
 			<div>Income: ${territory.resources.income}</div>
-			<DropZone id="target" onDrop={handleDrop} accepts={['unit']}>
-				{#if droppedItems.length === 0}
-					<p>Drop items here</p>
-				{:else}
-					<div class="grid grid-cols-3 gap-2">
-						{#each droppedItems as item}
-							<div class="rounded p-4 bg-{item.data.color}-400">
-								{item.id}
-							</div>
-						{/each}
-					</div>
-				{/if}
-			</DropZone>
+			{#if territory.ownerId === player?.id}
+				<DropZone id="target" onDrop={handleDrop} accepts={['unit']}>
+					<UnitDrop unit={droppedItem?.data} {confirmed} />
+				</DropZone>
+			{/if}
 		{:else}
 			<h4 class="text-lg">Select a territory</h4>
 		{/if}

@@ -20,7 +20,12 @@ export default ts.config(
 		languageOptions: {
 			globals: { ...globals.browser, ...globals.node }
 		},
-		rules: { 'no-undef': 'off', '@typescript-eslint/no-explicit-any': 'warn', 'prefer-const' : 'off' }
+		rules: {
+			'no-undef': 'off',
+			'@typescript-eslint/no-explicit-any': 'warn',
+			'prefer-const': 'off',
+			'svelte/valid-compile': ['error', { ignoreWarnings: true }]
+		}
 	},
 	{
 		files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],

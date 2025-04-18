@@ -1,3 +1,4 @@
+// UnitModels.ts
 export enum UnitRank {
 	ASSOCIATE = 'ASSOCIATE',
 	SOLDIER = 'SOLDIER',

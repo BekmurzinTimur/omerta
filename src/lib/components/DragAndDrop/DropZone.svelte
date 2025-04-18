@@ -1,4 +1,5 @@
 <script lang="ts">
+	//DropZone.svelte
 	import { getDragContext } from './DragStore.svelte';
 	import { setupDropZone } from './dragActions.svelte';
 	import type { DragEndCallback } from './DragAndDropTypes';
@@ -14,8 +15,6 @@
 
 	// Register this drop zone and handle drops
 	$effect(() => {
-		if (!zoneElement) return;
-
 		const dropZone = setupDropZone(zoneElement, id, dragStore, onDrop);
 
 		return () => {
@@ -39,9 +38,9 @@
 
 <div
 	bind:this={zoneElement}
-	class="transition-all duration-200 {isValidDrop ? 'bg-blue-50 ring-2 ring-blue-500' : ''}"
-	class:min-h-16={isActive}
-	class:border-2={isActive}
+	class="drop-zone w-fit rounded-lg border-2 p-1 transition-all duration-200 {isValidDrop
+		? 'bg-blue-50 '
+		: ''}"
 	class:border-dashed={isActive}
 	class:border-gray-300={isActive && !isValidDrop}
 >

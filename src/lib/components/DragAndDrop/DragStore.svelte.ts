@@ -1,5 +1,6 @@
 import { getContext, setContext } from 'svelte';
 import type { DraggableItem } from './DragAndDropTypes';
+import { SvelteMap } from 'svelte/reactivity';
 
 export const DRAG_CONTEXT_KEY = 'drag-drop-context';
 
@@ -12,7 +13,7 @@ export function createDragStore() {
 	});
 
 	// Map of registered drop zones
-	const dropZones = $state(new Map<string, HTMLElement>());
+	const dropZones = new SvelteMap<string, HTMLElement>();
 	let dropZonesEntries = $derived([...dropZones.entries()]);
 	// Register a new drop zone
 	function registerDropZone(id: string, element: HTMLElement) {

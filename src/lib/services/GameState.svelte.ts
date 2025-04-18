@@ -1,3 +1,4 @@
+//GameState.svelte.ts
 import { SvelteMap } from 'svelte/reactivity';
 import { type GameState as GameStateInterface, type Player } from '../models/GameModels';
 import { UnitRank, UnitStatus, type IUnit } from '$lib/models/UnitModels';
@@ -39,7 +40,8 @@ const createInitialState = () => {
 				},
 				isBeingCaptured: false,
 				captureProgress: 0,
-				captureInitiator: null
+				captureInitiator: null,
+				managerId: null
 			});
 		}
 	}

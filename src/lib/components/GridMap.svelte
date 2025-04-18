@@ -133,7 +133,7 @@
 		}
 	});
 	$effect(() => {
-		console.log(playerCells.includes(64), playerColor);
+		console.log(playerCells.includes(210), playerColor, playerCells);
 	});
 </script>
 
@@ -160,7 +160,7 @@
 
 		{#each cells as cell (cell.id)}
 			<div
-				class={`absolute cursor-pointer border border-gray-300 transition-colors duration-200 ${playerCells.includes(cell.id) ? `bg-[${playerColor}]` : ''} `}
+				class={`absolute cursor-pointer border border-gray-300 transition-colors duration-200 `}
 				class:outline-solid={selectedCellId === cell.id}
 				class:outline-2={selectedCellId === cell.id}
 				class:outline-blue-500={selectedCellId === cell.id}
@@ -170,6 +170,7 @@
           left: {cell.x * cellSize}px;
           top: {cell.y * cellSize}px;
           opacity: 0.7;
+          background-color: {playerCells.includes(cell.id) ? `${playerColor};` : 'inherit;'}
         "
 				onclick={() => selectCell(cell.id)}
 			></div>

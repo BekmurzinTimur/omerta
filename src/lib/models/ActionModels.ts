@@ -1,4 +1,4 @@
-// Action models and interfaces
+// ActionModels.ts
 
 // Base action interface
 export interface Action {
@@ -15,6 +15,8 @@ export enum ActionType {
 	// Territory actions
 	START_CAPTURE = 'START_CAPTURE',
 	CANCEL_CAPTURE = 'CANCEL_CAPTURE',
+
+	ASSIGN_TO_TERRITORY = 'ASSIGN_TO_TERRITORY',
 
 	// Unit actions
 	HIRE_UNIT = 'HIRE_UNIT',
@@ -64,4 +66,11 @@ export interface StartCaptureAction extends Action {
 export interface HireUnitAction extends Action {
 	type: ActionType.HIRE_UNIT;
 	unitId: string;
+}
+
+// Assign to territory unit action
+export interface AssignToTerritory extends Action {
+	type: ActionType.ASSIGN_TO_TERRITORY;
+	unitId: string;
+	territoryId: string;
 }

@@ -17,7 +17,6 @@
 
 	// Store only the ID of the selected cell
 	let allTerritories = $derived(getAllTerritories());
-	let playerTerritories = $derived(getPlayerTerritories());
 	let selectedCellId: number | null = $state(null);
 	let selectedTerritoryId: string = $derived(convertCellIdToTerritory(selectedCellId));
 	let selectedTerritory = $derived(allTerritories.get(selectedTerritoryId));

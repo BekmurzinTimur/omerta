@@ -28,7 +28,6 @@
 
 	/** CSS background‑image style for a given sprite tile */
 	const iconStyle = (tile?: [number, number]) => {
-		console.log({ tile });
 		if (!tile) return ''; // <- graceful fallback
 		const [r, c] = tile;
 		return `
@@ -52,7 +51,8 @@
 
 <!-- ------------‑‑ Card root ‑‑------------ -->
 <div
-	class="flex h-[340px] max-w-[200px] min-w-[200px] flex-col overflow-hidden rounded-lg border border-gray-700 bg-gray-800 text-white shadow-lg"
+	class="flex max-w-[150px] min-w-[150px] flex-col overflow-hidden rounded-lg border border-gray-700 bg-gray-800 text-white shadow-lg"
+	onclick={openDetails}
 >
 	<!-- Header with background image -->
 	<div
@@ -72,14 +72,6 @@
 		</div>
 		<div class="flex items-center justify-between text-xs">
 			<span class="rounded bg-red-900 px-2 py-[2px] tracking-wide">{unit.rank}</span>
-			<button
-				type="button"
-				class="rounded bg-gray-900/70 px-3 py-1 text-xs hover:bg-gray-900"
-				onclick={openDetails}
-				aria-label="Show unit details"
-			>
-				Details
-			</button>
 		</div>
 	</div>
 

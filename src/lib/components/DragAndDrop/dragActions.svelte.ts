@@ -69,7 +69,6 @@ export function setupDraggable(
 		dragStore.startDrag(item, zoneId);
 
 		const onPointerMove = (e: PointerEvent) => {
-			console.log('pointer move', overlay);
 			// Prevent any text selection that might occur during drag
 			e.preventDefault();
 			e.stopPropagation();
@@ -79,29 +78,32 @@ export function setupDraggable(
 		};
 
 		const onPointerUp = (e: PointerEvent) => {
-			// Clean up
-			document.body.removeChild(overlay);
-			document.head.removeChild(noSelectStyle);
+			// 1. Get the raw list of what's under the cursor
+			const hits = document.elementsFromPoint(e.clientX, e.clientY);
+
+			// 2. Find the first registered zone that contains any of those
+			let dropZoneId: string | null = null;
+			const zones = Array.from(dragStore.getDropZones());
+			outer: for (const el of hits) {
+				for (const [id, zoneEl] of zones) {
+					if (zoneEl.contains(el)) {
+						dropZoneId = id;
+						break outer;
+					}
+				}
+			}
+
+			// 3. Now safely clean up the overlay and styles
+			if (overlay.parentNode) document.body.removeChild(overlay);
+			if (noSelectStyle.parentNode) document.head.removeChild(noSelectStyle);
 			document.body.classList.remove('dragging');
 			document.removeEventListener('pointermove', onPointerMove);
 			document.removeEventListener('pointerup', onPointerUp);
 
-			// Find the drop zone under the pointer
-			const dropTarget = document.elementFromPoint(e.clientX, e.clientY);
-			let dropZoneId = null;
-
-			// Check if we're over a valid drop zone
-			for (const [id, element] of dragStore.getDropZones()) {
-				if (element.contains(dropTarget)) {
-					dropZoneId = id;
-					break;
-				}
-			}
-
+			// 4. Dispatch if we found a zone
 			if (dropZoneId) {
-				// Dispatch the drop event
 				dispatchDropEvent({
-					item: item,
+					item,
 					sourceZoneId: zoneId,
 					targetZoneId: dropZoneId,
 					position: { x: e.clientX, y: e.clientY }

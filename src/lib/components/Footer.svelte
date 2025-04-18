@@ -10,8 +10,6 @@
 	// Get all units in the game
 	let units = $derived(getAllUnits());
 	let associates = $derived(getAssociates());
-	// Get the local player
-	let player = $derived(getLocalPlayer());
 	// Hire a new unit
 	const onHireUnitClick = (unitId: string) => {
 		hireUnit(unitId);

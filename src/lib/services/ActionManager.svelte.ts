@@ -1,3 +1,4 @@
+//ActionManager.svelte.ts
 import { v4 as uuidv4 } from 'uuid';
 import {
 	type Action,
@@ -8,7 +9,8 @@ import {
 } from '../models/ActionModels';
 import { type GameState } from '../models/GameModels';
 import gameState from './GameState.svelte';
-import { UnitRank } from '$lib/models/UnitModels';
+import type { AssignToTerritory } from '../models/ActionModels';
+import { UnitStatus, UnitRank } from '$lib/models/UnitModels';
 
 // Queue of actions waiting to be processed
 let actionQueue = $state<Action[]>([]);
@@ -69,6 +71,9 @@ const processActions = (): void => {
 					break;
 				case ActionType.HIRE_UNIT:
 					processHireUnitAction(action as HireUnitAction);
+					break;
+				case ActionType.ASSIGN_TO_TERRITORY:
+					processAssignToTerritoryAction(action as AssignToTerritory);
 					break;
 				// Add more cases as needed
 				default:
@@ -146,6 +151,33 @@ const processHireUnitAction = (action: HireUnitAction): void => {
 
 	console.log(`Player ${playerId} hired ${unit.name} unit`);
 };
+const processAssignToTerritoryAction = (action: AssignToTerritory): void => {
+	const { playerId, unitId, territoryId } = action;
+
+	const player = gameState.state.players.get(playerId);
+	if (!player) throw new Error(`Player ${playerId} not found`);
+
+	const unit = gameState.state.units.get(unitId);
+	if (!unit) throw new Error(`Unit ${unitId} not found`);
+	if (unit.ownerId !== playerId)
+		throw new Error(`Unit ${unitId} does not belong to player ${playerId}`);
+
+	if (unit.rank === UnitRank.ASSOCIATE)
+		throw new Error(`Unit ${unitId} is only an Associate and cannot be assigned`);
+
+	const territory = gameState.state.territories.get(territoryId);
+	if (!territory) throw new Error(`Territory ${territoryId} not found`);
+	if (territory.ownerId !== playerId)
+		throw new Error(`Territory ${territoryId} is not owned by player ${playerId}`);
+
+	// ── Apply state changes ────────────────────────────────────
+	const updatedUnit = { ...unit, status: UnitStatus.TERRITORY };
+	gameState.state.units.set(unitId, updatedUnit);
+
+	gameState.updateTerritory(territoryId, { managerId: unitId });
+
+	console.log(`Player ${playerId} assigned ${unit.name} to oversee territory ${territory.name}`);
+};
 
 // Create action creators (factory functions)
 
@@ -191,6 +223,38 @@ const createHireUnitAction = (playerId: string, unitId: string): HireUnitAction 
 	};
 };
 
+const createAssignToTerritoryAction = (
+	playerId: string,
+	unitId: string,
+	territoryId: string
+): AssignToTerritory => {
+	return {
+		id: uuidv4(),
+		type: ActionType.ASSIGN_TO_TERRITORY,
+		playerId,
+		unitId,
+		territoryId,
+		timestamp: Date.now(),
+		status: ActionStatus.PENDING,
+		validate: (state: GameState) => {
+			const player = state.players.get(playerId);
+			if (!player) return false;
+
+			const unit = state.units.get(unitId);
+			const territory = state.territories.get(territoryId);
+
+			return (
+				unit !== undefined &&
+				territory !== undefined &&
+				unit.ownerId === playerId &&
+				territory.ownerId === playerId &&
+				unit.rank !== UnitRank.ASSOCIATE &&
+				unit.id !== territory.managerId
+			);
+		}
+	};
+};
+
 // Export the action manager functions
 export {
 	queueAction,
@@ -198,5 +262,6 @@ export {
 	getPendingActions,
 	getPlayerActionHistory,
 	createStartCaptureAction,
-	createHireUnitAction
+	createHireUnitAction,
+	createAssignToTerritoryAction
 };

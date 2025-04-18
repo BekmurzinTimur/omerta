@@ -1,3 +1,4 @@
+//TerritoryModel.ts
 export interface ITerritory {
 	id: string;
 	name: string;
@@ -13,4 +14,5 @@ export interface ITerritory {
 	isBeingCaptured: boolean;
 	captureProgress: number;
 	captureInitiator: string | null;
+	managerId: string | null;
 }
