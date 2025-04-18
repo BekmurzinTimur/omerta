@@ -1,3 +1,6 @@
+import type { ITerritory } from './TerritoryModel';
+import type { IUnit } from './UnitModels';
+
 // Define types for our data structures
 export interface Position {
 	x: number;
@@ -13,4 +16,6 @@ export interface Cell {
 	id: number;
 	x: number;
 	y: number;
+	territory: ITerritory;
+	unit?: IUnit;
 }

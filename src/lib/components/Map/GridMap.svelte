@@ -1,8 +1,13 @@
 <!-- GridMap.svelte - Interactive grid map component with TypeScript -->
 <script lang="ts">
-	import { getPlayerColor, getPlayerTerritories } from '$lib/services/GameController.svelte';
-	import type { Cell, GridSize, Position } from '$lib/types/MapTypes';
-	import { convertTerritoryToCellId } from '$lib/utils/mapUtils';
+	import {
+		getAllTerritories,
+		getAllUnitsMap,
+		getPlayerColor,
+		getPlayerTerritories
+	} from '$lib/services/GameController.svelte';
+	import type { Cell, GridSize, Position } from '$lib/models/MapTypes';
+	import { convertCellIdToTerritory, convertTerritoryToCellId } from '$lib/utils/mapUtils';
 	import { onMount } from 'svelte';
 	import GridCell from './GridCell.svelte';
 
@@ -20,6 +25,8 @@
 	let zoom: number = $state(1);
 	let isDragging: boolean = $state(false);
 	let dragStart: Position = $state({ x: 0, y: 0 });
+	let territories = $derived(getAllTerritories());
+	let units = $derived(getAllUnitsMap());
 
 	let playerTerritories = $derived(getPlayerTerritories());
 	let playerCells = $derived(
@@ -28,14 +35,27 @@
 	let playerColor = $derived(getPlayerColor());
 
 	// Create a grid of cells (without selected property)
-	let cells: Cell[] = $state(
-		Array.from({ length: gridSize.width * gridSize.height }, (_, i) => ({
+	// let cells: Cell[] = $state(
+	// 	Array.from({ length: gridSize.width * gridSize.height }, (_, i) => ({
+	// 		id: i,
+	// 		x: i % gridSize.width,
+	// 		y: Math.floor(i / gridSize.width)
+	// 	}))
+	// );
+
+	let cells: Cell[] = $derived(
+		Array.from(territories, ([id, territory], i) => ({
 			id: i,
 			x: i % gridSize.width,
-			y: Math.floor(i / gridSize.width)
+			y: Math.floor(i / gridSize.width),
+			territory,
+			unit: units.get(territory.managerId || '')
 		}))
 	);
 
+	$effect(() => {
+		console.log(units, units.get('unit2'));
+	});
 	// Calculate cell size based on zoom level
 	let cellSize: number = $derived(100 * zoom);
 
@@ -149,6 +169,8 @@
 				{selectCell}
 				{cellSize}
 				{selectedCellId}
+				territory={cell.territory}
+				unit={cell.unit}
 				color={playerCells.includes(cell.id) ? `${playerColor};` : 'inherit;'}
 			/>
 		{/each}

@@ -229,6 +229,10 @@ class GameState {
 	getAllUnits(): IUnit[] {
 		return Array.from(this.state.units.values());
 	}
+
+	getAllUnitsMap(): Map<string, IUnit> {
+		return this.state.units;
+	}
 }
 
 export type GameStateType = InstanceType<typeof GameState>;

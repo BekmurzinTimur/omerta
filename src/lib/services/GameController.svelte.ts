@@ -69,6 +69,10 @@ const getAllUnits = () => {
 	return Array.from(state.units.values());
 };
 
+const getAllUnitsMap = () => {
+	return state.units;
+};
+
 // Get all units
 const getAssociates = () => {
 	return Array.from(state.availableUnits.values());
@@ -101,6 +105,7 @@ export {
 	getNeutralTerritories,
 	getCapturableTerritories,
 	getAllUnits,
+	getAllUnitsMap,
 	getAssociates,
 	getPlayerUnits,
 	getCurrentDateFormatted,

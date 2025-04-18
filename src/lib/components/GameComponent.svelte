@@ -28,9 +28,6 @@
 		console.log({ cellId });
 		selectedCellId = cellId;
 	};
-	$effect(() => {
-		console.log({ selectedTerritory, selectedCellId, selectedTerritoryId, allTerritories });
-	});
 </script>
 
 <div class="game-container flex h-full flex-col">
