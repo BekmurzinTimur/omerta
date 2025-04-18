@@ -22,10 +22,6 @@
 		territory?: ITerritory;
 		unit?: IUnit;
 	} = $props();
-
-	$effect(() => {
-		console.log({ territory, unit });
-	});
 </script>
 
 <div

@@ -53,9 +53,6 @@
 		}))
 	);
 
-	$effect(() => {
-		console.log(units, units.get('unit2'));
-	});
 	// Calculate cell size based on zoom level
 	let cellSize: number = $derived(100 * zoom);
 
@@ -136,9 +133,6 @@
 				y: rect.height / 2 - totalGridHeight / 2
 			};
 		}
-	});
-	$effect(() => {
-		console.log(playerCells.includes(210), playerColor, playerCells);
 	});
 </script>
 

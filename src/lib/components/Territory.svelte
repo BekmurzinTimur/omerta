@@ -17,9 +17,6 @@
 	let confirmed = $derived(droppedUnit?.id === territory?.managerId);
 	let player = $derived(getLocalPlayer());
 
-	$effect(() => {
-		console.log({ territory, droppedItem, droppedUnit, confirmed });
-	});
 	// Handle drop events
 	function handleDrop(result: DropResult) {
 		const { item } = result;

@@ -25,7 +25,6 @@
 	});
 
 	const onSelect = (cellId: number | null) => {
-		console.log({ cellId });
 		selectedCellId = cellId;
 	};
 </script>
