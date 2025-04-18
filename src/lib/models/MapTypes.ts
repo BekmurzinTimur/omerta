@@ -13,7 +13,7 @@ export interface GridSize {
 }
 
 export interface Cell {
-	id: number;
+	id: string;
 	x: number;
 	y: number;
 	territory: ITerritory;

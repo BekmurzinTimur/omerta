@@ -272,6 +272,7 @@ const createAssignToTerritoryAction = (
 
 			const unit = state.units.get(unitId);
 			const territory = state.territories.get(territoryId);
+			console.log({ unit, territory });
 
 			return (
 				unit !== undefined &&

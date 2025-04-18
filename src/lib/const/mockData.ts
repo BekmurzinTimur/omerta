@@ -19,7 +19,7 @@ export const mockUnits: IUnit[] = [
 		level: 4,
 		cut: 10,
 		status: UnitStatus.IDLE,
-		image: 1
+		image: 3
 	},
 	{
 		id: '_unit2',
@@ -39,7 +39,7 @@ export const mockUnits: IUnit[] = [
 		level: 7,
 		cut: 10,
 		status: UnitStatus.IDLE,
-		image: 1
+		image: 3
 	},
 	{
 		id: '_unit3',
@@ -59,7 +59,7 @@ export const mockUnits: IUnit[] = [
 		level: 8,
 		cut: 10,
 		status: UnitStatus.IDLE,
-		image: 1
+		image: 3
 	},
 	{
 		id: '_unit4',
@@ -79,7 +79,7 @@ export const mockUnits: IUnit[] = [
 		level: 2,
 		cut: 10,
 		status: UnitStatus.IDLE,
-		image: 1
+		image: 3
 	},
 	{
 		id: '_unit5',
@@ -99,7 +99,7 @@ export const mockUnits: IUnit[] = [
 		level: 9,
 		cut: 10,
 		status: UnitStatus.IDLE,
-		image: 1
+		image: 3
 	},
 	{
 		id: '_unit6',
@@ -119,7 +119,7 @@ export const mockUnits: IUnit[] = [
 		level: 3,
 		cut: 10,
 		status: UnitStatus.IDLE,
-		image: 1
+		image: 3
 	},
 	{
 		id: '_unit7',
@@ -139,7 +139,7 @@ export const mockUnits: IUnit[] = [
 		level: 6,
 		cut: 10,
 		status: UnitStatus.IDLE,
-		image: 1
+		image: 3
 	},
 	{
 		id: '_unit8',
@@ -159,7 +159,7 @@ export const mockUnits: IUnit[] = [
 		level: 10,
 		cut: 10,
 		status: UnitStatus.IDLE,
-		image: 1
+		image: 3
 	},
 	{
 		id: '_unit9',
@@ -179,7 +179,7 @@ export const mockUnits: IUnit[] = [
 		level: 5,
 		cut: 10,
 		status: UnitStatus.IDLE,
-		image: 1
+		image: 3
 	},
 	{
 		id: '_unit10',
@@ -199,6 +199,6 @@ export const mockUnits: IUnit[] = [
 		level: 1,
 		cut: 10,
 		status: UnitStatus.IDLE,
-		image: 1
+		image: 3
 	}
 ];

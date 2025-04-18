@@ -11,9 +11,8 @@
 
 	// Store only the ID of the selected cell
 	let allTerritories = $derived(getAllTerritories());
-	let selectedCellId: number | null = $state(null);
-	let selectedTerritoryId: string = $derived(convertCellIdToTerritory(selectedCellId));
-	let selectedTerritory = $derived(allTerritories.get(selectedTerritoryId));
+	let selectedCellId: string | null = $state(null);
+	let selectedTerritory = $derived(allTerritories.get(selectedCellId || ''));
 	// Initialize the game on component mount
 	onMount(() => {
 		gameService.initGame();
@@ -24,8 +23,9 @@
 		gameService.stopGameLoop();
 	});
 
-	const onSelect = (cellId: number | null) => {
+	const onSelect = (cellId: string | null) => {
 		selectedCellId = cellId;
+		console.log({ cellId, selectedCellId });
 	};
 </script>
 

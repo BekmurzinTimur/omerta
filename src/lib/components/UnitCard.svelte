@@ -116,6 +116,6 @@
 
 	<!-- Footer -->
 	<div class="mt-auto flex items-center justify-between bg-gray-900 px-4 py-2 text-xs">
-		<span>{unit.status}</span>
+		<span class="mx-auto font-black uppercase">{unit.status}</span>
 	</div>
 </div>

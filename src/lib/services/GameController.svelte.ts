@@ -85,6 +85,11 @@ const getAssociates = () => {
 	return Array.from(state.availableUnits.values());
 };
 
+// Get all units
+const getAssociatesMap = () => {
+	return state.availableUnits;
+};
+
 // Get units owned by the local player
 const getPlayerUnits = () => {
 	const player = getLocalPlayer();
@@ -114,6 +119,7 @@ export {
 	getAllUnits,
 	getAllUnitsMap,
 	getAssociates,
+	getAssociatesMap,
 	getPlayerUnits,
 	getCurrentDateFormatted,
 	getPlayerColor,

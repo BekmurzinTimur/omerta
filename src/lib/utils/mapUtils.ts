@@ -6,8 +6,8 @@ export const convertCellIdToTerritory = (cellId: number | null): string => {
 	}
 
 	// Calculate x and y coordinates
-	const x = cellId % 20;
-	const y = Math.floor(cellId / 20);
+	const y = cellId % 20;
+	const x = Math.floor(cellId / 20);
 
 	// Return the formatted territory string
 	return `territory_${x}-${y}`;
@@ -24,8 +24,8 @@ export const convertTerritoryToCellId = (territory: string | null): number | nul
 	}
 
 	// Extract x and y coordinates
-	const x = parseInt(match[1], 10);
-	const y = parseInt(match[2], 10);
+	const y = parseInt(match[1], 10);
+	const x = parseInt(match[2], 10);
 
 	// Validate coordinates are within the 20x20 grid
 	if (x < 0 || x >= 20 || y < 0 || y >= 20) {

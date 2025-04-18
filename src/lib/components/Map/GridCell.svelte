@@ -16,9 +16,9 @@
 	}: {
 		cell: Cell;
 		cellSize: number;
-		selectedCellId: number | null;
+		selectedCellId: string | null;
 		color: string;
-		selectCell: (cellId: number) => void;
+		selectCell: (cellId: string) => void;
 		territory?: ITerritory;
 		unit?: IUnit;
 	} = $props();

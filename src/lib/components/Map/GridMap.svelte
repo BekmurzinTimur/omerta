@@ -7,7 +7,6 @@
 		getPlayerTerritories
 	} from '$lib/services/GameController.svelte';
 	import type { Cell, GridSize, Position } from '$lib/models/MapTypes';
-	import { convertCellIdToTerritory, convertTerritoryToCellId } from '$lib/utils/mapUtils';
 	import { onMount } from 'svelte';
 	import GridCell from './GridCell.svelte';
 
@@ -19,7 +18,7 @@
 	let {
 		selectedCellId,
 		onSelect
-	}: { selectedCellId: number | null; onSelect: (cellid: number | null) => void } = $props();
+	}: { selectedCellId: string | null; onSelect: (cellid: string | null) => void } = $props();
 	// Grid position and zoom state
 	let position: Position = $state({ x: 0, y: 0 });
 	let zoom: number = $state(1);
@@ -29,9 +28,7 @@
 	let units = $derived(getAllUnitsMap());
 
 	let playerTerritories = $derived(getPlayerTerritories());
-	let playerCells = $derived(
-		playerTerritories.map((territory) => convertTerritoryToCellId(territory.id))
-	);
+	let playerCells = $derived(playerTerritories.map((territory) => territory.id));
 	let playerColor = $derived(getPlayerColor());
 
 	// Create a grid of cells (without selected property)
@@ -44,13 +41,16 @@
 	// );
 
 	let cells: Cell[] = $derived(
-		Array.from(territories, ([id, territory], i) => ({
-			id: i,
-			x: i % gridSize.width,
-			y: Math.floor(i / gridSize.width),
-			territory,
-			unit: units.get(territory.managerId || '')
-		}))
+		Array.from(territories, ([id, territory], i) => {
+			console.log(id, i, territory);
+			return {
+				id: territory.id,
+				x: territory.position.x,
+				y: territory.position.y,
+				territory,
+				unit: units.get(territory.managerId || '')
+			};
+		})
 	);
 
 	// Calculate cell size based on zoom level
@@ -111,7 +111,8 @@
 	}
 
 	// Toggle cell selection
-	function selectCell(cellId: number): void {
+	function selectCell(cellId: string): void {
+		console.log({ cellId });
 		// If the cell is already selected, deselect it
 		if (selectedCellId === cellId) {
 			onSelect(null);
