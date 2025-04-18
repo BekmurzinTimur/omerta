@@ -87,6 +87,11 @@
 			class="relative h-[320px] border-b border-gray-700"
 			style="background:url('/mobsters/{unit.image}.png') center/cover"
 		>
+			<span
+				class="absolute top-3 left-3 flex h-10 w-10 flex-col items-center justify-center rounded-full bg-amber-600 text-lg leading-0 font-bold"
+			>
+				{unit.level}
+			</span>
 			<!-- Rank badge, positioned in top-right corner -->
 			<span class="absolute top-3 right-3 rounded bg-red-900 px-3 py-1 font-bold tracking-wide">
 				{unit.rank}
