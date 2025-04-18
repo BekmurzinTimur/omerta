@@ -2,14 +2,8 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import gameService from '../services/GameService.svelte';
-	import {
-		getLocalPlayer,
-		getCapturableTerritories,
-		startCapturingTerritory,
-		getPlayerTerritories,
-		getAllTerritories
-	} from '../services/GameController.svelte';
-	import GridMap from './GridMap.svelte';
+	import { getAllTerritories } from '../services/GameController.svelte';
+	import GridMap from './Map/GridMap.svelte';
 	import Header from './Header.svelte';
 	import Footer from './Footer.svelte';
 	import Territory from './Territory.svelte';
@@ -29,14 +23,6 @@
 	onDestroy(() => {
 		gameService.stopGameLoop();
 	});
-
-	// Get territories that can be captured by the player
-	let capturableTerritories = $derived(getCapturableTerritories());
-
-	// Start capturing a territory
-	const onCaptureClick = (territoryId: string) => {
-		startCapturingTerritory(territoryId);
-	};
 
 	const onSelect = (cellId: number | null) => {
 		console.log({ cellId });

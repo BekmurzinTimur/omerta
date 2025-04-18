@@ -1,28 +1,13 @@
 <!-- GridMap.svelte - Interactive grid map component with TypeScript -->
 <script lang="ts">
 	import { getPlayerColor, getPlayerTerritories } from '$lib/services/GameController.svelte';
-	import { convertCellIdToTerritory, convertTerritoryToCellId } from '$lib/utils/mapUtils';
+	import type { Cell, GridSize, Position } from '$lib/types/MapTypes';
+	import { convertTerritoryToCellId } from '$lib/utils/mapUtils';
 	import { onMount } from 'svelte';
+	import GridCell from './GridCell.svelte';
 
 	// Define props for background image
 	const backgroundImageUrl = '/map_background.png';
-
-	// Define types for our data structures
-	interface Position {
-		x: number;
-		y: number;
-	}
-
-	interface GridSize {
-		width: number;
-		height: number;
-	}
-
-	interface Cell {
-		id: number;
-		x: number;
-		y: number;
-	}
 
 	// Define grid dimensions
 	let gridSize: GridSize = $state({ width: 20, height: 20 });
@@ -159,21 +144,13 @@
 		></div>
 
 		{#each cells as cell (cell.id)}
-			<div
-				class={`absolute cursor-pointer border border-gray-300 transition-colors duration-200 `}
-				class:outline-solid={selectedCellId === cell.id}
-				class:outline-2={selectedCellId === cell.id}
-				class:outline-blue-500={selectedCellId === cell.id}
-				style="
-          width: {cellSize}px;
-          height: {cellSize}px;
-          left: {cell.x * cellSize}px;
-          top: {cell.y * cellSize}px;
-          opacity: 0.7;
-          background-color: {playerCells.includes(cell.id) ? `${playerColor};` : 'inherit;'}
-        "
-				onclick={() => selectCell(cell.id)}
-			></div>
+			<GridCell
+				{cell}
+				{selectCell}
+				{cellSize}
+				{selectedCellId}
+				color={playerCells.includes(cell.id) ? `${playerColor};` : 'inherit;'}
+			/>
 		{/each}
 	</div>
 
