@@ -3,10 +3,8 @@
 	import type { IUnit } from '$lib/models/UnitModels';
 	import {
 		assignUnitToTerritory,
-		getAllUnits,
 		getAllUnitsMap,
 		getLocalPlayer,
-		getPlayerTerritories,
 		removeUnitFromTerritory
 	} from '$lib/services/GameController.svelte';
 	import { SvelteMap } from 'svelte/reactivity';
@@ -15,45 +13,31 @@
 	import UnitDrop from './Unit/UnitDrop.svelte';
 
 	let { territory }: { territory?: ITerritory } = $props();
-	let droppedItem = $state<DraggableItem | null>(null);
+	let droppedItemsMap = $state(new SvelteMap<string, DraggableItem>());
+	let droppedItem = $derived<DraggableItem | null>(
+		droppedItemsMap.get(territory?.id || '') || null
+	);
 	let droppedUnit = $derived<IUnit | null>(droppedItem?.data);
 	let confirmed = $derived(droppedUnit?.id === territory?.managerId);
 	let player = $derived(getLocalPlayer());
-	let droppedItemsMap = new SvelteMap<string, DraggableItem>();
 
 	let assignedUnit = $derived(getAllUnitsMap().get(territory?.managerId || ''));
 	// Handle drop events
 	function handleDrop(result: DropResult) {
+		if (!territory?.id) return;
 		const { item } = result;
-		droppedItem = item;
+		droppedItemsMap.set(territory.id, item);
 		const unitId = (item.data as IUnit).id;
 		if (!unitId) return;
-		if (!territory?.id) return;
 		if (territory.managerId === unitId) return console.log('Same unit', item);
-		droppedItemsMap.set(territory.id, droppedItem);
+
 		assignUnitToTerritory(unitId, territory.id);
 	}
 	function handleRemove(unitId: string) {
 		if (!territory?.id) return;
 		removeUnitFromTerritory(unitId, territory.id);
-		droppedItem = null;
 		droppedItemsMap.delete(territory.id);
 	}
-	$effect(() => {
-		if (!assignedUnit) {
-			droppedItem = null;
-			return;
-		}
-		droppedItem = {
-			id: assignedUnit.id,
-			type: 'unit',
-			data: assignedUnit
-		};
-	});
-	$effect(() => {
-		if (!territory) return;
-		droppedItem = droppedItemsMap.get(territory.id) || null;
-	});
 </script>
 
 <!-- Actions -->
@@ -66,7 +50,7 @@
 			<div>Income: ${territory.resources.income}</div>
 			{#if territory.ownerId === player?.id}
 				<DropZone id="territory{territory.id}" onDrop={handleDrop} accepts={['unit']}>
-					<UnitDrop unit={droppedItem?.data} {confirmed} onRemove={handleRemove} />
+					<UnitDrop unit={droppedItem?.data || assignedUnit} {confirmed} onRemove={handleRemove} />
 				</DropZone>
 			{/if}
 		{:else}
