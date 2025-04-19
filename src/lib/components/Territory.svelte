@@ -9,6 +9,7 @@
 		getPlayerTerritories,
 		removeUnitFromTerritory
 	} from '$lib/services/GameController.svelte';
+	import { SvelteMap } from 'svelte/reactivity';
 	import { type DraggableItem, type DropResult } from './DragAndDrop/DragAndDropTypes';
 	import DropZone from './DragAndDrop/DropZone.svelte';
 	import UnitDrop from './Unit/UnitDrop.svelte';
@@ -18,6 +19,7 @@
 	let droppedUnit = $derived<IUnit | null>(droppedItem?.data);
 	let confirmed = $derived(droppedUnit?.id === territory?.managerId);
 	let player = $derived(getLocalPlayer());
+	let droppedItemsMap = new SvelteMap<string, DraggableItem>();
 
 	let assignedUnit = $derived(getAllUnitsMap().get(territory?.managerId || ''));
 	// Handle drop events
@@ -28,12 +30,14 @@
 		if (!unitId) return;
 		if (!territory?.id) return;
 		if (territory.managerId === unitId) return console.log('Same unit', item);
+		droppedItemsMap.set(territory.id, droppedItem);
 		assignUnitToTerritory(unitId, territory.id);
 	}
 	function handleRemove(unitId: string) {
 		if (!territory?.id) return;
 		removeUnitFromTerritory(unitId, territory.id);
 		droppedItem = null;
+		droppedItemsMap.delete(territory.id);
 	}
 	$effect(() => {
 		if (!assignedUnit) {
@@ -45,6 +49,10 @@
 			type: 'unit',
 			data: assignedUnit
 		};
+	});
+	$effect(() => {
+		if (!territory) return;
+		droppedItem = droppedItemsMap.get(territory.id) || null;
 	});
 </script>
 
