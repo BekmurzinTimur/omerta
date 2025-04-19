@@ -1,27 +1,41 @@
 <script lang="ts">
 	import type { MissionTemplate } from '$lib/models/MissionModels';
+	import { addWindow } from '../DialogWindows/windowStore.svelte';
+	import MissionCardBig from './MissionCardBig.svelte';
 
-	export let mission: MissionTemplate;
-	export let isActive: boolean = false;
-	/** 0 – 100 */
-	export let progress: number = 0;
-	/** formatted ETA string – e.g. "02:15" */
-	export let eta: string = '';
-	/** array of avatar URLs for units */
-	export let unitImages: string[] = [];
+	let {
+		mission,
+		isActive = false,
+		progress = 0,
+		eta = '',
+		unitImages = []
+	}: {
+		mission: MissionTemplate;
+		isActive: boolean;
+		progress: number;
+		eta: string;
+		unitImages: string[];
+	} = $props();
+
+	function handleClick() {
+		addWindow({
+			id: `window-${Date.now()}`,
+			title: `Mission: ${mission.name}`,
+			content: { component: MissionCardBig, props: { mission } },
+			position: { x: Math.random() * 200 + 50, y: Math.random() * 200 + 50 },
+			size: { width: 600, height: 500 }
+		});
+	}
 </script>
 
 <div
 	class="relative cursor-pointer overflow-hidden rounded-lg shadow-md transition hover:shadow-lg"
+	onclick={handleClick}
 >
-	<img
-		src={mission.image}
-		alt={mission.name}
-		class="absolute inset-0 h-full w-full object-cover opacity-30"
-	/>
+	<img src={mission.image} alt={mission.name} class="absolute inset-0 h-full w-full object-cover" />
 
 	<!-- overlay -->
-	<div class="relative flex flex-col gap-2 p-3 backdrop-blur-sm">
+	<div class="relative flex flex-col gap-2 p-3 hover:bg-white/20">
 		<h3 class="font-semibold text-white drop-shadow">{mission.name}</h3>
 
 		{#if !isActive}

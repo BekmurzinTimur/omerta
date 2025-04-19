@@ -1,3 +1,4 @@
+// MissionModels.ts
 import { CoreAttribute } from './UnitModels';
 
 /*------------- templates (static) -------------*/
@@ -22,7 +23,7 @@ export const DEFAULT_MISSIONS: Record<string, MissionTemplate> = {
 			[CoreAttribute.INFLUENCE]: 0
 		},
 		durationTicks: 3,
-		image: '/img/missions/shakedown.jpg' // put your file in static or assets
+		image: '/themes/shop_shakedown.png' // put your file in static or assets
 	}
 	// add more here …
 };
