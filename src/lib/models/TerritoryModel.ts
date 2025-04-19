@@ -14,5 +14,6 @@ export interface ITerritory {
 	isBeingCaptured: boolean;
 	captureProgress: number;
 	captureInitiator: string | null;
+	capturingUnitId: string | null;
 	managerId: string | null;
 }

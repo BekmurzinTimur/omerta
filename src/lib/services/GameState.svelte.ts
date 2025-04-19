@@ -41,7 +41,8 @@ const createInitialState = () => {
 				isBeingCaptured: false,
 				captureProgress: 0,
 				captureInitiator: null,
-				managerId: null
+				managerId: null,
+				capturingUnitId: null
 			});
 		}
 	}

@@ -11,7 +11,6 @@ import { type GameState } from '../models/GameModels';
 import gameState from './GameState.svelte';
 import type { AssignToTerritory, RemoveFromTerritoryAction } from '../models/ActionModels';
 import { UnitStatus, UnitRank } from '$lib/models/UnitModels';
-import { getPlayerUnits } from './GameController.svelte';
 // Queue of actions waiting to be processed
 let actionQueue = $state<Action[]>([]);
 
@@ -103,29 +102,32 @@ const processActions = (): void => {
 
 // Process a StartCaptureAction
 const processStartCaptureAction = (action: StartCaptureAction): void => {
-	const { territoryId, playerId } = action;
+	const { territoryId, playerId, unitId } = action;
+
 	const territory = gameState.state.territories.get(territoryId);
+	const unit = gameState.state.units.get(unitId);
 
-	if (!territory) {
-		throw new Error(`Territory ${territoryId} not found`);
-	}
+	if (!territory) throw new Error(`Territory ${territoryId} not found`);
+	if (!unit) throw new Error(`Unit ${unitId} not found`);
+	if (unit.ownerId !== playerId)
+		throw new Error(`Unit ${unitId} does not belong to player ${playerId}`);
+	if (unit.rank === UnitRank.ASSOCIATE) throw new Error('Associates cannot capture territories');
+	if (territory.ownerId === playerId) throw new Error('You already own this territory');
+	if (territory.isBeingCaptured) throw new Error('Territory is already under siege');
 
-	if (territory.ownerId === playerId) {
-		throw new Error(`Player ${playerId} already owns territory ${territoryId}`);
-	}
-
-	if (territory.isBeingCaptured) {
-		throw new Error(`Territory ${territoryId} is already being captured`);
-	}
-
-	// Start capture process
+	// Mark territory and unit
 	gameState.updateTerritory(territoryId, {
 		isBeingCaptured: true,
 		captureProgress: 0,
-		captureInitiator: playerId
+		captureInitiator: playerId,
+		capturingUnitId: unitId
 	});
 
-	console.log(`Player ${playerId} started capturing territory ${territoryId}`);
+	gameState.state.units.set(unitId, { ...unit, status: UnitStatus.EXPAND });
+
+	console.log(
+		`Player ${playerId} started capturing territory ${territoryId} with unit ${unit.name}`
+	);
 };
 
 // Process a HireUnitAction
@@ -223,19 +225,22 @@ const createStartCaptureAction = (
 		type: ActionType.START_CAPTURE,
 		playerId,
 		territoryId,
+		unitId,
 		timestamp: Date.now(),
 		status: ActionStatus.PENDING,
-		validate: (gameState) => {
-			const territory = gameState.territories.get(territoryId);
-			const player = gameState.players.get(playerId);
-			const playerUnitsId = getPlayerUnits().map((unit) => unit.id);
-
+		validate: (state: GameState) => {
+			const territory = state.territories.get(territoryId);
+			const player = state.players.get(playerId);
+			const unit = state.units.get(unitId);
+			console.log({ territory, player, unit, territoryId, unitId, state });
 			return !!(
 				territory &&
 				player &&
+				unit &&
+				unit.ownerId === playerId &&
+				unit.rank !== UnitRank.ASSOCIATE &&
 				territory.ownerId !== playerId &&
-				!territory.isBeingCaptured &&
-				playerUnitsId.includes(unitId)
+				!territory.isBeingCaptured
 			);
 		}
 	};

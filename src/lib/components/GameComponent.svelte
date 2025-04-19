@@ -7,7 +7,6 @@
 	import Header from './Header.svelte';
 	import Footer from './Footer.svelte';
 	import Territory from './Territory.svelte';
-	import { convertCellIdToTerritory } from '$lib/utils/mapUtils';
 
 	// Store only the ID of the selected cell
 	let allTerritories = $derived(getAllTerritories());

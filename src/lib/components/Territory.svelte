@@ -20,9 +20,14 @@
 	);
 	let droppedUnit = $derived<IUnit | null>(droppedItem?.data);
 	let confirmed = $derived(droppedUnit?.id === territory?.managerId);
+	let capturerConfirmed = $derived(droppedUnit?.id === territory?.capturingUnitId);
 	let player = $derived(getLocalPlayer());
 
 	let assignedUnit = $derived(getAllUnitsMap().get(territory?.managerId || ''));
+	let capturerUnit = $derived(getAllUnitsMap().get(territory?.capturingUnitId || ''));
+	$effect(() => {
+		console.log({ territory, capturerUnit });
+	});
 	// Handle drop events
 	function handleDrop(result: DropResult) {
 		if (!territory?.id) return;
@@ -52,12 +57,23 @@
 			<div>Income: ${territory.resources.income}</div>
 			{#if territory.ownerId === player?.id}
 				<span class="text-lg font-bold">Manage</span>
+				<DropZone id="territory{territory.id}" onDrop={handleDrop} accepts={['unit']}>
+					<UnitDrop unit={droppedItem?.data || assignedUnit} {confirmed} onRemove={handleRemove} />
+				</DropZone>
 			{:else}
 				<span class="text-lg font-bold">Capture</span>
+				<div>
+					<span>Capture progress: </span>
+					<span>{territory.captureProgress}</span>
+				</div>
+				<DropZone id="territory{territory.id}" onDrop={handleDrop} accepts={['unit']}>
+					<UnitDrop
+						unit={droppedItem?.data || capturerUnit}
+						confirmed={capturerConfirmed}
+						onRemove={handleRemove}
+					/>
+				</DropZone>
 			{/if}
-			<DropZone id="territory{territory.id}" onDrop={handleDrop} accepts={['unit']}>
-				<UnitDrop unit={droppedItem?.data || assignedUnit} {confirmed} onRemove={handleRemove} />
-			</DropZone>
 		{:else}
 			<h4 class="text-lg">Select a territory</h4>
 		{/if}

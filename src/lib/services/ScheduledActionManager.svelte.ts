@@ -3,6 +3,7 @@ import { type ScheduledAction, ScheduledActionType } from '../models/ActionModel
 import gameState from './GameState.svelte';
 import type { GameState, Player } from '$lib/models/GameModels';
 import type { ITerritory } from '$lib/models/TerritoryModel';
+import { UnitStatus } from '$lib/models/UnitModels';
 
 let state: GameState = gameState.state;
 
@@ -96,39 +97,59 @@ const setupInitialScheduledActions = (): void => {
 		nextExecutionTick: 1,
 		isRecurring: true,
 		execute: (state: GameState) => {
-			// Find all territories being captured
 			state.territories.forEach((territory: ITerritory) => {
-				if (territory.isBeingCaptured && territory.captureInitiator) {
-					// Increase capture progress
-					const newProgress = territory.captureProgress + 10; // 10% per tick
+				if (!territory.isBeingCaptured) return;
 
-					if (newProgress >= 100) {
-						// Capture complete
-						const playerId = territory.captureInitiator;
-						const player = state.players.get(playerId);
+				const unit = territory.capturingUnitId ? state.units.get(territory.capturingUnitId) : null;
 
-						if (player) {
-							// Update territory owner
-							gameState.updateTerritory(territory.id, {
-								ownerId: playerId,
-								isBeingCaptured: false,
-								captureProgress: 0,
-								captureInitiator: null
-							});
+				// Abort if the capturing unit is gone or reassigned
+				if (
+					!unit ||
+					unit.ownerId !== territory.captureInitiator || // unit switched sides?
+					unit.status !== UnitStatus.EXPAND
+				) {
+					gameState.updateTerritory(territory.id, {
+						isBeingCaptured: false,
+						captureProgress: 0,
+						captureInitiator: null,
+						capturingUnitId: null
+					});
+					console.log(`Capture of ${territory.id} aborted - missing or invalid unit`);
+					return;
+				}
 
-							// Add territory to player's territories
-							gameState.updatePlayer(playerId, {
-								territories: [...player.territories, territory]
-							});
+				// Advance progress
+				const newProgress = territory.captureProgress + 10; // 10% per tick
 
-							console.log(`Player ${playerId} completed capture of territory ${territory.id}`);
-						}
-					} else {
-						// Update progress
+				if (newProgress >= 100) {
+					const playerId = unit.ownerId!;
+					const player = state.players.get(playerId);
+
+					if (player) {
+						// Transfer ownership
 						gameState.updateTerritory(territory.id, {
-							captureProgress: newProgress
+							ownerId: playerId,
+							isBeingCaptured: false,
+							captureProgress: 0,
+							captureInitiator: null,
+							capturingUnitId: null,
+							managerId: unit.id // now the manager
 						});
+
+						gameState.updatePlayer(playerId, {
+							territories: [...player.territories, territory]
+						});
+
+						// Unit becomes territory manager
+						state.units.set(unit.id, { ...unit, status: UnitStatus.TERRITORY });
+
+						console.log(`Player ${playerId} captured territory ${territory.id} with ${unit.name}`);
 					}
+				} else {
+					// Simply update progress
+					gameState.updateTerritory(territory.id, {
+						captureProgress: newProgress
+					});
 				}
 			});
 		}

@@ -61,6 +61,7 @@ export enum ScheduledActionType {
 export interface StartCaptureAction extends Action {
 	type: ActionType.START_CAPTURE;
 	territoryId: string;
+	unitId: string;
 }
 
 // Hire unit action
