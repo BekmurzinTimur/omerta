@@ -7,7 +7,7 @@
 	import AssignUnit from '../Unit/AssignUnit.svelte';
 
 	/** The mission you want to display & launch */
-	export let mission: IMission;
+	let { mission }: { mission: IMission } = $props();
 
 	function onLaunch(missionId: string, unitIds: string[]) {}
 
@@ -18,15 +18,17 @@
 	let confirmed = false;
 
 	// reactive total of all skills across all assigned units
-	$: teamPower = assignments
-		.filter((u): u is IUnit => !!u)
-		.reduce(
-			(sum, unit) => sum + Object.values(unit.skills).reduce((attrSum, v) => attrSum + v, 0),
-			0
-		);
+	let teamPower = $derived(
+		assignments
+			.filter((u): u is IUnit => !!u)
+			.reduce(
+				(sum, unit) => sum + Object.values(unit.skills).reduce((attrSum, v) => attrSum + v, 0),
+				0
+			)
+	);
 
 	// sum of all difficulty values
-	$: missionDifficulty = Object.values(mission.difficulty).reduce((a, b) => a + b, 0);
+	let missionDifficulty = $derived(Object.values(mission.difficulty).reduce((a, b) => a + b, 0));
 
 	// called by each slot when a unit is dropped
 	function handleDrop(slotIndex: number) {
