@@ -4,6 +4,7 @@ import { type GameState as GameStateInterface, type Player } from '../models/Gam
 import { UnitRank, UnitStatus, type IUnit } from '$lib/models/UnitModels';
 import { mockUnits } from '$lib/const/mockData';
 import type { ITerritory } from '$lib/models/TerritoryModel';
+import { DEFAULT_MISSIONS, type IMission } from '$lib/models/MissionModels';
 
 const createInitialState = () => {
 	// Start date: January 1, 1960, 00:00
@@ -19,6 +20,7 @@ const createInitialState = () => {
 		},
 		territories: [],
 		units: [],
+		unlockedMissionIds: Object.keys(DEFAULT_MISSIONS),
 		color: '#ff0000'
 	};
 
@@ -113,6 +115,8 @@ const createInitialState = () => {
 		availableUnits.set(unit.id, unit);
 	});
 
+	const missionMap = new SvelteMap<string, IMission>();
+
 	return {
 		players: playerMap,
 		territories: territoryMap,
@@ -120,7 +124,8 @@ const createInitialState = () => {
 		currentDate: startDate,
 		isRunning: false,
 		tickCount: 0,
-		availableUnits
+		availableUnits,
+		missions: missionMap
 	};
 };
 /**
@@ -195,6 +200,10 @@ class GameState {
 			this.state.units.set(unitId, { ...unit, ...updates });
 		}
 	}
+	updateMission(missionId: string, updates: Partial<IMission>): void {
+		const m = this.state.missions.get(missionId);
+		if (m) this.state.missions.set(missionId, { ...m, ...updates });
+	}
 
 	/**
 	 * Get a player by ID
@@ -233,6 +242,11 @@ class GameState {
 
 	getAllUnitsMap(): Map<string, IUnit> {
 		return this.state.units;
+	}
+
+	/** Get missions belonging to a player */
+	getPlayerMissions(playerId: string): IMission[] {
+		return Array.from(this.state.missions.values()).filter((m) => m.playerId === playerId);
 	}
 }
 

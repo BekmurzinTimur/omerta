@@ -1,5 +1,6 @@
 // Game entity models and interfaces
 
+import type { IMission } from './MissionModels';
 import type { ITerritory } from './TerritoryModel';
 import type { IUnit } from './UnitModels';
 
@@ -14,6 +15,7 @@ export interface Player {
 	territories: ITerritory[];
 	units: IUnit[];
 	color: string;
+	unlockedMissionIds: string[];
 }
 
 // Overall game state
@@ -21,6 +23,7 @@ export interface GameState {
 	players: Map<string, Player>;
 	territories: Map<string, ITerritory>;
 	units: Map<string, IUnit>;
+	missions: Map<string, IMission>;
 	availableUnits: Map<string, IUnit>;
 	currentDate: Date;
 	isRunning: boolean;

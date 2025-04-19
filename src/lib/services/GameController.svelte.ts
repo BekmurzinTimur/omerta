@@ -6,8 +6,11 @@ import {
 	createStartCaptureAction,
 	createHireUnitAction,
 	createAssignToTerritoryAction,
-	createRemoveFromTerritoryAction
+	createRemoveFromTerritoryAction,
+	createLaunchMissionAction
 } from './ActionManager.svelte';
+
+import { DEFAULT_MISSIONS, type IMission, type MissionTemplate } from '../models/MissionModels';
 
 let state = gameState.state;
 // This controller acts as an interface between the UI and the game systems
@@ -71,6 +74,10 @@ const getCapturableTerritories = () => {
 	);
 };
 
+const getMyMissions = (): IMission[] => {
+	return Array.from(state.missions.values()).filter((m) => m.playerId === LOCAL_PLAYER_ID);
+};
+
 // Get all units
 const getAllUnits = () => {
 	return Array.from(state.units.values());
@@ -107,10 +114,29 @@ const getCurrentDateFormatted = () => {
 	return `${year}-${month}-${day} ${hour}:00`;
 };
 
+const getAvailableMissions = (): MissionTemplate[] => {
+	const player = getLocalPlayer();
+	if (!player) return [];
+
+	const activeTemplates = new Set(getMyMissions().map((m) => m.templateId));
+
+	return player.unlockedMissionIds
+		.filter((id) => !activeTemplates.has(id)) // exclude running ones
+		.map((id) => DEFAULT_MISSIONS[id]);
+};
+
+const launchMission = (missionId: string, unitIds: string[]) => {
+	const action = createLaunchMissionAction(LOCAL_PLAYER_ID, missionId, unitIds);
+	queueAction(action);
+};
+
 // Export the game controller functions
 export {
 	startCapturingTerritory,
 	hireUnit,
+	assignUnitToTerritory,
+	removeUnitFromTerritory,
+	launchMission,
 	getLocalPlayer,
 	getAllTerritories,
 	getPlayerTerritories,
@@ -123,6 +149,6 @@ export {
 	getPlayerUnits,
 	getCurrentDateFormatted,
 	getPlayerColor,
-	assignUnitToTerritory,
-	removeUnitFromTerritory
+	getMyMissions,
+	getAvailableMissions
 };

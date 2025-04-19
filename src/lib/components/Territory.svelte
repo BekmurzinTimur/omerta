@@ -12,6 +12,7 @@
 	import { type DraggableItem, type DropResult } from './DragAndDrop/DragAndDropTypes';
 	import DropZone from './DragAndDrop/DropZone.svelte';
 	import UnitDrop from './Unit/UnitDrop.svelte';
+	import AssignUnit from './Unit/AssignUnit.svelte';
 
 	let { territory }: { territory?: ITerritory } = $props();
 	let droppedItemsMap = $state(new SvelteMap<string, DraggableItem>());
@@ -23,11 +24,9 @@
 	let capturerConfirmed = $derived(droppedUnit?.id === territory?.capturingUnitId);
 	let player = $derived(getLocalPlayer());
 
-	let assignedUnit = $derived(getAllUnitsMap().get(territory?.managerId || ''));
+	let managerUnit = $derived(getAllUnitsMap().get(territory?.managerId || ''));
 	let capturerUnit = $derived(getAllUnitsMap().get(territory?.capturingUnitId || ''));
-	$effect(() => {
-		console.log({ territory, capturerUnit });
-	});
+
 	// Handle drop events
 	function handleDrop(result: DropResult) {
 		if (!territory?.id) return;
@@ -57,22 +56,28 @@
 			<div>Income: ${territory.resources.income}</div>
 			{#if territory.ownerId === player?.id}
 				<span class="text-lg font-bold">Manage</span>
-				<DropZone id="territory{territory.id}" onDrop={handleDrop} accepts={['unit']}>
-					<UnitDrop unit={droppedItem?.data || assignedUnit} {confirmed} onRemove={handleRemove} />
-				</DropZone>
+				<AssignUnit
+					id="territory{territory.id}"
+					onDrop={handleDrop}
+					accepts={['unit']}
+					assignedUnit={droppedItem?.data || managerUnit}
+					{confirmed}
+					onRemove={handleRemove}
+				/>
 			{:else}
 				<span class="text-lg font-bold">Capture</span>
 				<div>
 					<span>Capture progress: </span>
 					<span>{territory.captureProgress}</span>
 				</div>
-				<DropZone id="territory{territory.id}" onDrop={handleDrop} accepts={['unit']}>
-					<UnitDrop
-						unit={droppedItem?.data || capturerUnit}
-						confirmed={capturerConfirmed}
-						disableRemove
-					/>
-				</DropZone>
+				<AssignUnit
+					id="territory{territory.id}"
+					onDrop={handleDrop}
+					accepts={['unit']}
+					assignedUnit={droppedItem?.data || capturerUnit}
+					confirmed={capturerConfirmed}
+					disableRemove
+				/>
 			{/if}
 		{:else}
 			<h4 class="text-lg">Select a territory</h4>

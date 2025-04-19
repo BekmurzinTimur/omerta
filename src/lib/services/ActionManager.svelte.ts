@@ -5,12 +5,19 @@ import {
 	ActionStatus,
 	ActionType,
 	type StartCaptureAction,
-	type HireUnitAction
+	type HireUnitAction,
+	ScheduledActionType
 } from '../models/ActionModels';
 import { type GameState } from '../models/GameModels';
 import gameState from './GameState.svelte';
-import type { AssignToTerritory, RemoveFromTerritoryAction } from '../models/ActionModels';
-import { UnitStatus, UnitRank } from '$lib/models/UnitModels';
+import type {
+	AssignToTerritory,
+	LaunchMissionAction,
+	RemoveFromTerritoryAction
+} from '../models/ActionModels';
+import { UnitStatus, UnitRank, CoreAttribute } from '$lib/models/UnitModels';
+import { DEFAULT_MISSIONS } from '$lib/models/MissionModels';
+import { addScheduledAction } from './ScheduledActionManager.svelte';
 // Queue of actions waiting to be processed
 let actionQueue = $state<Action[]>([]);
 
@@ -77,6 +84,9 @@ const processActions = (): void => {
 				case ActionType.REMOVE_FROM_TERRITORY:
 					processRemoveFromTerritoryAction(action as RemoveFromTerritoryAction);
 					break;
+				case ActionType.LAUNCH_MISSION:
+					processLaunchMissionAction(action as LaunchMissionAction);
+					break;
 				// Add more cases as needed
 				default:
 					console.warn(`Unknown action type: ${action.type}`);
@@ -129,7 +139,6 @@ const processStartCaptureAction = (action: StartCaptureAction): void => {
 		`Player ${playerId} started capturing territory ${territoryId} with unit ${unit.name}`
 	);
 };
-
 // Process a HireUnitAction
 const processHireUnitAction = (action: HireUnitAction): void => {
 	const { playerId, unitId } = action;
@@ -183,7 +192,6 @@ const processAssignToTerritoryAction = (action: AssignToTerritory): void => {
 
 	console.log(`Player ${playerId} assigned ${unit.name} to oversee territory ${territory.name}`);
 };
-
 const processRemoveFromTerritoryAction = (action: RemoveFromTerritoryAction): void => {
 	const { playerId, unitId, territoryId } = action;
 
@@ -211,7 +219,85 @@ const processRemoveFromTerritoryAction = (action: RemoveFromTerritoryAction): vo
 
 	console.log(`Player ${playerId} removed ${unit.name} from territory ${territory.name}`);
 };
+const processLaunchMissionAction = (action: LaunchMissionAction): void => {
+	const { playerId, missionId, unitIds } = action;
+	const mission = DEFAULT_MISSIONS[missionId];
+	if (!mission) throw new Error(`Mission ${missionId} not found`);
 
+	// Mark units as on‑mission
+	unitIds.forEach((uid) => {
+		const unit = gameState.state.units.get(uid);
+		if (!unit) throw new Error(`Unit ${uid} missing`);
+		gameState.state.units.set(uid, { ...unit, status: UnitStatus.MISSION });
+	});
+
+	// Schedule mission resolution
+	addScheduledAction({
+		id: `mission-${action.id}`,
+		type: ScheduledActionType.MISSION_COMPLETE,
+		interval: mission.durationTicks,
+		nextExecutionTick: gameState.state.tickCount + mission.durationTicks,
+		isRecurring: false,
+		execute: (state) => resolveMission(state, playerId, missionId, unitIds)
+	});
+
+	console.log(`Player ${playerId} launched mission ${mission.name} with ${unitIds.length} unit(s)`);
+};
+const resolveMission = (
+	state: GameState,
+	playerId: string,
+	missionId: string,
+	unitIds: string[]
+) => {
+	const mission = DEFAULT_MISSIONS[missionId];
+	const player = state.players.get(playerId);
+	if (!mission || !player) return;
+
+	// 1. calculate combined relevant stats
+	let total = 0;
+	Object.entries(mission.difficulty).forEach(([attrStr]) => {
+		const attr = attrStr as CoreAttribute;
+		const sum = unitIds.reduce((acc, uid) => acc + (state.units.get(uid)?.skills[attr] ?? 0), 0);
+		total += sum;
+	});
+
+	const required = Object.values(mission.difficulty).reduce((a, b) => a + b, 0);
+	const success = total >= required;
+
+	// 2. Apply money to player
+	if (success) {
+		// calculate total cut %
+		const totalCutPct =
+			unitIds.reduce((acc, uid) => acc + (state.units.get(uid)?.cut ?? 0), 0) / 100;
+		const netReward = Math.round(mission.reward * (1 - totalCutPct));
+
+		gameState.updatePlayer(playerId, {
+			resources: {
+				...player.resources,
+				money: player.resources.money + netReward
+			}
+		});
+	}
+
+	// 3. Update each unit
+	unitIds.forEach((uid) => {
+		const unit = state.units.get(uid);
+		if (!unit) return;
+
+		const loyaltyDelta = success ? +1 : -1;
+		const updated = {
+			...unit,
+			status: UnitStatus.IDLE,
+			loyalty: unit.loyalty + loyaltyDelta,
+			heat: unit.heat + 1
+		};
+		state.units.set(uid, updated);
+	});
+
+	console.log(
+		`Mission ${mission.name} ${success ? 'succeeded' : 'failed'} ` + `for player ${playerId}`
+	);
+};
 // Create action creators (factory functions)
 
 // Create a start capture action
@@ -329,6 +415,36 @@ const createRemoveFromTerritoryAction = (
 	};
 };
 
+const createLaunchMissionAction = (
+	playerId: string,
+	missionId: string,
+	unitIds: string[]
+): LaunchMissionAction => {
+	return {
+		id: uuidv4(),
+		type: ActionType.LAUNCH_MISSION,
+		playerId,
+		missionId,
+		unitIds,
+		timestamp: Date.now(),
+		status: ActionStatus.PENDING,
+		validate: (state: GameState) => {
+			if (unitIds.length === 0 || unitIds.length > 4) return false;
+
+			const mission = DEFAULT_MISSIONS[missionId];
+			if (!mission) return false;
+
+			const player = state.players.get(playerId);
+			if (!player) return false;
+
+			return unitIds.every((uid) => {
+				const u = state.units.get(uid);
+				return u && u.ownerId === playerId && u.status === UnitStatus.IDLE;
+			});
+		}
+	};
+};
+
 // Export the action manager functions
 export {
 	queueAction,
@@ -338,5 +454,6 @@ export {
 	createStartCaptureAction,
 	createHireUnitAction,
 	createAssignToTerritoryAction,
-	createRemoveFromTerritoryAction
+	createRemoveFromTerritoryAction,
+	createLaunchMissionAction
 };

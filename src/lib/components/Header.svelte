@@ -18,7 +18,6 @@
 		</div>
 
 		<span class="text-sm">Tick: {state.tickCount}</span>
-		<span class="text-sm">FPS: {gameService.currentFps}</span>
 		<button
 			class="rounded px-4 py-2 text-sm font-medium {gameService.isRunning
 				? 'bg-red-600 hover:bg-red-700'

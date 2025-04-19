@@ -7,6 +7,7 @@
 	import Header from './Header.svelte';
 	import Footer from './Footer.svelte';
 	import Territory from './Territory.svelte';
+	import MissionSidebar from './Mission/MissionSidebar.svelte';
 
 	// Store only the ID of the selected cell
 	let allTerritories = $derived(getAllTerritories());
@@ -24,7 +25,6 @@
 
 	const onSelect = (cellId: string | null) => {
 		selectedCellId = cellId;
-		console.log({ cellId, selectedCellId });
 	};
 </script>
 
@@ -39,6 +39,7 @@
 		<div class="map-container flex-grow bg-gray-600">
 			<GridMap {selectedCellId} {onSelect} />
 		</div>
+		<MissionSidebar />
 	</div>
 	<Footer />
 </div>

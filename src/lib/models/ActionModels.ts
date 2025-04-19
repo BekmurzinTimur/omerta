@@ -16,13 +16,13 @@ export enum ActionType {
 	START_CAPTURE = 'START_CAPTURE',
 	CANCEL_CAPTURE = 'CANCEL_CAPTURE',
 
+	// Territories
 	ASSIGN_TO_TERRITORY = 'ASSIGN_TO_TERRITORY',
 	REMOVE_FROM_TERRITORY = 'REMOVE_FROM_TERRITORY',
 
 	// Unit actions
 	HIRE_UNIT = 'HIRE_UNIT',
-	MOVE_UNIT = 'MOVE_UNIT',
-	ATTACK = 'ATTACK',
+	LAUNCH_MISSION = 'LAUNCH_MISSION',
 
 	// Economy actions
 	COLLECT_RESOURCES = 'COLLECT_RESOURCES',
@@ -52,7 +52,8 @@ export enum ScheduledActionType {
 	GENERATE_INCOME = 'GENERATE_INCOME',
 	INCREASE_CAPTURE_PROGRESS = 'INCREASE_CAPTURE_PROGRESS',
 	MAINTENANCE_COST = 'MAINTENANCE_COST',
-	AI_DECISION = 'AI_DECISION'
+	AI_DECISION = 'AI_DECISION',
+	MISSION_COMPLETE = 'MISSION_COMPLETE'
 }
 
 // Specific action implementation examples
@@ -82,4 +83,10 @@ export interface RemoveFromTerritoryAction extends Action {
 	type: ActionType.REMOVE_FROM_TERRITORY;
 	unitId: string;
 	territoryId: string;
+}
+
+export interface LaunchMissionAction extends Action {
+	type: ActionType.LAUNCH_MISSION;
+	missionId: string;
+	unitIds: string[]; // 1–4 units
 }
