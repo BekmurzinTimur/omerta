@@ -18,4 +18,5 @@ export interface Cell {
 	y: number;
 	territory: ITerritory;
 	unit?: IUnit;
+	isBeingCaptured: boolean;
 }

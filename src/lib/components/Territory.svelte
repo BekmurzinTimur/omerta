@@ -70,7 +70,7 @@
 					<UnitDrop
 						unit={droppedItem?.data || capturerUnit}
 						confirmed={capturerConfirmed}
-						onRemove={handleRemove}
+						disableRemove
 					/>
 				</DropZone>
 			{/if}

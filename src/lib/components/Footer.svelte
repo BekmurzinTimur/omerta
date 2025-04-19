@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { UnitStatus } from '$lib/models/UnitModels';
 	import {
 		getAllUnits,
 		getAssociates,
@@ -23,6 +24,7 @@
 			{#if units.length > 0}
 				{#each units as unit}
 					<Draggable
+						disabled={unit.status !== UnitStatus.IDLE}
 						item={{
 							id: unit.id,
 							type: 'unit',

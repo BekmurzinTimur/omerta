@@ -6,8 +6,14 @@
 	let {
 		unit,
 		confirmed,
-		onRemove
-	}: { unit?: IUnit; confirmed?: boolean; onRemove: (unitId: string) => void } = $props();
+		onRemove,
+		disableRemove
+	}: {
+		unit?: IUnit;
+		confirmed?: boolean;
+		onRemove?: (unitId: string) => void;
+		disableRemove?: boolean;
+	} = $props();
 </script>
 
 <!-- Unit assignment slot - 150x150 square for unit assignment -->
@@ -37,13 +43,13 @@
 			>
 				Pending
 			</div>
-		{:else}
-			<div
+		{:else if !disableRemove}
+			<button
 				class="pointer-events-auto absolute top-2 right-2 cursor-pointer rounded-full bg-red-500/50 px-1 py-0.5 text-xs font-bold text-black hover:bg-red-500"
-				onclick={() => onRemove(unit.id)}
+				onclick={() => onRemove?.(unit.id)}
 			>
 				Remove
-			</div>
+			</button>
 		{/if}
 	{:else}
 		<!-- No unit assigned - show placeholder text -->

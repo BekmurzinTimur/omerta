@@ -19,33 +19,44 @@
 		selectedCellId,
 		onSelect
 	}: { selectedCellId: string | null; onSelect: (cellid: string | null) => void } = $props();
+
 	// Grid position and zoom state
 	let position: Position = $state({ x: 0, y: 0 });
 	let zoom: number = $state(1);
 	let isDragging: boolean = $state(false);
 	let dragStart: Position = $state({ x: 0, y: 0 });
+
+	// Core data structures with reactive access
 	let territories = $derived(getAllTerritories());
 	let units = $derived(getAllUnitsMap());
-
 	let playerTerritories = $derived(getPlayerTerritories());
-	let playerCells = $derived(playerTerritories.map((territory) => territory.id));
-	let playerColor = $derived(getPlayerColor());
-	let cells: Cell[] = $derived(
-		Array.from(territories, ([id, territory], i) => {
-			return {
-				id: territory.id,
-				x: territory.position.x,
-				y: territory.position.y,
-				territory,
-				unit: units.get(territory.managerId || '')
-			};
-		})
-	);
 
-	// Calculate cell size based on zoom level
+	// Optimize lookups by creating a Set of player territory IDs
+	let playerTerritorySet = $derived(new Set(playerTerritories.map((t) => t.id)));
+	let playerColor = $derived(getPlayerColor());
+
+	// Only create the array of territory IDs once (or when territories change)
+	let territoryIds = $derived([...territories.keys()]);
+
+	// Cell size based on zoom level
 	let cellSize: number = $derived(100 * zoom);
 
 	let containerRef: HTMLDivElement;
+
+	// Function to get cell data efficiently
+	function getCellData(territoryId: string): Cell | null {
+		const territory = territories.get(territoryId);
+		if (!territory) return null;
+
+		return {
+			id: territory.id,
+			x: territory.position.x,
+			y: territory.position.y,
+			territory,
+			unit: units.get(territory.managerId || '') || units.get(territory.capturingUnitId || ''),
+			isBeingCaptured: !!territory.capturingUnitId
+		};
+	}
 
 	// Handle mouse down to start dragging
 	function handleMouseDown(event: MouseEvent): void {
@@ -143,20 +154,24 @@
         height: {gridSize.height * cellSize}px;
         background-image: url('{backgroundImageUrl}');
         background-size: cover;
-		
       "
 		></div>
 
-		{#each cells as cell (cell.id)}
-			<GridCell
-				{cell}
-				{selectCell}
-				{cellSize}
-				{selectedCellId}
-				territory={cell.territory}
-				unit={cell.unit}
-				color={playerCells.includes(cell.id) ? `${playerColor};` : 'inherit;'}
-			/>
+		{#each territoryIds as id (id)}
+			{@const cellData = getCellData(id)}
+			{#if cellData}
+				<GridCell
+					cell={cellData}
+					{selectCell}
+					{cellSize}
+					{selectedCellId}
+					unit={cellData.unit}
+					isBeingCaptured={cellData.isBeingCaptured}
+					color={playerTerritorySet.has(id) || cellData.isBeingCaptured
+						? `${playerColor};`
+						: 'inherit;'}
+				/>
+			{/if}
 		{/each}
 	</div>
 
