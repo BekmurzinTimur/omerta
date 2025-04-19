@@ -17,8 +17,8 @@ let state = gameState.state;
 const LOCAL_PLAYER_ID = 'player1';
 
 // Start territory capture
-const startCapturingTerritory = (territoryId: string): void => {
-	const action = createStartCaptureAction(LOCAL_PLAYER_ID, territoryId);
+const startCapturingTerritory = (unitId: string, territoryId: string): void => {
+	const action = createStartCaptureAction(LOCAL_PLAYER_ID, unitId, territoryId);
 	queueAction(action);
 };
 

@@ -5,7 +5,8 @@
 		assignUnitToTerritory,
 		getAllUnitsMap,
 		getLocalPlayer,
-		removeUnitFromTerritory
+		removeUnitFromTerritory,
+		startCapturingTerritory
 	} from '$lib/services/GameController.svelte';
 	import { SvelteMap } from 'svelte/reactivity';
 	import { type DraggableItem, type DropResult } from './DragAndDrop/DragAndDropTypes';
@@ -31,7 +32,8 @@
 		if (!unitId) return;
 		if (territory.managerId === unitId) return console.log('Same unit', item);
 
-		assignUnitToTerritory(unitId, territory.id);
+		if (territory.ownerId === player?.id) assignUnitToTerritory(unitId, territory.id);
+		else startCapturingTerritory(unitId, territory.id);
 	}
 	function handleRemove(unitId: string) {
 		if (!territory?.id) return;
@@ -49,10 +51,13 @@
 			<div>Owner: {territory.ownerId ? territory.ownerId : 'no one'}</div>
 			<div>Income: ${territory.resources.income}</div>
 			{#if territory.ownerId === player?.id}
-				<DropZone id="territory{territory.id}" onDrop={handleDrop} accepts={['unit']}>
-					<UnitDrop unit={droppedItem?.data || assignedUnit} {confirmed} onRemove={handleRemove} />
-				</DropZone>
+				<span class="text-lg font-bold">Manage</span>
+			{:else}
+				<span class="text-lg font-bold">Capture</span>
 			{/if}
+			<DropZone id="territory{territory.id}" onDrop={handleDrop} accepts={['unit']}>
+				<UnitDrop unit={droppedItem?.data || assignedUnit} {confirmed} onRemove={handleRemove} />
+			</DropZone>
 		{:else}
 			<h4 class="text-lg">Select a territory</h4>
 		{/if}

@@ -11,6 +11,7 @@ import { type GameState } from '../models/GameModels';
 import gameState from './GameState.svelte';
 import type { AssignToTerritory, RemoveFromTerritoryAction } from '../models/ActionModels';
 import { UnitStatus, UnitRank } from '$lib/models/UnitModels';
+import { getPlayerUnits } from './GameController.svelte';
 // Queue of actions waiting to be processed
 let actionQueue = $state<Action[]>([]);
 
@@ -212,7 +213,11 @@ const processRemoveFromTerritoryAction = (action: RemoveFromTerritoryAction): vo
 // Create action creators (factory functions)
 
 // Create a start capture action
-const createStartCaptureAction = (playerId: string, territoryId: string): StartCaptureAction => {
+const createStartCaptureAction = (
+	playerId: string,
+	unitId: string,
+	territoryId: string
+): StartCaptureAction => {
 	return {
 		id: uuidv4(),
 		type: ActionType.START_CAPTURE,
@@ -223,12 +228,14 @@ const createStartCaptureAction = (playerId: string, territoryId: string): StartC
 		validate: (gameState) => {
 			const territory = gameState.territories.get(territoryId);
 			const player = gameState.players.get(playerId);
+			const playerUnitsId = getPlayerUnits().map((unit) => unit.id);
 
 			return !!(
 				territory &&
 				player &&
 				territory.ownerId !== playerId &&
-				!territory.isBeingCaptured
+				!territory.isBeingCaptured &&
+				playerUnitsId.includes(unitId)
 			);
 		}
 	};

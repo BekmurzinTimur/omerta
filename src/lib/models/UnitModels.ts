@@ -17,6 +17,7 @@ export enum UnitStatus {
 	IDLE = 'Idle',
 	MISSION = 'Mission',
 	TERRITORY = 'Territory',
+	EXPAND = 'Expand',
 	BUSINESS = 'Business'
 }
 
