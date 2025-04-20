@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ITerritory } from '$lib/models/TerritoryModel';
-	import type { IUnit } from '$lib/models/UnitModels';
+	import { UnitRank, type IUnit } from '$lib/models/UnitModels';
 	import {
 		assignUnitToTerritory,
 		getAllUnitsMap,
@@ -31,8 +31,9 @@
 	function handleDrop(result: DropResult) {
 		if (!territory?.id) return;
 		const { item } = result;
-		droppedItemsMap.set(territory.id, item);
 		const unitId = (item.data as IUnit).id;
+		if (item.data.rank === UnitRank.ASSOCIATE) return;
+		droppedItemsMap.set(territory.id, item);
 		if (!unitId) return;
 		if (territory.managerId === unitId) return console.log('Same unit', item);
 
@@ -44,6 +45,9 @@
 		removeUnitFromTerritory(unitId, territory.id);
 		droppedItemsMap.delete(territory.id);
 	}
+	const handleClear = () => {
+		droppedUnit = null;
+	};
 </script>
 
 <!-- Actions -->
@@ -59,8 +63,10 @@
 				<AssignUnit
 					id="territory{territory.id}"
 					onDrop={handleDrop}
+					onClear={handleClear}
 					accepts={['member']}
-					assignedUnit={droppedItem?.data || managerUnit}
+					assignedUnit={managerUnit}
+					droppedUnit={droppedItem?.data}
 					{confirmed}
 					onRemove={handleRemove}
 				/>
@@ -73,8 +79,10 @@
 				<AssignUnit
 					id="territory{territory.id}"
 					onDrop={handleDrop}
+					onClear={handleClear}
 					accepts={['member']}
-					assignedUnit={droppedItem?.data || capturerUnit}
+					assignedUnit={capturerUnit}
+					droppedUnit={droppedItem?.data}
 					confirmed={capturerConfirmed}
 					disableRemove
 				/>

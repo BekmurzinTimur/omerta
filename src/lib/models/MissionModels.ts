@@ -9,6 +9,7 @@ export interface IMissionInfo {
 	difficulty: Record<CoreAttribute, number>;
 	durationTicks: number;
 	image: string;
+	repeatable?: boolean;
 }
 
 export const DEFAULT_MISSIONS: Record<string, IMissionInfo> = {
@@ -23,6 +24,7 @@ export const DEFAULT_MISSIONS: Record<string, IMissionInfo> = {
 			[CoreAttribute.INFLUENCE]: 0
 		},
 		durationTicks: 3,
+		repeatable: true,
 		image: '/themes/shop_shakedown.png' // put your file in static or assets
 	}
 	// add more here …

@@ -1,20 +1,21 @@
 <script lang="ts">
 	import { UnitStatus } from '$lib/models/UnitModels';
-	import {
-		getAllUnits,
-		getAssociates,
-		getLocalPlayer,
-		hireUnit
-	} from '../services/GameController.svelte';
+	import { getUsedUnits } from '$lib/services/UiState.svelte';
+	import { getAllUnits, getAssociates, getTick } from '../services/GameController.svelte';
 	import Draggable from './DragAndDrop/Draggable.svelte';
 	import UnitCard from './UnitCard.svelte';
+
+	let tick: number = $derived(getTick());
+
 	// Get all units in the game
+	let usedUnits = $derived(getUsedUnits());
 	let units = $derived(getAllUnits());
 	let associates = $derived(getAssociates());
-	// Hire a new unit
-	const onHireUnitClick = (unitId: string) => {
-		hireUnit(unitId);
-	};
+
+	$effect(() => {
+		if (Number.isNaN(tick)) return;
+		usedUnits.clear();
+	});
 </script>
 
 <footer class="flex gap-4 bg-gray-800 px-4 py-4 text-white">
@@ -24,7 +25,7 @@
 			{#if units.length > 0}
 				{#each units as unit}
 					<Draggable
-						disabled={unit.status !== UnitStatus.IDLE}
+						disabled={unit.status !== UnitStatus.IDLE || usedUnits.has(unit.id)}
 						item={{
 							id: unit.id,
 							type: 'member',
@@ -32,7 +33,7 @@
 						}}
 						zoneId="source"
 					>
-						<UnitCard {unit} />
+						<UnitCard {unit} assigned={usedUnits.has(unit.id)} />
 					</Draggable>
 				{/each}
 			{:else}

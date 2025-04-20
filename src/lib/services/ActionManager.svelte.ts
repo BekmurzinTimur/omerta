@@ -184,9 +184,14 @@ const processAssignToTerritoryAction = (action: AssignToTerritory): void => {
 	if (territory.ownerId !== playerId)
 		throw new Error(`Territory ${territoryId} is not owned by player ${playerId}`);
 
+	const previousManager = gameState.state.units.get(territory.managerId || '');
+
 	// ── Apply state changes ────────────────────────────────────
 	const updatedUnit = { ...unit, status: UnitStatus.TERRITORY };
 	gameState.state.units.set(unitId, updatedUnit);
+	if (previousManager) {
+		gameState.updateUnit(previousManager.id, { status: UnitStatus.IDLE });
+	}
 
 	gameState.updateTerritory(territoryId, { managerId: unitId });
 
@@ -222,6 +227,8 @@ const processRemoveFromTerritoryAction = (action: RemoveFromTerritoryAction): vo
 const processLaunchMissionAction = (action: LaunchMissionAction): void => {
 	const { playerId, missionInfoId, unitIds } = action;
 	const mission = DEFAULT_MISSIONS[missionInfoId];
+	let player = gameState.state.players.get(playerId);
+	if (!player) throw new Error(`Player ${playerId} not found`);
 	if (!mission) throw new Error(`Mission info ${missionInfoId} not found`);
 
 	// Mark units as on‑mission
@@ -242,6 +249,10 @@ const processLaunchMissionAction = (action: LaunchMissionAction): void => {
 		endTick,
 		status: MissionStatus.ACTIVE
 	};
+
+	player.unlockedMissionIds = player.unlockedMissionIds.filter(
+		(playerMissionId) => playerMissionId !== missionInfoId
+	);
 
 	gameState.state.missions.set(activeMission.id, activeMission);
 
@@ -290,6 +301,10 @@ const resolveMission = (state: GameState, playerId: string, activeMission: IMiss
 		});
 	}
 
+	if (missionInfo.repeatable) {
+		player.unlockedMissionIds.push(missionInfoId);
+	}
+
 	// 3. Update each unit
 	unitIds.forEach((uid) => {
 		const unit = state.units.get(uid);
@@ -305,7 +320,8 @@ const resolveMission = (state: GameState, playerId: string, activeMission: IMiss
 		state.units.set(uid, updated);
 	});
 
-	activeMission.status = success ? MissionStatus.SUCCEEDED : MissionStatus.FAILED;
+	const status = success ? MissionStatus.SUCCEEDED : MissionStatus.FAILED;
+	gameState.updateMission(activeMission.id, { status });
 
 	console.log(
 		`Mission ${missionInfo.name} ${success ? 'succeeded' : 'failed'} ` + `for player ${playerId}`

@@ -10,7 +10,12 @@ import {
 	createLaunchMissionAction
 } from './ActionManager.svelte';
 
-import { DEFAULT_MISSIONS, type IMission, type IMissionInfo } from '../models/MissionModels';
+import {
+	DEFAULT_MISSIONS,
+	MissionStatus,
+	type IMission,
+	type IMissionInfo
+} from '../models/MissionModels';
 
 let state = gameState.state;
 // This controller acts as an interface between the UI and the game systems
@@ -18,6 +23,10 @@ let state = gameState.state;
 
 // Local player ID (for now, hardcoded to player1)
 const LOCAL_PLAYER_ID = 'player1';
+
+const getTick = () => {
+	return gameState.state.tickCount;
+};
 
 // Start territory capture
 const startCapturingTerritory = (unitId: string, territoryId: string): void => {
@@ -78,6 +87,18 @@ const getMyMissions = (): IMission[] => {
 	return Array.from(state.missions.values()).filter((m) => m.playerId === LOCAL_PLAYER_ID);
 };
 
+const getActiveMissions = (): IMission[] => {
+	return Array.from(state.missions.values()).filter(
+		(m) => m.status === MissionStatus.ACTIVE && m.playerId === LOCAL_PLAYER_ID
+	);
+};
+
+const getFinishedMissions = (): IMission[] => {
+	return Array.from(state.missions.values()).filter(
+		(m) => m.status !== MissionStatus.ACTIVE && m.playerId === LOCAL_PLAYER_ID
+	);
+};
+
 // Get all units
 const getAllUnits = () => {
 	return Array.from(state.units.values());
@@ -132,6 +153,7 @@ const launchMission = (missionId: string, unitIds: string[]) => {
 
 // Export the game controller functions
 export {
+	getTick,
 	startCapturingTerritory,
 	hireUnit,
 	assignUnitToTerritory,
@@ -150,5 +172,7 @@ export {
 	getCurrentDateFormatted,
 	getPlayerColor,
 	getMyMissions,
-	getAvailableMissions
+	getAvailableMissions,
+	getActiveMissions,
+	getFinishedMissions
 };

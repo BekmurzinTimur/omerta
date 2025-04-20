@@ -44,6 +44,13 @@
 		};
 	}
 
+	// called by each slot when a unit is dropped
+	function handleClear(slotIndex: number) {
+		return () => {
+			assignments[slotIndex] = undefined;
+		};
+	}
+
 	// called by each slot when the little “×” remove button is clicked
 	function handleRemove(slotIndex: number) {
 		return (unitId: string) => {
@@ -87,6 +94,7 @@
 				<AssignUnit
 					id={'slot-' + idx}
 					onDrop={handleDrop(idx)}
+					onClear={handleClear(idx)}
 					accepts={['member', 'associate']}
 					assignedUnit={assignments[idx]}
 					{confirmed}

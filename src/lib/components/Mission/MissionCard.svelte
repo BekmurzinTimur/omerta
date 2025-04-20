@@ -7,20 +7,20 @@
 
 	let {
 		missionInfo,
-		activeMission,
+		mission,
 		progress = 0,
 		eta = ''
 	}: {
 		missionInfo: IMissionInfo;
-		activeMission?: IMission;
+		mission?: IMission;
 		progress?: number;
 		eta?: string;
 	} = $props();
 
 	let allUnitsMap = $derived(getAllUnitsMap());
-	let isActive = $derived(!!activeMission);
+	let isActive = $derived(!!mission);
 	let unitImages = $derived(
-		activeMission?.unitIds.map((id) => getUnitImage(allUnitsMap.get(id)?.image)) || []
+		mission?.unitIds.map((id) => getUnitImage(allUnitsMap.get(id)?.image)) || []
 	);
 
 	function handleClick() {

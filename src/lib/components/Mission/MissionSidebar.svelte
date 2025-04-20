@@ -1,14 +1,25 @@
 <script lang="ts">
 	import MissionCard from './MissionCard.svelte';
 
-	import { DEFAULT_MISSIONS, type IMissionInfo } from '$lib/models/MissionModels';
+	import { DEFAULT_MISSIONS, MissionStatus, type IMissionInfo } from '$lib/models/MissionModels';
 	import Sidebar from '../Sidebar.svelte';
-	import { getMyMissions } from '$lib/services/GameController.svelte';
+	import {
+		getActiveMissions,
+		getAvailableMissions,
+		getFinishedMissions,
+		getMyMissions
+	} from '$lib/services/GameController.svelte';
 
 	/** For now we expose an empty array – replace with real store later */
-	let activeMissions = $derived(getMyMissions());
+	let myMissions = $derived(getMyMissions());
+	let activeMissions = $derived(myMissions.filter((m) => m.status === MissionStatus.ACTIVE));
+	let finishedMissions = $derived(myMissions.filter((m) => m.status !== MissionStatus.ACTIVE));
+	let availableMissions = $derived(getAvailableMissions());
 
-	const availableMissions = Object.values(DEFAULT_MISSIONS);
+	$effect(() => {
+		console.log({ activeMissions, finishedMissions, availableMissions, myMissions });
+		console.log(myMissions.filter((m) => m.status === MissionStatus.SUCCEEDED));
+	});
 </script>
 
 <Sidebar>
@@ -24,7 +35,7 @@
 			{:else}
 				{#each activeMissions as activeMission}
 					<MissionCard
-						{activeMission}
+						mission={activeMission}
 						missionInfo={DEFAULT_MISSIONS[activeMission.missionInfoId]}
 						progress={0}
 						eta="unknown"
@@ -39,6 +50,20 @@
 		<div class="mt-2 flex flex-col gap-2">
 			{#each availableMissions as missionInfo}
 				<MissionCard {missionInfo} eta="unknown" />
+			{/each}
+		</div>
+
+		<!-- History -->
+		<h3 class="mt-6 text-sm font-semibold text-gray-400 uppercase">History of missions</h3>
+
+		<div class="mt-2 flex flex-col gap-2">
+			{#each finishedMissions as finishedMission}
+				<MissionCard
+					mission={finishedMission}
+					missionInfo={DEFAULT_MISSIONS[finishedMission.missionInfoId]}
+					progress={0}
+					eta="finished"
+				/>
 			{/each}
 		</div>
 	</div>

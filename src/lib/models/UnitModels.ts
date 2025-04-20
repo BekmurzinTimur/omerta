@@ -14,6 +14,7 @@ export enum CoreAttribute {
 	INFLUENCE = 'Influence' // Charisma, respect, ability to command others
 }
 export enum UnitStatus {
+	ASSIGNED = 'ASSIGNED',
 	IDLE = 'Idle',
 	MISSION = 'Mission',
 	TERRITORY = 'Territory',

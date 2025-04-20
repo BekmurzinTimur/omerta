@@ -4,7 +4,7 @@
 	import { addWindow } from './DialogWindows/windowStore.svelte';
 	import UnitCardBig from './UnitCardBig.svelte';
 
-	let { unit }: { unit: IUnit } = $props();
+	let { unit, assigned }: { unit: IUnit; assigned?: boolean } = $props();
 
 	/* --------‑‑ Spritesheet helpers ‑‑-------- */
 	const ICON_SHEET = '/icons/IconPack.png'; // ✔️  adjust if you store it elsewhere
@@ -116,6 +116,10 @@
 
 	<!-- Footer -->
 	<div class="mt-auto flex items-center justify-between bg-gray-900 px-4 py-2 text-xs">
-		<span class="mx-auto font-black uppercase">{unit.status}</span>
+		{#if assigned}
+			<span class="mx-auto font-black uppercase">ASSIGNED</span>
+		{:else}
+			<span class="mx-auto font-black uppercase">{unit.status}</span>
+		{/if}
 	</div>
 </div>
