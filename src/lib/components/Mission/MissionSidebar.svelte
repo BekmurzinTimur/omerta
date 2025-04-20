@@ -1,13 +1,12 @@
 <script lang="ts">
 	import MissionCard from './MissionCard.svelte';
 
-	import { DEFAULT_MISSIONS, type MissionTemplate } from '$lib/models/MissionModels';
+	import { DEFAULT_MISSIONS, type IMissionInfo } from '$lib/models/MissionModels';
 	import Sidebar from '../Sidebar.svelte';
-	import { getAllUnits, getAllUnitsMap, getMyMissions } from '$lib/services/GameController.svelte';
+	import { getMyMissions } from '$lib/services/GameController.svelte';
 
 	/** For now we expose an empty array – replace with real store later */
 	let activeMissions = $derived(getMyMissions());
-	let units = $derived(getAllUnitsMap());
 
 	const availableMissions = Object.values(DEFAULT_MISSIONS);
 </script>
@@ -23,12 +22,12 @@
 			{#if activeMissions.length === 0}
 				<p class="text-xs text-gray-500">No active missions</p>
 			{:else}
-				{#each activeMissions as mission}
+				{#each activeMissions as activeMission}
 					<MissionCard
-						{mission}
-						isActive={true}
-						progress={mission.progress}
-						unitImages={mission.unitIds.map((id) => `/mobsters/${units.get(id)?.image}.png`)}
+						{activeMission}
+						missionInfo={DEFAULT_MISSIONS[activeMission.missionInfoId]}
+						progress={0}
+						eta="unknown"
 					/>
 				{/each}
 			{/if}
@@ -38,8 +37,8 @@
 		<h3 class="mt-6 text-sm font-semibold text-gray-400 uppercase">Available</h3>
 
 		<div class="mt-2 flex flex-col gap-2">
-			{#each availableMissions as m}
-				<MissionCard mission={m} />
+			{#each availableMissions as missionInfo}
+				<MissionCard {missionInfo} eta="unknown" />
 			{/each}
 		</div>
 	</div>

@@ -87,6 +87,6 @@ export interface RemoveFromTerritoryAction extends Action {
 
 export interface LaunchMissionAction extends Action {
 	type: ActionType.LAUNCH_MISSION;
-	missionId: string;
+	missionInfoId: string;
 	unitIds: string[]; // 1–4 units
 }

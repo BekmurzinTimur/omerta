@@ -7,14 +7,16 @@
 	let {
 		id,
 		accepts = [],
-		onDrop
-	}: { id: string; accepts?: string[]; onDrop?: DragEndCallback } = $props();
+		onDrop,
+		disabled
+	}: { id: string; accepts?: string[]; onDrop?: DragEndCallback; disabled?: boolean } = $props();
 
 	const dragStore = getDragContext();
 	let zoneElement: HTMLElement;
 
 	// Register this drop zone and handle drops
 	$effect(() => {
+		if (disabled) return;
 		const dropZone = setupDropZone(zoneElement, id, dragStore, onDrop);
 
 		return () => {
@@ -23,9 +25,10 @@
 	});
 
 	// Reactive states for visual feedback
-	const isActive = $derived(dragStore.isDragging);
+	const isActive = $derived(dragStore.isDragging && !disabled);
 
 	const isValidDrop = $derived.by(() => {
+		if (disabled) return;
 		if (!isActive || !dragStore.currentItem) return false;
 
 		// If no specific types are defined, accept all

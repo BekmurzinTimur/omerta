@@ -1,27 +1,33 @@
 <script lang="ts">
-	import type { MissionTemplate } from '$lib/models/MissionModels';
+	import type { IMission, IMissionInfo } from '$lib/models/MissionModels';
+	import { getAllUnitsMap } from '$lib/services/GameController.svelte';
+	import { getUnitImage } from '$lib/utils/common';
 	import { addWindow } from '../DialogWindows/windowStore.svelte';
 	import MissionCardBig from './MissionCardBig.svelte';
 
 	let {
-		mission,
-		isActive = false,
+		missionInfo,
+		activeMission,
 		progress = 0,
-		eta = '',
-		unitImages = []
+		eta = ''
 	}: {
-		mission: MissionTemplate;
-		isActive: boolean;
-		progress: number;
-		eta: string;
-		unitImages: string[];
+		missionInfo: IMissionInfo;
+		activeMission?: IMission;
+		progress?: number;
+		eta?: string;
 	} = $props();
+
+	let allUnitsMap = $derived(getAllUnitsMap());
+	let isActive = $derived(!!activeMission);
+	let unitImages = $derived(
+		activeMission?.unitIds.map((id) => getUnitImage(allUnitsMap.get(id)?.image)) || []
+	);
 
 	function handleClick() {
 		addWindow({
 			id: `window-${Date.now()}`,
-			title: `Mission: ${mission.name}`,
-			content: { component: MissionCardBig, props: { mission } },
+			title: `Mission: ${missionInfo.name}`,
+			content: { component: MissionCardBig, props: { missionInfo } },
 			position: { x: Math.random() * 200 + 50, y: Math.random() * 200 + 50 },
 			size: { width: 600, height: 500 }
 		});
@@ -32,17 +38,21 @@
 	class="relative cursor-pointer overflow-hidden rounded-lg shadow-md transition hover:shadow-lg"
 	onclick={handleClick}
 >
-	<img src={mission.image} alt={mission.name} class="absolute inset-0 h-full w-full object-cover" />
+	<img
+		src={missionInfo.image}
+		alt={missionInfo.name}
+		class="absolute inset-0 h-full w-full object-cover"
+	/>
 
 	<!-- overlay -->
 	<div class="relative flex flex-col gap-2 p-3 hover:bg-white/20">
-		<h3 class="font-semibold text-white drop-shadow">{mission.name}</h3>
+		<h3 class="font-semibold text-white drop-shadow">{missionInfo.name}</h3>
 
 		{#if !isActive}
-			<div class="text-sm text-white/80">Reward: ${mission.reward.toLocaleString()}</div>
+			<div class="text-sm text-white/80">Reward: ${missionInfo.reward.toLocaleString()}</div>
 
 			<div class="flex flex-wrap gap-2 text-xs text-white/80">
-				{#each Object.entries(mission.difficulty) as [key, val]}
+				{#each Object.entries(missionInfo.difficulty) as [key, val]}
 					<span>{key}: {val}</span>
 				{/each}
 			</div>

@@ -2,8 +2,8 @@
 import { CoreAttribute } from './UnitModels';
 
 /*------------- templates (static) -------------*/
-export interface MissionTemplate {
-	templateId: string;
+export interface IMissionInfo {
+	infoId: string;
 	name: string;
 	reward: number;
 	difficulty: Record<CoreAttribute, number>;
@@ -11,9 +11,9 @@ export interface MissionTemplate {
 	image: string;
 }
 
-export const DEFAULT_MISSIONS: Record<string, MissionTemplate> = {
+export const DEFAULT_MISSIONS: Record<string, IMissionInfo> = {
 	SHAKEDOWN: {
-		templateId: 'SHAKEDOWN',
+		infoId: 'SHAKEDOWN',
 		name: 'Shakedown Local Shop',
 		reward: 1_000,
 		difficulty: {
@@ -35,12 +35,12 @@ export enum MissionStatus {
 	FAILED = 'FAILED'
 }
 
-export interface IMission extends MissionTemplate {
+export interface IMission {
 	id: string; // same as action.id
+	missionInfoId: string;
 	playerId: string;
 	unitIds: string[];
 	startTick: number;
 	endTick: number; // tick when it will finish
 	status: MissionStatus;
-	progress: number; // 0‑100 cached for UI convenience
 }

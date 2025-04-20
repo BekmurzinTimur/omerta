@@ -11,7 +11,8 @@
 		confirmed,
 		onRemove,
 		accepts,
-		disableRemove
+		disableRemove,
+		disabled
 	}: {
 		id: string;
 		onDrop: (result: DropResult) => void;
@@ -20,9 +21,10 @@
 		confirmed: boolean;
 		onRemove?: (unitId: string) => void;
 		disableRemove?: boolean;
+		disabled?: boolean;
 	} = $props();
 </script>
 
-<DropZone {id} {onDrop} {accepts}>
+<DropZone {id} {onDrop} {accepts} {disabled}>
 	<UnitDrop unit={assignedUnit} {confirmed} {onRemove} {disableRemove} />
 </DropZone>

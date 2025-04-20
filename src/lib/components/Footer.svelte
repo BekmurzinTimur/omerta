@@ -27,7 +27,7 @@
 						disabled={unit.status !== UnitStatus.IDLE}
 						item={{
 							id: unit.id,
-							type: 'unit',
+							type: 'member',
 							data: unit
 						}}
 						zoneId="source"
@@ -42,7 +42,17 @@
 			<div class="border border-dashed border-white bg-gray-800 text-white shadow-lg"></div>
 			{#if associates.length > 0}
 				{#each associates as unit}
-					<UnitCard {unit} />
+					<Draggable
+						disabled={unit.status !== UnitStatus.IDLE}
+						item={{
+							id: unit.id,
+							type: 'associate',
+							data: unit
+						}}
+						zoneId="source"
+					>
+						<UnitCard {unit} />
+					</Draggable>
 				{/each}
 			{:else}
 				<p class="text-sm text-gray-400">No associates available</p>

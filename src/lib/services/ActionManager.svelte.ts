@@ -16,7 +16,7 @@ import type {
 	RemoveFromTerritoryAction
 } from '../models/ActionModels';
 import { UnitStatus, UnitRank, CoreAttribute } from '$lib/models/UnitModels';
-import { DEFAULT_MISSIONS } from '$lib/models/MissionModels';
+import { DEFAULT_MISSIONS, MissionStatus, type IMission } from '$lib/models/MissionModels';
 import { addScheduledAction } from './ScheduledActionManager.svelte';
 // Queue of actions waiting to be processed
 let actionQueue = $state<Action[]>([]);
@@ -220,9 +220,9 @@ const processRemoveFromTerritoryAction = (action: RemoveFromTerritoryAction): vo
 	console.log(`Player ${playerId} removed ${unit.name} from territory ${territory.name}`);
 };
 const processLaunchMissionAction = (action: LaunchMissionAction): void => {
-	const { playerId, missionId, unitIds } = action;
-	const mission = DEFAULT_MISSIONS[missionId];
-	if (!mission) throw new Error(`Mission ${missionId} not found`);
+	const { playerId, missionInfoId, unitIds } = action;
+	const mission = DEFAULT_MISSIONS[missionInfoId];
+	if (!mission) throw new Error(`Mission info ${missionInfoId} not found`);
 
 	// Mark units as on‑mission
 	unitIds.forEach((uid) => {
@@ -231,37 +231,47 @@ const processLaunchMissionAction = (action: LaunchMissionAction): void => {
 		gameState.state.units.set(uid, { ...unit, status: UnitStatus.MISSION });
 	});
 
+	const endTick = gameState.state.tickCount + mission.durationTicks;
+
+	const activeMission: IMission = {
+		id: uuidv4(),
+		missionInfoId,
+		playerId,
+		unitIds,
+		startTick: gameState.state.tickCount,
+		endTick,
+		status: MissionStatus.ACTIVE
+	};
+
+	gameState.state.missions.set(activeMission.id, activeMission);
+
 	// Schedule mission resolution
 	addScheduledAction({
 		id: `mission-${action.id}`,
 		type: ScheduledActionType.MISSION_COMPLETE,
 		interval: mission.durationTicks,
-		nextExecutionTick: gameState.state.tickCount + mission.durationTicks,
+		nextExecutionTick: endTick,
 		isRecurring: false,
-		execute: (state) => resolveMission(state, playerId, missionId, unitIds)
+		execute: (state) => resolveMission(state, playerId, activeMission)
 	});
 
 	console.log(`Player ${playerId} launched mission ${mission.name} with ${unitIds.length} unit(s)`);
 };
-const resolveMission = (
-	state: GameState,
-	playerId: string,
-	missionId: string,
-	unitIds: string[]
-) => {
-	const mission = DEFAULT_MISSIONS[missionId];
+const resolveMission = (state: GameState, playerId: string, activeMission: IMission) => {
+	const { missionInfoId, unitIds } = activeMission;
+	const missionInfo = DEFAULT_MISSIONS[missionInfoId];
 	const player = state.players.get(playerId);
-	if (!mission || !player) return;
+	if (!missionInfo || !player) return;
 
 	// 1. calculate combined relevant stats
 	let total = 0;
-	Object.entries(mission.difficulty).forEach(([attrStr]) => {
+	Object.entries(missionInfo.difficulty).forEach(([attrStr]) => {
 		const attr = attrStr as CoreAttribute;
 		const sum = unitIds.reduce((acc, uid) => acc + (state.units.get(uid)?.skills[attr] ?? 0), 0);
 		total += sum;
 	});
 
-	const required = Object.values(mission.difficulty).reduce((a, b) => a + b, 0);
+	const required = Object.values(missionInfo.difficulty).reduce((a, b) => a + b, 0);
 	const success = total >= required;
 
 	// 2. Apply money to player
@@ -269,7 +279,8 @@ const resolveMission = (
 		// calculate total cut %
 		const totalCutPct =
 			unitIds.reduce((acc, uid) => acc + (state.units.get(uid)?.cut ?? 0), 0) / 100;
-		const netReward = Math.round(mission.reward * (1 - totalCutPct));
+		const netReward = Math.round(missionInfo.reward * (1 - totalCutPct));
+		console.log({ totalCutPct, netReward });
 
 		gameState.updatePlayer(playerId, {
 			resources: {
@@ -294,8 +305,10 @@ const resolveMission = (
 		state.units.set(uid, updated);
 	});
 
+	activeMission.status = success ? MissionStatus.SUCCEEDED : MissionStatus.FAILED;
+
 	console.log(
-		`Mission ${mission.name} ${success ? 'succeeded' : 'failed'} ` + `for player ${playerId}`
+		`Mission ${missionInfo.name} ${success ? 'succeeded' : 'failed'} ` + `for player ${playerId}`
 	);
 };
 // Create action creators (factory functions)
@@ -417,30 +430,48 @@ const createRemoveFromTerritoryAction = (
 
 const createLaunchMissionAction = (
 	playerId: string,
-	missionId: string,
+	missionInfoId: string,
 	unitIds: string[]
 ): LaunchMissionAction => {
 	return {
 		id: uuidv4(),
 		type: ActionType.LAUNCH_MISSION,
 		playerId,
-		missionId,
+		missionInfoId,
 		unitIds,
 		timestamp: Date.now(),
 		status: ActionStatus.PENDING,
 		validate: (state: GameState) => {
-			if (unitIds.length === 0 || unitIds.length > 4) return false;
+			if (unitIds.length === 0 || unitIds.length > 4) {
+				console.error('Unit count wrong', unitIds.length);
+				return false;
+			}
 
-			const mission = DEFAULT_MISSIONS[missionId];
-			if (!mission) return false;
+			const mission = DEFAULT_MISSIONS[missionInfoId];
+			if (!mission) {
+				console.error('No mission info found', missionInfoId, DEFAULT_MISSIONS);
+				return false;
+			}
 
 			const player = state.players.get(playerId);
-			if (!player) return false;
+			if (!player) {
+				console.error('No player found', player, state.players);
+				return false;
+			}
 
-			return unitIds.every((uid) => {
+			const isAllUnitsCorrect = unitIds.every((uid) => {
 				const u = state.units.get(uid);
-				return u && u.ownerId === playerId && u.status === UnitStatus.IDLE;
+				return (
+					u &&
+					(u.ownerId === playerId || u.rank === UnitRank.ASSOCIATE) &&
+					u.status === UnitStatus.IDLE
+				);
 			});
+			if (!isAllUnitsCorrect) {
+				console.error('Not all units are correct', unitIds, state.units);
+				return false;
+			}
+			return true;
 		}
 	};
 };

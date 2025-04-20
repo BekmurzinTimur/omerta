@@ -59,7 +59,7 @@
 				<AssignUnit
 					id="territory{territory.id}"
 					onDrop={handleDrop}
-					accepts={['unit']}
+					accepts={['member']}
 					assignedUnit={droppedItem?.data || managerUnit}
 					{confirmed}
 					onRemove={handleRemove}
@@ -73,7 +73,7 @@
 				<AssignUnit
 					id="territory{territory.id}"
 					onDrop={handleDrop}
-					accepts={['unit']}
+					accepts={['member']}
 					assignedUnit={droppedItem?.data || capturerUnit}
 					confirmed={capturerConfirmed}
 					disableRemove

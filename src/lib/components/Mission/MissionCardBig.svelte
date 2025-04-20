@@ -1,21 +1,24 @@
 <!-- src/lib/components/MissionCard.svelte -->
 <script lang="ts">
-	import type { IMission } from '$lib/models/MissionModels';
+	import type { IMission, IMissionInfo } from '$lib/models/MissionModels';
 	import type { IUnit } from '$lib/models/UnitModels';
 	import { CoreAttribute } from '$lib/models/UnitModels';
+	import { launchMission } from '$lib/services/GameController.svelte';
 	import type { DraggableItem } from '../DragAndDrop/DragAndDropTypes';
 	import AssignUnit from '../Unit/AssignUnit.svelte';
 
 	/** The mission you want to display & launch */
-	let { mission }: { mission: IMission } = $props();
+	let { missionInfo }: { missionInfo: IMissionInfo } = $props();
 
-	function onLaunch(missionId: string, unitIds: string[]) {}
+	function onLaunch(missionId: string, unitIds: string[]) {
+		launchMission(missionId, unitIds);
+	}
 
 	const maxSlots = 4;
 
 	// local state of dropped units
-	let assignments: (IUnit | undefined)[] = Array(maxSlots).fill(undefined);
-	let confirmed = false;
+	let assignments: (IUnit | undefined)[] = $state(Array(maxSlots).fill(undefined));
+	let confirmed = $state(false);
 
 	// reactive total of all skills across all assigned units
 	let teamPower = $derived(
@@ -28,11 +31,14 @@
 	);
 
 	// sum of all difficulty values
-	let missionDifficulty = $derived(Object.values(mission.difficulty).reduce((a, b) => a + b, 0));
+	let missionDifficulty = $derived(
+		Object.values(missionInfo.difficulty).reduce((a, b) => a + b, 0)
+	);
 
 	// called by each slot when a unit is dropped
 	function handleDrop(slotIndex: number) {
 		return (result: { item: DraggableItem }) => {
+			console.log('drop', result, confirmed);
 			if (confirmed) return;
 			assignments[slotIndex] = result.item.data as IUnit;
 		};
@@ -48,7 +54,7 @@
 
 	function launch() {
 		const unitIds = assignments.filter((u) => u).map((u) => u!.id);
-		onLaunch(mission.id, unitIds);
+		onLaunch(missionInfo.infoId, unitIds);
 		confirmed = true;
 	}
 </script>
@@ -56,18 +62,18 @@
 <div class="relative overflow-hidden rounded-xl bg-gray-900 text-white shadow-lg">
 	<!-- Background image, toned down -->
 	<img
-		src={mission.image}
-		alt={mission.name}
+		src={missionInfo.image}
+		alt={missionInfo.name}
 		class="absolute inset-0 h-full w-full object-cover opacity-20"
 	/>
 
 	<div class="relative space-y-4 p-6">
 		<!-- Mission title -->
-		<h3 class="text-3xl font-bold">{mission.name}</h3>
+		<h3 class="text-3xl font-bold">{missionInfo.name}</h3>
 
 		<!-- Difficulty by attribute -->
 		<div class="flex space-x-6">
-			{#each Object.entries(mission.difficulty) as [attr, value]}
+			{#each Object.entries(missionInfo.difficulty) as [attr, value]}
 				<div class="flex flex-col items-center">
 					<span class="text-sm font-medium uppercase">{attr}</span>
 					<span class="text-lg">{value}</span>
@@ -81,11 +87,12 @@
 				<AssignUnit
 					id={'slot-' + idx}
 					onDrop={handleDrop(idx)}
-					accepts={['unit']}
+					accepts={['member', 'associate']}
 					assignedUnit={assignments[idx]}
 					{confirmed}
 					onRemove={handleRemove(idx)}
 					disableRemove={confirmed}
+					disabled={confirmed}
 				/>
 			{/each}
 		</div>

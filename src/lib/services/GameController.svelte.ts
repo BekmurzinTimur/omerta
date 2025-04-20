@@ -10,7 +10,7 @@ import {
 	createLaunchMissionAction
 } from './ActionManager.svelte';
 
-import { DEFAULT_MISSIONS, type IMission, type MissionTemplate } from '../models/MissionModels';
+import { DEFAULT_MISSIONS, type IMission, type IMissionInfo } from '../models/MissionModels';
 
 let state = gameState.state;
 // This controller acts as an interface between the UI and the game systems
@@ -114,11 +114,11 @@ const getCurrentDateFormatted = () => {
 	return `${year}-${month}-${day} ${hour}:00`;
 };
 
-const getAvailableMissions = (): MissionTemplate[] => {
+const getAvailableMissions = (): IMissionInfo[] => {
 	const player = getLocalPlayer();
 	if (!player) return [];
 
-	const activeTemplates = new Set(getMyMissions().map((m) => m.templateId));
+	const activeTemplates = new Set(getMyMissions().map((m) => m.missionInfoId));
 
 	return player.unlockedMissionIds
 		.filter((id) => !activeTemplates.has(id)) // exclude running ones
