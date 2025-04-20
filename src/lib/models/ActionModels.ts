@@ -7,7 +7,7 @@ export interface Action {
 	playerId: string;
 	timestamp: number;
 	status: ActionStatus;
-	validate: (state: any) => boolean; // Will be used to check if action is valid
+	validate: (state: any) => { valid: boolean; reason?: string }; // Will be used to check if action is valid
 }
 
 // Action types

@@ -24,7 +24,6 @@ export interface GameState {
 	territories: Map<string, ITerritory>;
 	units: Map<string, IUnit>;
 	missions: Map<string, IMission>;
-	availableUnits: Map<string, IUnit>;
 	currentDate: Date;
 	isRunning: boolean;
 	tickCount: number;

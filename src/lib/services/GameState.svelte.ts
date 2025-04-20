@@ -110,9 +110,8 @@ const createInitialState = () => {
 		unitMap.set(unit.id, unit);
 	});
 
-	const availableUnits = new SvelteMap<string, IUnit>();
 	mockUnits.forEach((unit) => {
-		availableUnits.set(unit.id, unit);
+		unitMap.set(unit.id, unit);
 	});
 
 	const missionMap = new SvelteMap<string, IMission>();
@@ -124,7 +123,6 @@ const createInitialState = () => {
 		currentDate: startDate,
 		isRunning: false,
 		tickCount: 0,
-		availableUnits,
 		missions: missionMap
 	};
 };

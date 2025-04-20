@@ -1,7 +1,12 @@
 <script lang="ts">
 	import { UnitStatus } from '$lib/models/UnitModels';
 	import { getUsedUnits } from '$lib/services/UiState.svelte';
-	import { getAllUnits, getAssociates, getTick } from '../services/GameController.svelte';
+	import {
+		getAllUnits,
+		getAssociates,
+		getPlayerUnits,
+		getTick
+	} from '../services/GameController.svelte';
 	import Draggable from './DragAndDrop/Draggable.svelte';
 	import UnitCard from './UnitCard.svelte';
 
@@ -9,7 +14,7 @@
 
 	// Get all units in the game
 	let usedUnits = $derived(getUsedUnits());
-	let units = $derived(getAllUnits());
+	let units = $derived(getPlayerUnits());
 	let associates = $derived(getAssociates());
 
 	$effect(() => {

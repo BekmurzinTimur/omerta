@@ -16,6 +16,7 @@ import {
 	type IMission,
 	type IMissionInfo
 } from '../models/MissionModels';
+import { UnitRank } from '$lib/models/UnitModels';
 
 let state = gameState.state;
 // This controller acts as an interface between the UI and the game systems
@@ -110,12 +111,7 @@ const getAllUnitsMap = () => {
 
 // Get all units
 const getAssociates = () => {
-	return Array.from(state.availableUnits.values());
-};
-
-// Get all units
-const getAssociatesMap = () => {
-	return state.availableUnits;
+	return Array.from(state.units.values()).filter((unit) => unit.rank === UnitRank.ASSOCIATE);
 };
 
 // Get units owned by the local player
@@ -167,7 +163,6 @@ export {
 	getAllUnits,
 	getAllUnitsMap,
 	getAssociates,
-	getAssociatesMap,
 	getPlayerUnits,
 	getCurrentDateFormatted,
 	getPlayerColor,
