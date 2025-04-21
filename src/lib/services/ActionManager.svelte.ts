@@ -459,6 +459,7 @@ const resolveMission = (state: GameState, playerId: string, activeMission: IMiss
 			loyalty: unit.loyalty + loyaltyDelta,
 			heat: unit.heat + 1
 		};
+		console.log('UNIT', { updated });
 		state.units.set(uid, updated);
 	});
 

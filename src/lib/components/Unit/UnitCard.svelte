@@ -1,7 +1,7 @@
 <script lang="ts">
 	/* --------‑‑ Imports & props ‑‑-------- */
 	import { type IUnit, CoreAttribute } from '$lib/models/UnitModels';
-	import { addWindow } from './DialogWindows/windowStore.svelte';
+	import { addWindow } from '../DialogWindows/windowStore.svelte';
 	import UnitCardBig from './UnitCardBig.svelte';
 
 	let { unit, assigned }: { unit: IUnit; assigned?: boolean } = $props();

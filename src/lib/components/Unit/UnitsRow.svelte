@@ -6,8 +6,8 @@
 		getAssociates,
 		getPlayerUnits,
 		getTick
-	} from '../services/GameController.svelte';
-	import Draggable from './DragAndDrop/Draggable.svelte';
+	} from '../../services/GameController.svelte';
+	import Draggable from '../DragAndDrop/Draggable.svelte';
 	import UnitCard from './UnitCard.svelte';
 
 	let tick: number = $derived(getTick());

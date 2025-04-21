@@ -5,8 +5,8 @@
 	import { getAllTerritories } from '../services/GameController.svelte';
 	import GridMap from './Map/GridMap.svelte';
 	import Header from './Header.svelte';
-	import Footer from './Footer.svelte';
-	import Territory from './Territory.svelte';
+	import UnitsRow from './Unit/UnitsRow.svelte';
+	import Territory from './Territory/Territory.svelte';
 	import MissionSidebar from './Mission/MissionSidebar.svelte';
 
 	// Store only the ID of the selected cell
@@ -41,7 +41,7 @@
 		</div>
 		<MissionSidebar />
 	</div>
-	<Footer />
+	<UnitsRow />
 </div>
 
 <style>

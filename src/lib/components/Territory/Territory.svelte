@@ -9,10 +9,10 @@
 		startCapturingTerritory
 	} from '$lib/services/GameController.svelte';
 	import { SvelteMap } from 'svelte/reactivity';
-	import { type DraggableItem, type DropResult } from './DragAndDrop/DragAndDropTypes';
-	import DropZone from './DragAndDrop/DropZone.svelte';
-	import UnitDrop from './Unit/UnitDrop.svelte';
-	import AssignUnit from './Unit/AssignUnit.svelte';
+	import { type DraggableItem, type DropResult } from '../DragAndDrop/DragAndDropTypes';
+	import DropZone from '../DragAndDrop/DropZone.svelte';
+	import UnitDrop from '../Unit/UnitDrop.svelte';
+	import AssignUnit from '../Unit/AssignUnit.svelte';
 
 	let { territory }: { territory?: ITerritory } = $props();
 	let droppedItemsMap = $state(new SvelteMap<string, DraggableItem>());

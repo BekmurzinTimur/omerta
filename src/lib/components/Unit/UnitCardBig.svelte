@@ -2,8 +2,6 @@
 	/* --------‑‑ Imports & props ‑‑-------- */
 	import { type IUnit, CoreAttribute } from '$lib/models/UnitModels';
 	import { hireUnit } from '$lib/services/GameController.svelte';
-	import { addWindow } from './DialogWindows/windowStore.svelte';
-	import UnitCardBig from './UnitCardBig.svelte';
 
 	let { unit }: { unit: IUnit } = $props();
 
