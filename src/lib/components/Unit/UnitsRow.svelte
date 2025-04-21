@@ -18,7 +18,7 @@
 	let associates = $derived(getAssociates());
 
 	$effect(() => {
-		if (Number.isNaN(tick)) return;
+		tick;
 		usedUnits.clear();
 	});
 </script>

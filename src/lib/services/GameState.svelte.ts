@@ -1,7 +1,7 @@
 //GameState.svelte.ts
 import { SvelteMap } from 'svelte/reactivity';
 import { type GameState as GameStateInterface, type Player } from '../models/GameModels';
-import { UnitRank, UnitStatus, type IUnit } from '$lib/models/UnitModels';
+import { type IUnit } from '$lib/models/UnitModels';
 import { mockUnits } from '$lib/const/mockData';
 import type { ITerritory } from '$lib/models/TerritoryModel';
 import { DEFAULT_MISSIONS, type IMission } from '$lib/models/MissionModels';
@@ -53,46 +53,7 @@ const createInitialState = () => {
 	playerOne.territories = territories.filter((t) => t.ownerId === 'player1');
 
 	// Create initial units
-	const units: IUnit[] = [
-		{
-			id: 'unit1',
-			name: 'John Doe',
-			ownerId: 'player1',
-			rank: UnitRank.SOLDIER,
-			skills: {
-				Muscle: 3,
-				Brains: 5,
-				Cunning: 6,
-				Influence: 9
-			},
-			experience: 50,
-			loyalty: 75,
-			heat: 20,
-			level: 3,
-			cut: 10,
-			status: UnitStatus.IDLE,
-			image: 1
-		},
-		{
-			id: 'unit2',
-			name: 'Jack Doe',
-			ownerId: 'player1',
-			rank: UnitRank.CAPO,
-			skills: {
-				Muscle: 4,
-				Brains: 6,
-				Cunning: 7,
-				Influence: 10
-			},
-			experience: 4,
-			loyalty: 5,
-			heat: 80,
-			level: 6,
-			cut: 10,
-			status: UnitStatus.IDLE,
-			image: 2
-		}
-	];
+	const units: string[] = ['unit1', 'unit2'];
 
 	playerOne.units = units;
 
@@ -106,9 +67,6 @@ const createInitialState = () => {
 	});
 
 	const unitMap = new SvelteMap<string, IUnit>();
-	units.forEach((unit) => {
-		unitMap.set(unit.id, unit);
-	});
 
 	mockUnits.forEach((unit) => {
 		unitMap.set(unit.id, unit);

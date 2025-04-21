@@ -116,8 +116,9 @@ const getAssociates = () => {
 
 // Get units owned by the local player
 const getPlayerUnits = () => {
+	const allUnitsMap = getAllUnitsMap();
 	const player = getLocalPlayer();
-	return player ? player.units : [];
+	return player ? player.units.map((unitId) => allUnitsMap.get(unitId)!) : [];
 };
 
 // Get the current game date as a formatted string

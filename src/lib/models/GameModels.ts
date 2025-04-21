@@ -13,7 +13,7 @@ export interface Player {
 		manpower: number;
 	};
 	territories: ITerritory[];
-	units: IUnit[];
+	units: string[];
 	color: string;
 	unlockedMissionIds: string[];
 }

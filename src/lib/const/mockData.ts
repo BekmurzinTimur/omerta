@@ -2,6 +2,44 @@ import { UnitRank, UnitStatus, type IUnit } from '$lib/models/UnitModels';
 
 export const mockUnits: IUnit[] = [
 	{
+		id: 'unit1',
+		name: 'John Doe',
+		ownerId: 'player1',
+		rank: UnitRank.SOLDIER,
+		skills: {
+			Muscle: 3,
+			Brains: 5,
+			Cunning: 6,
+			Influence: 9
+		},
+		experience: 50,
+		loyalty: 75,
+		heat: 20,
+		level: 3,
+		cut: 10,
+		status: UnitStatus.IDLE,
+		image: 1
+	},
+	{
+		id: 'unit2',
+		name: 'Jack Doe',
+		ownerId: 'player1',
+		rank: UnitRank.CAPO,
+		skills: {
+			Muscle: 4,
+			Brains: 6,
+			Cunning: 7,
+			Influence: 10
+		},
+		experience: 4,
+		loyalty: 5,
+		heat: 80,
+		level: 6,
+		cut: 10,
+		status: UnitStatus.IDLE,
+		image: 2
+	},
+	{
 		id: '_unit1',
 		name: 'Vinny Malone',
 		nickname: 'The Shark',

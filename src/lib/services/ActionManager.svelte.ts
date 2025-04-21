@@ -305,7 +305,7 @@ const processHireUnitAction = (action: HireUnitAction): void => {
 	unit.rank = UnitRank.SOLDIER;
 
 	// Add unit to player's units
-	const updatedUnits = [...player.units, unit];
+	const updatedUnits = [...player.units, unit.id];
 	gameState.updatePlayer(playerId, { units: updatedUnits });
 
 	console.log(`Player ${playerId} hired ${unit.name} unit`);
