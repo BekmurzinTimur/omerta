@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { MissionStatus, type IMission, type IMissionInfo } from '$lib/models/MissionModels';
-	import { getAllUnitsMap } from '$lib/services/GameController.svelte';
+	import { getAllUnitsMap, getTick } from '$lib/services/GameController.svelte';
 	import { getUnitImage } from '$lib/utils/common';
 	import { addWindow } from '../DialogWindows/windowStore.svelte';
 	import AttributesList from './AttributesList.svelte';
@@ -9,15 +9,21 @@
 	let {
 		missionInfo,
 		mission,
-		progress = 0,
 		eta = ''
 	}: {
 		missionInfo: IMissionInfo;
 		mission?: IMission;
-		progress?: number;
 		eta?: string;
 	} = $props();
 
+	let tick = $derived(getTick());
+	let progress = $derived.by<number>(() => {
+		if (!mission) return 0;
+		if (mission.status !== MissionStatus.ACTIVE) return 100;
+		let length = mission.endTick - mission.startTick;
+		let tickPassed = tick - mission.startTick;
+		return Math.min(Math.round((tickPassed / length) * 100), 100);
+	});
 	let allUnitsMap = $derived(getAllUnitsMap());
 	let isActive = $derived(!!mission);
 	let unitImages = $derived(
@@ -54,11 +60,6 @@
 
 			<AttributesList stats={missionInfo.difficulty} />
 		{:else}
-			<!-- progress bar -->
-			<div class="h-2 w-full overflow-hidden rounded-full bg-white/20">
-				<div class="h-full bg-green-400 transition-all" style="width: {progress}%" />
-			</div>
-
 			<div class="text-xs text-white/90">ETA: {eta}</div>
 
 			<div class="flex justify-between">
@@ -79,6 +80,11 @@
 				>
 					{mission?.status}
 				</div>
+			</div>
+
+			<!-- progress bar -->
+			<div class="h-2 w-full overflow-hidden rounded-full bg-white/20">
+				<div class="h-full bg-white transition-all" style="width: {progress}%" />
 			</div>
 		{/if}
 	</div>

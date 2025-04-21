@@ -37,7 +37,6 @@
 					<MissionCard
 						mission={activeMission}
 						missionInfo={DEFAULT_MISSIONS[activeMission.missionInfoId]}
-						progress={0}
 						eta="unknown"
 					/>
 				{/each}
@@ -61,7 +60,6 @@
 				<MissionCard
 					mission={finishedMission}
 					missionInfo={DEFAULT_MISSIONS[finishedMission.missionInfoId]}
-					progress={0}
 					eta="finished"
 				/>
 			{/each}
