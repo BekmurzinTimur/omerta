@@ -147,6 +147,10 @@ const launchMission = (missionId: string, unitIds: string[]) => {
 	queueAction(action);
 };
 
+const getActiveMission = (missionInfoId: string): IMission | undefined => {
+	return getActiveMissions().filter((mission) => mission.missionInfoId === missionInfoId)[0];
+};
+
 // Export the game controller functions
 export {
 	getTick,
@@ -169,5 +173,6 @@ export {
 	getMyMissions,
 	getAvailableMissions,
 	getActiveMissions,
-	getFinishedMissions
+	getFinishedMissions,
+	getActiveMission
 };
