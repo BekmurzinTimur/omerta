@@ -15,9 +15,11 @@ import type {
 	LaunchMissionAction,
 	RemoveFromTerritoryAction
 } from '../models/ActionModels';
-import { UnitStatus, UnitRank, CoreAttribute } from '$lib/models/UnitModels';
+import { UnitStatus, UnitRank } from '$lib/models/UnitModels';
 import { DEFAULT_MISSIONS, MissionStatus, type IMission } from '$lib/models/MissionModels';
 import { addScheduledAction } from './ScheduledActionManager.svelte';
+import { checkMissionSuccess, getTeamStats } from '$lib/utils/common';
+import { getAllUnitsMap } from './GameController.svelte';
 
 // Queue of actions waiting to be processed
 let actionQueue = $state<Action[]>([]);
@@ -419,17 +421,11 @@ const resolveMission = (state: GameState, playerId: string, activeMission: IMiss
 	const missionInfo = DEFAULT_MISSIONS[missionInfoId];
 	const player = state.players.get(playerId);
 	if (!missionInfo || !player) return;
+	const allUnits = getAllUnitsMap();
 
-	// 1. calculate combined relevant stats
-	let total = 0;
-	Object.entries(missionInfo.difficulty).forEach(([attrStr]) => {
-		const attr = attrStr as CoreAttribute;
-		const sum = unitIds.reduce((acc, uid) => acc + (state.units.get(uid)?.skills[attr] ?? 0), 0);
-		total += sum;
-	});
-
-	const required = Object.values(missionInfo.difficulty).reduce((a, b) => a + b, 0);
-	const success = total >= required;
+	const units = unitIds.map((unitId) => allUnits.get(unitId));
+	const teamStats = getTeamStats(units);
+	const success = checkMissionSuccess(missionInfo.difficulty, teamStats);
 
 	// 2. Apply money to player
 	if (success) {

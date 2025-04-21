@@ -18,10 +18,10 @@ export const DEFAULT_MISSIONS: Record<string, IMissionInfo> = {
 		name: 'Shakedown Local Shop',
 		reward: 1_000,
 		difficulty: {
-			[CoreAttribute.MUSCLE]: 4,
-			[CoreAttribute.BRAINS]: 0,
-			[CoreAttribute.CUNNING]: 0,
-			[CoreAttribute.INFLUENCE]: 0
+			[CoreAttribute.MUSCLE]: 20,
+			[CoreAttribute.BRAINS]: 20,
+			[CoreAttribute.CUNNING]: 20,
+			[CoreAttribute.INFLUENCE]: 20
 		},
 		durationTicks: 3,
 		repeatable: true,

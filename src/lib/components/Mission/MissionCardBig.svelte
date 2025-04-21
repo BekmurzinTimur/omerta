@@ -3,9 +3,11 @@
 	import type { IMission, IMissionInfo } from '$lib/models/MissionModels';
 	import type { IUnit } from '$lib/models/UnitModels';
 	import { CoreAttribute } from '$lib/models/UnitModels';
-	import { launchMission } from '$lib/services/GameController.svelte';
+	import { getAllUnits, launchMission } from '$lib/services/GameController.svelte';
+	import { calculateMissionSuccessChance, getTeamStats } from '$lib/utils/common';
 	import type { DraggableItem } from '../DragAndDrop/DragAndDropTypes';
 	import AssignUnit from '../Unit/AssignUnit.svelte';
+	import AttributesList from './AttributesList.svelte';
 
 	/** The mission you want to display & launch */
 	let { missionInfo }: { missionInfo: IMissionInfo } = $props();
@@ -18,22 +20,17 @@
 
 	// local state of dropped units
 	let assignments: (IUnit | undefined)[] = $state(Array(maxSlots).fill(undefined));
+
 	let confirmed = $state(false);
+	let teamStats = $derived.by(() => {
+		return getTeamStats(assignments);
+	});
 
-	// reactive total of all skills across all assigned units
-	let teamPower = $derived(
-		assignments
-			.filter((u): u is IUnit => !!u)
-			.reduce(
-				(sum, unit) => sum + Object.values(unit.skills).reduce((attrSum, v) => attrSum + v, 0),
-				0
-			)
-	);
+	let successChance = $derived(calculateMissionSuccessChance(missionInfo.difficulty, teamStats));
 
-	// sum of all difficulty values
-	let missionDifficulty = $derived(
-		Object.values(missionInfo.difficulty).reduce((a, b) => a + b, 0)
-	);
+	$effect(() => {
+		console.log({ successChance, teamStats, missionInfo });
+	});
 
 	// called by each slot when a unit is dropped
 	function handleDrop(slotIndex: number) {
@@ -77,15 +74,13 @@
 	<div class="relative space-y-4 p-6">
 		<!-- Mission title -->
 		<h3 class="text-3xl font-bold">{missionInfo.name}</h3>
+		<h4 class="text-xl font-bold">Success chance: {successChance}</h4>
 
-		<!-- Difficulty by attribute -->
-		<div class="flex space-x-6">
-			{#each Object.entries(missionInfo.difficulty) as [attr, value]}
-				<div class="flex flex-col items-center">
-					<span class="text-sm font-medium uppercase">{attr}</span>
-					<span class="text-lg">{value}</span>
-				</div>
-			{/each}
+		<div>
+			<span class="font-semibold">Team Power:</span>
+			<AttributesList stats={teamStats} />
+			<span class="font-semibold">Difficulty:</span>
+			<AttributesList stats={missionInfo.difficulty} />
 		</div>
 
 		<!-- Four drop‑zones for units -->
@@ -107,13 +102,6 @@
 
 		<!-- Power vs. Difficulty + Launch button -->
 		<div class="flex items-center justify-between border-t border-gray-700 pt-4">
-			<div>
-				<span class="font-semibold">Team Power:</span>
-				{teamPower}
-				<span class="ml-6 font-semibold">Difficulty:</span>
-				{missionDifficulty}
-			</div>
-
 			<button
 				class="rounded bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
 				onclick={launch}

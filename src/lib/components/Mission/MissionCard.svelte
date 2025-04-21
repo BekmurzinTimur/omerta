@@ -1,8 +1,9 @@
 <script lang="ts">
-	import type { IMission, IMissionInfo } from '$lib/models/MissionModels';
+	import { MissionStatus, type IMission, type IMissionInfo } from '$lib/models/MissionModels';
 	import { getAllUnitsMap } from '$lib/services/GameController.svelte';
 	import { getUnitImage } from '$lib/utils/common';
 	import { addWindow } from '../DialogWindows/windowStore.svelte';
+	import AttributesList from './AttributesList.svelte';
 	import MissionCardBig from './MissionCardBig.svelte';
 
 	let {
@@ -51,11 +52,7 @@
 		{#if !isActive}
 			<div class="text-sm text-white/80">Reward: ${missionInfo.reward.toLocaleString()}</div>
 
-			<div class="flex flex-wrap gap-2 text-xs text-white/80">
-				{#each Object.entries(missionInfo.difficulty) as [key, val]}
-					<span>{key}: {val}</span>
-				{/each}
-			</div>
+			<AttributesList stats={missionInfo.difficulty} />
 		{:else}
 			<!-- progress bar -->
 			<div class="h-2 w-full overflow-hidden rounded-full bg-white/20">
@@ -64,14 +61,24 @@
 
 			<div class="text-xs text-white/90">ETA: {eta}</div>
 
-			<div class="mt-1 flex -space-x-2">
-				{#each unitImages as img}
-					<img
-						src={img}
-						alt="unit"
-						class="h-6 w-6 rounded-full border-2 border-white object-cover"
-					/>
-				{/each}
+			<div class="flex justify-between">
+				<div class="mt-1 flex -space-x-2">
+					{#each unitImages as img}
+						<img
+							src={img}
+							alt="unit"
+							class="h-6 w-6 rounded-full border-2 border-white object-cover"
+						/>
+					{/each}
+				</div>
+				<div
+					class="rounded-sm px-2"
+					class:bg-red-500={mission?.status === MissionStatus.FAILED}
+					class:bg-green-500={mission?.status === MissionStatus.SUCCEEDED}
+					class:bg-gray-500={mission?.status === MissionStatus.ACTIVE}
+				>
+					{mission?.status}
+				</div>
 			</div>
 		{/if}
 	</div>
