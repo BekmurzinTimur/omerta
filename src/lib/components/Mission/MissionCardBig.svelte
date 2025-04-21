@@ -3,8 +3,9 @@
 	import { MissionStatus, type IMissionInfo } from '$lib/models/MissionModels';
 	import type { IUnit } from '$lib/models/UnitModels';
 	import {
-		getActiveMission,
+		getMyMission,
 		getAllUnitsMap,
+		getMyMissions,
 		getTick,
 		launchMission
 	} from '$lib/services/GameController.svelte';
@@ -13,6 +14,7 @@
 	import AssignUnit from '../Unit/AssignUnit.svelte';
 	import UnitLocked from '../Unit/UnitLocked.svelte';
 	import AttributesList from './AttributesList.svelte';
+	import MissionStatusBadge from './MissionStatusBadge.svelte';
 
 	/** The mission you want to display & launch */
 	let { missionInfo }: { missionInfo: IMissionInfo } = $props();
@@ -32,7 +34,8 @@
 	});
 
 	let successChance = $derived(calculateMissionSuccessChance(missionInfo.difficulty, teamStats));
-	let activeMission = $derived(getActiveMission(missionInfo.infoId));
+	let allMissions = $derived(getMyMissions());
+	let activeMission = $derived(getMyMission(missionInfo.infoId));
 	let tick = $derived(getTick());
 	let progress = $derived.by<number>(() => {
 		if (!activeMission) return 0;
@@ -41,6 +44,7 @@
 		let tickPassed = tick - activeMission.startTick;
 		return Math.min(Math.round((tickPassed / length) * 100), 100);
 	});
+	let missionCompleted = $derived(activeMission && activeMission.status !== MissionStatus.ACTIVE);
 
 	// called by each slot when a unit is dropped
 	function handleDrop(slotIndex: number) {
@@ -82,7 +86,12 @@
 
 	<div class="relative space-y-4 p-6">
 		<!-- Mission title -->
-		<h3 class="text-3xl font-bold">{missionInfo.name}</h3>
+		<div class="flex items-center justify-between">
+			<h3 class="text-3xl font-bold">{missionInfo.name}</h3>
+			{#if activeMission}
+				<MissionStatusBadge status={activeMission.status} />
+			{/if}
+		</div>
 		<h4 class="text-xl font-bold">Success chance: {successChance}</h4>
 
 		<div>
@@ -93,7 +102,6 @@
 		</div>
 
 		{#if activeMission}
-			<h4 class="text-xl font-bold">Mission started</h4>
 			<div class="grid grid-cols-4 gap-4">
 				{#each activeMission.unitIds as unitId}
 					{@const unit = getAllUnitsMap().get(unitId)}

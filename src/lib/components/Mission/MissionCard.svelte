@@ -5,6 +5,7 @@
 	import { addWindow } from '../DialogWindows/windowStore.svelte';
 	import AttributesList from './AttributesList.svelte';
 	import MissionCardBig from './MissionCardBig.svelte';
+	import MissionStatusBadge from './MissionStatusBadge.svelte';
 
 	let {
 		missionInfo,
@@ -72,14 +73,7 @@
 						/>
 					{/each}
 				</div>
-				<div
-					class="rounded-sm px-2"
-					class:bg-red-500={mission?.status === MissionStatus.FAILED}
-					class:bg-green-500={mission?.status === MissionStatus.SUCCEEDED}
-					class:bg-gray-500={mission?.status === MissionStatus.ACTIVE}
-				>
-					{mission?.status}
-				</div>
+				<MissionStatusBadge status={mission?.status} />
 			</div>
 
 			<!-- progress bar -->

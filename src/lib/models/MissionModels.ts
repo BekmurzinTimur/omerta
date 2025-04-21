@@ -23,7 +23,7 @@ export const DEFAULT_MISSIONS: Record<string, IMissionInfo> = {
 			[CoreAttribute.CUNNING]: 20,
 			[CoreAttribute.INFLUENCE]: 20
 		},
-		durationTicks: 14,
+		durationTicks: 2,
 		repeatable: true,
 		image: '/themes/shop_shakedown.png' // put your file in static or assets
 	}

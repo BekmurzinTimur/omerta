@@ -7,7 +7,6 @@ export function calculateMissionSuccessChance(
 	missionRequirements: Record<CoreAttribute, number>,
 	teamAttributes: Record<CoreAttribute, number>
 ): number {
-	console.log({ missionRequirements, teamAttributes });
 	// Calculate individual success chances for each attribute
 	const muscleChance = missionRequirements[CoreAttribute.MUSCLE]
 		? Math.min(
@@ -54,8 +53,6 @@ export function checkMissionSuccess(
 
 	// Roll once for the overall mission (1-100)
 	const roll = Math.floor(Math.random() * 100) + 1;
-
-	console.log({ roll });
 
 	// Mission succeeds if roll is less than or equal to success chance
 	return roll <= successChance;
