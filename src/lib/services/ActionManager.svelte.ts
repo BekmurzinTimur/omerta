@@ -20,6 +20,7 @@ import { MissionStatus, type IMission } from '$lib/models/MissionModels';
 import { addScheduledAction } from './ScheduledActionManager.svelte';
 import { checkMissionSuccess, getTeamStats } from '$lib/utils/common';
 import { getAllUnitsMap } from './GameController.svelte';
+import { isNeighboringPlayerTerritory } from '$lib/utils/mapUtils';
 
 // Queue of actions waiting to be processed
 let actionQueue = $state<Action[]>([]);
@@ -53,6 +54,8 @@ const validateStartCapture = (
 		return { valid: false, reason: 'You already own this territory' };
 	if (territory.isBeingCaptured)
 		return { valid: false, reason: 'Territory is already under siege' };
+	if (!isNeighboringPlayerTerritory(territory, gameState.state.territories, player.id))
+		return { valid: false, reason: 'Territory is not neighbouring any players territory' };
 
 	return { valid: true };
 };
