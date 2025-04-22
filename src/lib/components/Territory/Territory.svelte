@@ -78,10 +78,7 @@
 					{confirmed}
 					onRemove={handleRemove}
 				/>
-			{:else}
-				{#if isNeighbouringMyTerritory}
-					can capture
-				{/if}
+			{:else if isNeighbouringMyTerritory}
 				<span class="text-lg font-bold">Capture</span>
 				<div>
 					<span>Capture progress: </span>
