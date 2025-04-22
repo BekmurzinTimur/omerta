@@ -302,7 +302,8 @@ const processHireUnitAction = (action: HireUnitAction): void => {
 	const player = gameState.state.players.get(playerId)!;
 	const unit = gameState.state.units.get(unitId)!;
 
-	unit.rank = UnitRank.SOLDIER;
+	// unit.rank = UnitRank.SOLDIER;
+	gameState.updateUnit(unitId, { rank: UnitRank.SOLDIER });
 
 	// Add unit to player's units
 	const updatedUnits = [...player.units, unit.id];
@@ -443,8 +444,11 @@ const resolveMission = (state: GameState, playerId: string, activeMission: IMiss
 		});
 	}
 
+	console.log('is repeatable', missionInfo.repeatable, missionInfo);
 	if (missionInfo.repeatable) {
-		player.unlockedMissionIds.push(missionInfoId);
+		gameState.updatePlayer(playerId, {
+			unlockedMissionIds: [...player.unlockedMissionIds, missionInfoId]
+		});
 	}
 
 	// 3. Update each unit

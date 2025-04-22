@@ -42,7 +42,7 @@
 		addWindow({
 			id: `window-${Date.now()}`,
 			title: `Unit: ${unit.name}`,
-			content: { component: UnitCardBig, props: { unit } },
+			content: { component: UnitCardBig, props: { unitId: unit.id } },
 			position: { x: Math.random() * 200 + 50, y: Math.random() * 200 + 50 },
 			size: { width: 600, height: 500 }
 		});

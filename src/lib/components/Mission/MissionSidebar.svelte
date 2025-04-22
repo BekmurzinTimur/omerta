@@ -1,24 +1,17 @@
 <script lang="ts">
 	import MissionCard from './MissionCard.svelte';
 
-	import { DEFAULT_MISSIONS, MissionStatus, type IMissionInfo } from '$lib/models/MissionModels';
+	import { DEFAULT_MISSIONS, MissionStatus } from '$lib/models/MissionModels';
 	import Sidebar from '../Sidebar.svelte';
-	import {
-		getActiveMissions,
-		getAvailableMissions,
-		getFinishedMissions,
-		getMyMissions
-	} from '$lib/services/GameController.svelte';
+	import { getAvailableMissions, getMyMissions } from '$lib/services/GameController.svelte';
 
 	/** For now we expose an empty array – replace with real store later */
 	let myMissions = $derived(getMyMissions());
 	let activeMissions = $derived(myMissions.filter((m) => m.status === MissionStatus.ACTIVE));
 	let finishedMissions = $derived(myMissions.filter((m) => m.status !== MissionStatus.ACTIVE));
 	let availableMissions = $derived(getAvailableMissions());
-
 	$effect(() => {
-		console.log({ activeMissions, finishedMissions, availableMissions, myMissions });
-		console.log(myMissions.filter((m) => m.status === MissionStatus.SUCCEEDED));
+		console.log({ availableMissions });
 	});
 </script>
 
@@ -53,7 +46,7 @@
 		</div>
 
 		<!-- History -->
-		<h3 class="mt-6 text-sm font-semibold text-gray-400 uppercase">History of missions</h3>
+		<h3 class="mt-6 text-sm font-semibold text-gray-400 uppercase">History</h3>
 
 		<div class="mt-2 flex flex-col gap-2">
 			{#each finishedMissions as finishedMission}

@@ -109,6 +109,10 @@ const getAllUnitsMap = () => {
 	return state.units;
 };
 
+const getUnit = (unitId: string) => {
+	return state.units.get(unitId);
+};
+
 // Get all units
 const getAssociates = () => {
 	return Array.from(state.units.values()).filter((unit) => unit.rank === UnitRank.ASSOCIATE);
@@ -136,11 +140,7 @@ const getAvailableMissions = (): IMissionInfo[] => {
 	const player = getLocalPlayer();
 	if (!player) return [];
 
-	const activeTemplates = new Set(getMyMissions().map((m) => m.missionInfoId));
-
-	return player.unlockedMissionIds
-		.filter((id) => !activeTemplates.has(id)) // exclude running ones
-		.map((id) => DEFAULT_MISSIONS[id]);
+	return player.unlockedMissionIds.map((missionInfoId) => DEFAULT_MISSIONS[missionInfoId]!);
 };
 
 const launchMission = (missionId: string, unitIds: string[]) => {
@@ -167,6 +167,7 @@ export {
 	getCapturableTerritories,
 	getAllUnits,
 	getAllUnitsMap,
+	getUnit,
 	getAssociates,
 	getPlayerUnits,
 	getCurrentDateFormatted,

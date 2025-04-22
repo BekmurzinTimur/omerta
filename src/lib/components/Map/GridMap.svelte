@@ -148,7 +148,7 @@
 	<div class="absolute" style="transform: translate({position.x}px, {position.y}px);">
 		<!-- Background image that covers the entire grid area -->
 		<div
-			class="pointer-events-none absolute bg-cover bg-center"
+			class="pointer-events-none absolute bg-cover bg-center opacity-10"
 			style="
         width: {gridSize.width * cellSize}px;
         height: {gridSize.height * cellSize}px;
