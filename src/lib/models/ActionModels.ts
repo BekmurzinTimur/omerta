@@ -50,6 +50,7 @@ export interface ScheduledAction {
 // Scheduled action types
 export enum ScheduledActionType {
 	GENERATE_INCOME = 'GENERATE_INCOME',
+	GENERATE_MISSIONS = 'GENERATE_MISSIONS',
 	INCREASE_CAPTURE_PROGRESS = 'INCREASE_CAPTURE_PROGRESS',
 	MAINTENANCE_COST = 'MAINTENANCE_COST',
 	AI_DECISION = 'AI_DECISION',
@@ -87,6 +88,6 @@ export interface RemoveFromTerritoryAction extends Action {
 
 export interface LaunchMissionAction extends Action {
 	type: ActionType.LAUNCH_MISSION;
-	missionInfoId: string;
+	missionId: string;
 	unitIds: string[]; // 1–4 units
 }

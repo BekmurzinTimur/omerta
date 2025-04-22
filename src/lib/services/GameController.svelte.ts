@@ -10,12 +10,7 @@ import {
 	createLaunchMissionAction
 } from './ActionManager.svelte';
 
-import {
-	DEFAULT_MISSIONS,
-	MissionStatus,
-	type IMission,
-	type IMissionInfo
-} from '../models/MissionModels';
+import { MissionStatus, type IMission } from '../models/MissionModels';
 import { UnitRank } from '$lib/models/UnitModels';
 
 let state = gameState.state;
@@ -84,21 +79,23 @@ const getCapturableTerritories = () => {
 	);
 };
 
-const getMyMissions = (): IMission[] => {
-	return Array.from(state.missions.values()).filter((m) => m.playerId === LOCAL_PLAYER_ID);
-};
-
-const getActiveMissions = (): IMission[] => {
-	return Array.from(state.missions.values()).filter(
-		(m) => m.status === MissionStatus.ACTIVE && m.playerId === LOCAL_PLAYER_ID
+const getAvailableMissions = (): IMission[] =>
+	Array.from(gameState.state.missions.values()).filter(
+		(m) => m.playerId === LOCAL_PLAYER_ID && m.status === MissionStatus.AVAILABLE
 	);
-};
 
-const getFinishedMissions = (): IMission[] => {
-	return Array.from(state.missions.values()).filter(
-		(m) => m.status !== MissionStatus.ACTIVE && m.playerId === LOCAL_PLAYER_ID
+const getActiveMissions = (): IMission[] =>
+	Array.from(gameState.state.missions.values()).filter(
+		(m) => m.playerId === LOCAL_PLAYER_ID && m.status === MissionStatus.ACTIVE
 	);
-};
+
+const getFinishedMissions = (): IMission[] =>
+	Array.from(gameState.state.missions.values()).filter(
+		(m) =>
+			m.playerId === LOCAL_PLAYER_ID &&
+			m.status !== MissionStatus.ACTIVE &&
+			m.status !== MissionStatus.AVAILABLE
+	);
 
 // Get all units
 const getAllUnits = () => {
@@ -136,20 +133,13 @@ const getCurrentDateFormatted = () => {
 	return `${year}-${month}-${day} ${hour}:00`;
 };
 
-const getAvailableMissions = (): IMissionInfo[] => {
-	const player = getLocalPlayer();
-	if (!player) return [];
-
-	return player.unlockedMissionIds.map((missionInfoId) => DEFAULT_MISSIONS[missionInfoId]!);
-};
-
 const launchMission = (missionId: string, unitIds: string[]) => {
 	const action = createLaunchMissionAction(LOCAL_PLAYER_ID, missionId, unitIds);
 	queueAction(action);
 };
 
-const getMyMission = (missionInfoId: string): IMission | undefined => {
-	return getMyMissions().filter((mission) => mission.missionInfoId === missionInfoId)[0];
+const getMission = (missionId: string): IMission | undefined => {
+	return gameState.state.missions.get(missionId);
 };
 
 // Export the game controller functions
@@ -172,9 +162,8 @@ export {
 	getPlayerUnits,
 	getCurrentDateFormatted,
 	getPlayerColor,
-	getMyMissions,
 	getAvailableMissions,
 	getActiveMissions,
 	getFinishedMissions,
-	getMyMission
+	getMission
 };

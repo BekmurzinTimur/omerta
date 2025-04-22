@@ -16,7 +16,7 @@ import type {
 	RemoveFromTerritoryAction
 } from '../models/ActionModels';
 import { UnitStatus, UnitRank } from '$lib/models/UnitModels';
-import { DEFAULT_MISSIONS, MissionStatus, type IMission } from '$lib/models/MissionModels';
+import { MissionStatus, type IMission } from '$lib/models/MissionModels';
 import { addScheduledAction } from './ScheduledActionManager.svelte';
 import { checkMissionSuccess, getTeamStats } from '$lib/utils/common';
 import { getAllUnitsMap } from './GameController.svelte';
@@ -132,21 +132,21 @@ const validateRemoveFromTerritory = (
 const validateLaunchMission = (
 	state: GameState,
 	playerId: string,
-	missionInfoId: string,
+	missionId: string,
 	unitIds: string[]
 ): { valid: boolean; reason?: string } => {
-	if (unitIds.length === 0 || unitIds.length > 4) {
-		return { valid: false, reason: `Mission requires between 1-4 units, got ${unitIds.length}` };
-	}
+	const mission = state.missions.get(missionId);
 
-	const mission = DEFAULT_MISSIONS[missionInfoId];
-	if (!mission) {
-		return { valid: false, reason: `Mission ${missionInfoId} not found` };
-	}
-
+	if (!mission) return { valid: false, reason: 'Mission not found' };
+	if (mission.playerId !== playerId) return { valid: false, reason: 'Not your mission' };
+	if (mission.status !== MissionStatus.AVAILABLE)
+		return { valid: false, reason: 'Mission already taken' };
 	const player = state.players.get(playerId);
 	if (!player) {
 		return { valid: false, reason: `Player ${playerId} not found` };
+	}
+	if (unitIds.length === 0 || unitIds.length > 4) {
+		return { valid: false, reason: `Mission requires between 1-4 units, got ${unitIds.length}` };
 	}
 
 	for (const uid of unitIds) {
@@ -369,16 +369,14 @@ const processRemoveFromTerritoryAction = (action: RemoveFromTerritoryAction): vo
 };
 
 const processLaunchMissionAction = (action: LaunchMissionAction): void => {
-	const { playerId, missionInfoId, unitIds } = action;
+	const { playerId, missionId, unitIds } = action;
 
-	// Validate again with current state
-	const validationResult = validateLaunchMission(gameState.state, playerId, missionInfoId, unitIds);
+	const validationResult = validateLaunchMission(gameState.state, playerId, missionId, unitIds);
 	if (!validationResult.valid) {
 		throw new Error(validationResult.reason || 'Validation failed');
 	}
 
-	const mission = DEFAULT_MISSIONS[missionInfoId];
-	let player = gameState.state.players.get(playerId)!;
+	const mission = gameState.state.missions.get(missionId)!;
 
 	// Mark units as on‑mission
 	unitIds.forEach((uid) => {
@@ -386,54 +384,46 @@ const processLaunchMissionAction = (action: LaunchMissionAction): void => {
 		gameState.state.units.set(uid, { ...unit, status: UnitStatus.MISSION });
 	});
 
-	const endTick = gameState.state.tickCount + mission.durationTicks;
+	const endTick = gameState.state.tickCount + mission.info.durationTicks;
 
-	const activeMission: IMission = {
-		id: uuidv4(),
-		missionInfoId,
-		playerId,
+	gameState.updateMission(missionId, {
 		unitIds,
 		startTick: gameState.state.tickCount,
-		endTick,
+		endTick: endTick,
 		status: MissionStatus.ACTIVE
-	};
-
-	player.unlockedMissionIds = player.unlockedMissionIds.filter(
-		(playerMissionId) => playerMissionId !== missionInfoId
-	);
-
-	gameState.state.missions.set(activeMission.id, activeMission);
+	});
 
 	// Schedule mission resolution
 	addScheduledAction({
-		id: `mission-${action.id}`,
+		id: `mission-${mission.id}`,
 		type: ScheduledActionType.MISSION_COMPLETE,
-		interval: mission.durationTicks,
+		interval: mission.info.durationTicks,
 		nextExecutionTick: endTick,
 		isRecurring: false,
-		execute: (state) => resolveMission(state, playerId, activeMission)
+		execute: (state) => resolveMission(state, playerId, mission)
 	});
 
-	console.log(`Player ${playerId} launched mission ${mission.name} with ${unitIds.length} unit(s)`);
+	console.log(
+		`Player ${playerId} launched mission ${mission.info.name} with ${unitIds.length} unit(s)`
+	);
 };
 
 const resolveMission = (state: GameState, playerId: string, activeMission: IMission) => {
-	const { missionInfoId, unitIds } = activeMission;
-	const missionInfo = DEFAULT_MISSIONS[missionInfoId];
+	const { info, unitIds } = activeMission;
 	const player = state.players.get(playerId);
-	if (!missionInfo || !player) return;
+	if (!info || !player) return;
 	const allUnits = getAllUnitsMap();
 
 	const units = unitIds.map((unitId) => allUnits.get(unitId));
 	const teamStats = getTeamStats(units);
-	const success = checkMissionSuccess(missionInfo.difficulty, teamStats);
+	const success = checkMissionSuccess(info.difficulty, teamStats);
 
 	// 2. Apply money to player
 	if (success) {
 		// calculate total cut %
 		const totalCutPct =
 			unitIds.reduce((acc, uid) => acc + (state.units.get(uid)?.cut ?? 0), 0) / 100;
-		const netReward = Math.round(missionInfo.reward * (1 - totalCutPct));
+		const netReward = Math.round(info.reward * (1 - totalCutPct));
 		console.log({ totalCutPct, netReward });
 
 		gameState.updatePlayer(playerId, {
@@ -441,13 +431,6 @@ const resolveMission = (state: GameState, playerId: string, activeMission: IMiss
 				...player.resources,
 				money: player.resources.money + netReward
 			}
-		});
-	}
-
-	console.log('is repeatable', missionInfo.repeatable, missionInfo);
-	if (missionInfo.repeatable) {
-		gameState.updatePlayer(playerId, {
-			unlockedMissionIds: [...player.unlockedMissionIds, missionInfoId]
 		});
 	}
 
@@ -471,7 +454,7 @@ const resolveMission = (state: GameState, playerId: string, activeMission: IMiss
 	gameState.updateMission(activeMission.id, { status });
 
 	console.log(
-		`Mission ${missionInfo.name} ${success ? 'succeeded' : 'failed'} ` + `for player ${playerId}`
+		`Mission ${info.name} ${success ? 'succeeded' : 'failed'} ` + `for player ${playerId}`
 	);
 };
 
@@ -547,18 +530,18 @@ const createRemoveFromTerritoryAction = (
 
 const createLaunchMissionAction = (
 	playerId: string,
-	missionInfoId: string,
+	missionId: string,
 	unitIds: string[]
 ): LaunchMissionAction => {
 	return {
 		id: uuidv4(),
 		type: ActionType.LAUNCH_MISSION,
 		playerId,
-		missionInfoId,
+		missionId,
 		unitIds,
 		timestamp: Date.now(),
 		status: ActionStatus.PENDING,
-		validate: (state: GameState) => validateLaunchMission(state, playerId, missionInfoId, unitIds)
+		validate: (state: GameState) => validateLaunchMission(state, playerId, missionId, unitIds)
 	};
 };
 

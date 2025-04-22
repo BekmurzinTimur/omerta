@@ -4,6 +4,7 @@ import gameState from './GameState.svelte';
 import type { GameState, Player } from '$lib/models/GameModels';
 import type { ITerritory } from '$lib/models/TerritoryModel';
 import { UnitStatus } from '$lib/models/UnitModels';
+import { buildMissionFromPrototype, DEFAULT_MISSIONS } from '$lib/models/MissionModels';
 
 let state: GameState = gameState.state;
 
@@ -151,6 +152,22 @@ const setupInitialScheduledActions = (): void => {
 						captureProgress: newProgress
 					});
 				}
+			});
+		}
+	});
+
+	addScheduledAction({
+		id: 'mission-supply',
+		type: ScheduledActionType.GENERATE_MISSIONS,
+		interval: 5,
+		nextExecutionTick: 5,
+		isRecurring: true,
+		execute: (state) => {
+			state.players.forEach((player: Player) => {
+				const proto = DEFAULT_MISSIONS[Math.floor(Math.random() * DEFAULT_MISSIONS.length)];
+				const mission = buildMissionFromPrototype(player.id, proto);
+				state.missions.set(mission.id, mission);
+				console.log(`Added new mission "${mission.info.name}" for ${player.id}`);
 			});
 		}
 	});

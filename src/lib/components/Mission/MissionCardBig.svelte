@@ -1,13 +1,12 @@
 <!-- src/lib/components/MissionCard.svelte -->
 <script lang="ts">
-	import { MissionStatus, type IMissionInfo } from '$lib/models/MissionModels';
+	import { MissionStatus } from '$lib/models/MissionModels';
 	import type { IUnit } from '$lib/models/UnitModels';
 	import {
-		getMyMission,
 		getAllUnitsMap,
-		getMyMissions,
 		getTick,
-		launchMission
+		launchMission,
+		getMission
 	} from '$lib/services/GameController.svelte';
 	import { calculateMissionSuccessChance, getTeamStats } from '$lib/utils/common';
 	import type { DraggableItem } from '../DragAndDrop/DragAndDropTypes';
@@ -17,7 +16,7 @@
 	import MissionStatusBadge from './MissionStatusBadge.svelte';
 
 	/** The mission you want to display & launch */
-	let { missionInfo }: { missionInfo: IMissionInfo } = $props();
+	let { missionId }: { missionId: string } = $props();
 
 	function onLaunch(missionId: string, unitIds: string[]) {
 		launchMission(missionId, unitIds);
@@ -33,18 +32,17 @@
 		return getTeamStats(assignments);
 	});
 
-	let successChance = $derived(calculateMissionSuccessChance(missionInfo.difficulty, teamStats));
-	let allMissions = $derived(getMyMissions());
-	let activeMission = $derived(getMyMission(missionInfo.infoId));
+	let mission = $derived(getMission(missionId)!);
+	let successChance = $derived(calculateMissionSuccessChance(mission.info.difficulty, teamStats));
 	let tick = $derived(getTick());
 	let progress = $derived.by<number>(() => {
-		if (!activeMission) return 0;
-		if (activeMission.status !== MissionStatus.ACTIVE) return 100;
-		let length = activeMission.endTick - activeMission.startTick;
-		let tickPassed = tick - activeMission.startTick;
+		if (!mission) return 0;
+		if (mission.status === MissionStatus.AVAILABLE) return 0;
+		if (mission.status !== MissionStatus.ACTIVE) return 100;
+		let length = mission.endTick! - mission.startTick!;
+		let tickPassed = tick - mission.startTick!;
 		return Math.min(Math.round((tickPassed / length) * 100), 100);
 	});
-	let missionCompleted = $derived(activeMission && activeMission.status !== MissionStatus.ACTIVE);
 
 	// called by each slot when a unit is dropped
 	function handleDrop(slotIndex: number) {
@@ -71,7 +69,7 @@
 
 	function launch() {
 		const unitIds = assignments.filter((u) => u).map((u) => u!.id);
-		onLaunch(missionInfo.infoId, unitIds);
+		onLaunch(mission.id, unitIds);
 		confirmed = true;
 	}
 </script>
@@ -79,18 +77,17 @@
 <div class="relative overflow-hidden rounded-xl bg-gray-900 text-white shadow-lg">
 	<!-- Background image, toned down -->
 	<img
-		src={missionInfo.image}
-		alt={missionInfo.name}
+		src={mission.info.image}
+		alt={mission.info.name}
 		class="absolute inset-0 h-full w-full object-cover opacity-20"
 	/>
 
 	<div class="relative space-y-4 p-6">
 		<!-- Mission title -->
 		<div class="flex items-center justify-between">
-			<h3 class="text-3xl font-bold">{missionInfo.name}</h3>
-			{#if activeMission}
-				<MissionStatusBadge status={activeMission.status} />
-			{/if}
+			<h3 class="text-3xl font-bold">{mission.info.name}</h3>
+			=
+			<MissionStatusBadge status={mission.status} />=
 		</div>
 		<h4 class="text-xl font-bold">Success chance: {successChance}</h4>
 
@@ -98,12 +95,12 @@
 			<span class="font-semibold">Team Power:</span>
 			<AttributesList stats={teamStats} />
 			<span class="font-semibold">Difficulty:</span>
-			<AttributesList stats={missionInfo.difficulty} />
+			<AttributesList stats={mission.info.difficulty} />
 		</div>
 
-		{#if activeMission}
+		{#if mission.status !== MissionStatus.AVAILABLE}
 			<div class="grid grid-cols-4 gap-4">
-				{#each activeMission.unitIds as unitId}
+				{#each mission.unitIds as unitId}
 					{@const unit = getAllUnitsMap().get(unitId)}
 					{#if unit}
 						<UnitLocked {unit} />

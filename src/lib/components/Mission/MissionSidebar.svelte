@@ -1,18 +1,17 @@
 <script lang="ts">
 	import MissionCard from './MissionCard.svelte';
 
-	import { DEFAULT_MISSIONS, MissionStatus } from '$lib/models/MissionModels';
 	import Sidebar from '../Sidebar.svelte';
-	import { getAvailableMissions, getMyMissions } from '$lib/services/GameController.svelte';
+	import {
+		getActiveMissions,
+		getAvailableMissions,
+		getFinishedMissions
+	} from '$lib/services/GameController.svelte';
 
 	/** For now we expose an empty array – replace with real store later */
-	let myMissions = $derived(getMyMissions());
-	let activeMissions = $derived(myMissions.filter((m) => m.status === MissionStatus.ACTIVE));
-	let finishedMissions = $derived(myMissions.filter((m) => m.status !== MissionStatus.ACTIVE));
+	let activeMissions = $derived(getActiveMissions());
+	let finishedMissions = $derived(getFinishedMissions());
 	let availableMissions = $derived(getAvailableMissions());
-	$effect(() => {
-		console.log({ availableMissions });
-	});
 </script>
 
 <Sidebar>
@@ -26,12 +25,8 @@
 			{#if activeMissions.length === 0}
 				<p class="text-xs text-gray-500">No active missions</p>
 			{:else}
-				{#each activeMissions as activeMission}
-					<MissionCard
-						mission={activeMission}
-						missionInfo={DEFAULT_MISSIONS[activeMission.missionInfoId]}
-						eta="unknown"
-					/>
+				{#each activeMissions as mission}
+					<MissionCard {mission} eta="unknown" />
 				{/each}
 			{/if}
 		</div>
@@ -40,8 +35,8 @@
 		<h3 class="mt-6 text-sm font-semibold text-gray-400 uppercase">Available</h3>
 
 		<div class="mt-2 flex flex-col gap-2">
-			{#each availableMissions as missionInfo}
-				<MissionCard {missionInfo} eta="unknown" />
+			{#each availableMissions as mission}
+				<MissionCard {mission} eta="unknown" />
 			{/each}
 		</div>
 
@@ -49,12 +44,8 @@
 		<h3 class="mt-6 text-sm font-semibold text-gray-400 uppercase">History</h3>
 
 		<div class="mt-2 flex flex-col gap-2">
-			{#each finishedMissions as finishedMission}
-				<MissionCard
-					mission={finishedMission}
-					missionInfo={DEFAULT_MISSIONS[finishedMission.missionInfoId]}
-					eta="finished"
-				/>
+			{#each finishedMissions as mission}
+				<MissionCard {mission} eta="finished" />
 			{/each}
 		</div>
 	</div>

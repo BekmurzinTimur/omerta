@@ -9,6 +9,7 @@
 	class:bg-red-500={status === MissionStatus.FAILED}
 	class:bg-green-500={status === MissionStatus.SUCCEEDED}
 	class:bg-gray-500={status === MissionStatus.ACTIVE}
+	class:bg-yellow-500={status === MissionStatus.AVAILABLE}
 >
 	{status}
 </div>

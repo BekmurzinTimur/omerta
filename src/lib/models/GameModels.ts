@@ -15,7 +15,6 @@ export interface Player {
 	territories: ITerritory[];
 	units: string[];
 	color: string;
-	unlockedMissionIds: string[];
 }
 
 // Overall game state

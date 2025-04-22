@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MissionStatus, type IMission, type IMissionInfo } from '$lib/models/MissionModels';
+	import { MissionStatus, type IMission } from '$lib/models/MissionModels';
 	import { getAllUnitsMap, getTick } from '$lib/services/GameController.svelte';
 	import { getUnitImage } from '$lib/utils/common';
 	import { addWindow } from '../DialogWindows/windowStore.svelte';
@@ -8,21 +8,20 @@
 	import MissionStatusBadge from './MissionStatusBadge.svelte';
 
 	let {
-		missionInfo,
 		mission,
 		eta = ''
 	}: {
-		missionInfo: IMissionInfo;
-		mission?: IMission;
+		mission: IMission;
 		eta?: string;
 	} = $props();
 
 	let tick = $derived(getTick());
 	let progress = $derived.by<number>(() => {
 		if (!mission) return 0;
+		if (mission.status === MissionStatus.AVAILABLE) return 0;
 		if (mission.status !== MissionStatus.ACTIVE) return 100;
-		let length = mission.endTick - mission.startTick;
-		let tickPassed = tick - mission.startTick;
+		let length = mission.endTick! - mission.startTick!;
+		let tickPassed = tick - mission.startTick!;
 		return Math.min(Math.round((tickPassed / length) * 100), 100);
 	});
 	let allUnitsMap = $derived(getAllUnitsMap());
@@ -34,8 +33,8 @@
 	function handleClick() {
 		addWindow({
 			id: `window-${Date.now()}`,
-			title: `Mission: ${missionInfo.name}`,
-			content: { component: MissionCardBig, props: { missionInfo } },
+			title: `Mission: ${mission.info.name}`,
+			content: { component: MissionCardBig, props: { missionId: mission.id } },
 			position: { x: Math.random() * 200 + 50, y: Math.random() * 200 + 50 },
 			size: { width: 600, height: 500 }
 		});
@@ -47,19 +46,19 @@
 	onclick={handleClick}
 >
 	<img
-		src={missionInfo.image}
-		alt={missionInfo.name}
+		src={mission.info.image}
+		alt={mission.info.name}
 		class="absolute inset-0 h-full w-full object-cover"
 	/>
 
 	<!-- overlay -->
 	<div class="relative flex flex-col gap-2 p-3 hover:bg-white/20">
-		<h3 class="font-semibold text-white drop-shadow">{missionInfo.name}</h3>
+		<h3 class="font-semibold text-white drop-shadow">{mission.info.name}</h3>
 
 		{#if !isActive}
-			<div class="text-sm text-white/80">Reward: ${missionInfo.reward.toLocaleString()}</div>
+			<div class="text-sm text-white/80">Reward: ${mission.info.reward.toLocaleString()}</div>
 
-			<AttributesList stats={missionInfo.difficulty} />
+			<AttributesList stats={mission.info.difficulty} />
 		{:else}
 			<div class="text-xs text-white/90">ETA: {eta}</div>
 

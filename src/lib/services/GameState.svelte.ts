@@ -4,7 +4,11 @@ import { type GameState as GameStateInterface, type Player } from '../models/Gam
 import { type IUnit } from '$lib/models/UnitModels';
 import { mockUnits } from '$lib/const/mockData';
 import type { ITerritory } from '$lib/models/TerritoryModel';
-import { DEFAULT_MISSIONS, type IMission } from '$lib/models/MissionModels';
+import {
+	buildMissionFromPrototype,
+	DEFAULT_MISSIONS,
+	type IMission
+} from '$lib/models/MissionModels';
 
 const createInitialState = () => {
 	// Start date: January 1, 1960, 00:00
@@ -20,7 +24,6 @@ const createInitialState = () => {
 		},
 		territories: [],
 		units: [],
-		unlockedMissionIds: Object.keys(DEFAULT_MISSIONS),
 		color: '#ff0000'
 	};
 
@@ -73,6 +76,11 @@ const createInitialState = () => {
 	});
 
 	const missionMap = new SvelteMap<string, IMission>();
+	playerMap.forEach((_, playerId) => {
+		const proto = DEFAULT_MISSIONS[0]; // first prototype for now
+		const mission = buildMissionFromPrototype(playerMap.get(playerId)!.id, proto);
+		missionMap.set(mission.id, mission);
+	});
 
 	return {
 		players: playerMap,
