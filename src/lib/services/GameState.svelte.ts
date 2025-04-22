@@ -32,7 +32,7 @@ const createInitialState = () => {
 	for (let x = 0; x < 20; x++) {
 		for (let y = 0; y < 20; y++) {
 			territories.push({
-				id: `territory_${x}-${y}`,
+				id: `${x}-${y}`,
 				name: `Territory ${x}-${y}`,
 				ownerId: (x === 10 || x === 9) && y === 10 ? 'player1' : null, // Player 1 starts with 1 territory
 				position: {

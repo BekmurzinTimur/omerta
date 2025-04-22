@@ -13,8 +13,12 @@
 	import DropZone from '../DragAndDrop/DropZone.svelte';
 	import UnitDrop from '../Unit/UnitDrop.svelte';
 	import AssignUnit from '../Unit/AssignUnit.svelte';
+	import { isNeighboringPlayerTerritory } from '$lib/utils/mapUtils';
 
-	let { territory }: { territory?: ITerritory } = $props();
+	let {
+		territory,
+		allTerritories
+	}: { territory?: ITerritory; allTerritories: Map<string, ITerritory> } = $props();
 	let droppedItemsMap = $state(new SvelteMap<string, DraggableItem>());
 	let droppedItem = $derived<DraggableItem | null>(
 		droppedItemsMap.get(territory?.id || '') || null
@@ -26,6 +30,10 @@
 
 	let managerUnit = $derived(getAllUnitsMap().get(territory?.managerId || ''));
 	let capturerUnit = $derived(getAllUnitsMap().get(territory?.capturingUnitId || ''));
+
+	let isNeighbouringMyTerritory = $derived(
+		territory && player ? isNeighboringPlayerTerritory(territory, allTerritories, player.id) : false
+	);
 
 	// Handle drop events
 	function handleDrop(result: DropResult) {
@@ -71,6 +79,9 @@
 					onRemove={handleRemove}
 				/>
 			{:else}
+				{#if isNeighbouringMyTerritory}
+					can capture
+				{/if}
 				<span class="text-lg font-bold">Capture</span>
 				<div>
 					<span>Capture progress: </span>

@@ -33,7 +33,7 @@
 	<div class="game-content flex flex-grow gap-4 bg-gray-700 p-4">
 		<!-- Right panel - Game controls and information -->
 		<div class="control-panel flex w-80 flex-col bg-gray-800 p-4">
-			<Territory territory={selectedTerritory} />
+			<Territory territory={selectedTerritory} {allTerritories} />
 		</div>
 		<!-- Left panel - Map/Grid will go here -->
 		<div class="map-container flex-grow bg-gray-600">
