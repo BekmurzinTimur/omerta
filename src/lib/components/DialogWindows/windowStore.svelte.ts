@@ -8,7 +8,7 @@ const addWindow = (windowConfig: WindowConfig) => {
 	const isActive = windows.length === 0;
 	const newWindow = {
 		...windowConfig,
-		zIndex: isActive ? nextZIndex : nextZIndex - 10,
+		zIndex: isActive ? nextZIndex : nextZIndex - 1,
 		isActive
 	};
 
@@ -20,7 +20,7 @@ const addWindow = (windowConfig: WindowConfig) => {
 
 	windows = [...updatedWindows, newWindow];
 	if (isActive) {
-		nextZIndex = nextZIndex + 10;
+		nextZIndex = nextZIndex + 1;
 	}
 };
 
@@ -71,7 +71,7 @@ const focusWindow = (windowId: string) => {
 	};
 
 	windows = updatedWindows;
-	nextZIndex = nextZIndex + 10;
+	nextZIndex = nextZIndex + 1;
 };
 
 const moveWindow = (windowId: string, delta: WindowPosition) => {

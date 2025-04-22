@@ -134,12 +134,16 @@
 		document.removeEventListener('mousemove', handleMouseMove);
 		document.removeEventListener('mouseup', handleMouseUp);
 	});
+
+	$effect(() => {
+		console.log({ zIndex, id, title });
+	});
 </script>
 
 <div
 	bind:this={windowElement}
-	class="pointer-events-auto absolute flex flex-col overflow-hidden rounded-lg border border-gray-300 bg-white shadow-lg min-w-[{size.width}px] h-[{size.height}px] z-[{zIndex}] will-change-transform"
-	style="transform: translate3d({position.x}px, {position.y}px, 0);"
+	class="pointer-events-auto absolute flex flex-col overflow-hidden rounded-lg border border-gray-300 bg-white shadow-lg min-w-[{size.width}px] h-[{size.height}px] will-change-transform"
+	style="transform: translate3d({position.x}px, {position.y}px, 0); z-index: {zIndex};"
 	onmousedown={handleWindowClick}
 >
 	<div
