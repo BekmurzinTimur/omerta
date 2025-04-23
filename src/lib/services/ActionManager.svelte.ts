@@ -450,7 +450,12 @@ const resolveMission = (state: GameState, playerId: string, activeMission: IMiss
 			heat: unit.heat + 1
 		};
 		console.log('UNIT', { updated });
-		state.units.set(uid, updated);
+		gameState.updateUnit(unit.id, {
+			status: UnitStatus.IDLE,
+			loyalty: unit.loyalty + loyaltyDelta,
+			heat: unit.heat + 1
+		});
+		// state.units.set(uid, updated);
 	});
 
 	const status = success ? MissionStatus.SUCCEEDED : MissionStatus.FAILED;
