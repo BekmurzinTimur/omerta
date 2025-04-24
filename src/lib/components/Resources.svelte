@@ -13,8 +13,8 @@
 			<span class="font-semibold text-white">{player?.resources.money || 0}</span>
 		</div>
 		<div class="resource rounded bg-gray-800 p-2">
-			<span class="text-sm text-green-400">Manpower</span>
-			<span class="font-semibold text-white">{player?.resources.manpower || 0}</span>
+			<span class="text-sm text-red-400">Heat</span>
+			<span class="font-semibold text-white">{player?.resources.heat || 0}</span>
 		</div>
 	</div>
 </div>

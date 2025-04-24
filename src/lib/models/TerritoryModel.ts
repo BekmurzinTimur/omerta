@@ -9,7 +9,6 @@ export interface ITerritory {
 	};
 	resources: {
 		income: number;
-		manpower: number;
 	};
 	isBeingCaptured: boolean;
 	captureProgress: number;

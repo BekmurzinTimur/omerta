@@ -20,7 +20,7 @@ const createInitialState = () => {
 		name: 'Player 1',
 		resources: {
 			money: 1000,
-			manpower: 500
+			heat: 0
 		},
 		territories: [],
 		units: [],
@@ -40,8 +40,7 @@ const createInitialState = () => {
 					y: y
 				},
 				resources: {
-					income: 5 + Math.floor(Math.random() * 10),
-					manpower: 2 + Math.floor(Math.random() * 5)
+					income: 5 + Math.floor(Math.random() * 10)
 				},
 				isBeingCaptured: false,
 				captureProgress: 0,

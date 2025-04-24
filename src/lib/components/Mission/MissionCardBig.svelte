@@ -116,7 +116,7 @@
 				<div class="grid grid-cols-4 gap-4">
 					{#each Array(maxSlots) as _, idx}
 						<AssignUnit
-							id={'slot-' + idx}
+							id={'mission-' + mission.id + '-' + idx}
 							onDrop={handleDrop(idx)}
 							onClear={handleClear(idx)}
 							accepts={['member', 'associate']}

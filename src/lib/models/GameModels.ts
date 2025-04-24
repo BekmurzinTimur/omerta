@@ -10,7 +10,7 @@ export interface Player {
 	name: string;
 	resources: {
 		money: number;
-		manpower: number;
+		heat: number;
 	};
 	territories: ITerritory[];
 	units: string[];

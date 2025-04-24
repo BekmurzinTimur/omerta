@@ -389,12 +389,14 @@ const processLaunchMissionAction = (action: LaunchMissionAction): void => {
 
 	const endTick = gameState.state.tickCount + mission.info.durationTicks;
 
-	gameState.updateMission(missionId, {
+	const updatedMission = {
+		...mission,
 		unitIds,
 		startTick: gameState.state.tickCount,
 		endTick: endTick,
 		status: MissionStatus.ACTIVE
-	});
+	};
+	gameState.updateMission(missionId, updatedMission);
 
 	// Schedule mission resolution
 	addScheduledAction({
@@ -403,7 +405,7 @@ const processLaunchMissionAction = (action: LaunchMissionAction): void => {
 		interval: mission.info.durationTicks,
 		nextExecutionTick: endTick,
 		isRecurring: false,
-		execute: (state) => resolveMission(state, playerId, mission)
+		execute: (state) => resolveMission(state, playerId, updatedMission)
 	});
 
 	console.log(
@@ -438,11 +440,14 @@ const resolveMission = (state: GameState, playerId: string, activeMission: IMiss
 	}
 
 	// 3. Update each unit
+	console.log('resolveMission', unitIds, activeMission);
 	unitIds.forEach((uid) => {
 		const unit = state.units.get(uid);
+		console.log(unit);
 		if (!unit) return;
 
 		const loyaltyDelta = success ? +1 : -1;
+		console.log('updateUnit', loyaltyDelta);
 		gameState.updateUnit(unit.id, {
 			status: UnitStatus.IDLE,
 			loyalty: unit.loyalty + loyaltyDelta,
