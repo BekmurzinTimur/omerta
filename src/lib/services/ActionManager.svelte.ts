@@ -443,19 +443,11 @@ const resolveMission = (state: GameState, playerId: string, activeMission: IMiss
 		if (!unit) return;
 
 		const loyaltyDelta = success ? +1 : -1;
-		const updated = {
-			...unit,
-			status: UnitStatus.IDLE,
-			loyalty: unit.loyalty + loyaltyDelta,
-			heat: unit.heat + 1
-		};
-		console.log('UNIT', { updated });
 		gameState.updateUnit(unit.id, {
 			status: UnitStatus.IDLE,
 			loyalty: unit.loyalty + loyaltyDelta,
 			heat: unit.heat + 1
 		});
-		// state.units.set(uid, updated);
 	});
 
 	const status = success ? MissionStatus.SUCCEEDED : MissionStatus.FAILED;
