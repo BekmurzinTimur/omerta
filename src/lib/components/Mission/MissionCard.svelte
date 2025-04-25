@@ -2,6 +2,7 @@
 	import { MissionStatus, type IMission } from '$lib/models/MissionModels';
 	import { getAllUnitsMap, getTick } from '$lib/services/GameController.svelte';
 	import { getUnitImage } from '$lib/utils/common';
+	import ProgressBar from '../Common/ProgressBar.svelte';
 	import { addWindow } from '../DialogWindows/windowStore.svelte';
 	import AttributesList from './AttributesList.svelte';
 	import MissionCardBig from './MissionCardBig.svelte';
@@ -76,9 +77,7 @@
 			</div>
 
 			<!-- progress bar -->
-			<div class="h-2 w-full overflow-hidden rounded-full bg-white/20">
-				<div class="h-full bg-white transition-all" style="width: {progress}%" />
-			</div>
+			<ProgressBar {progress} />
 		{/if}
 	</div>
 </div>

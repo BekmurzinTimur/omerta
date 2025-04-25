@@ -64,6 +64,7 @@ const createInitialState = () => {
 
 	const startingUnits = generateStartingUnits(STARTING_COMPOSITION);
 	startingUnits.forEach((unit) => {
+		unit.ownerId = playerOne.id;
 		unitMap.set(unit.id, unit);
 	});
 
