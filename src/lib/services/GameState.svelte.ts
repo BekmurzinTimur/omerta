@@ -8,7 +8,7 @@ import {
 	DEFAULT_MISSIONS,
 	type IMission
 } from '$lib/models/MissionModels';
-import { generateStartingUnits, STARTING_COMPOSITION } from '$lib/utils/unitUtils';
+import { generateStartingUnits, STARTING_COMPOSITION, upgradeUnit } from '$lib/utils/unitUtils';
 
 const createInitialState = () => {
 	// Start date: January 1, 1960, 00:00
@@ -159,9 +159,12 @@ class GameState {
 	 */
 	updateUnit(unitId: string, updates: Partial<IUnit>): void {
 		const unit = this.state.units.get(unitId);
-		if (unit) {
-			this.state.units.set(unitId, { ...unit, ...updates });
+		if (!unit) return console.error('Cant updat unit. Unit doesnt exist');
+		const newUnit = { ...unit, ...updates };
+		if (newUnit.experience >= 100 && newUnit.level < 10) {
+			upgradeUnit(newUnit);
 		}
+		this.state.units.set(unitId, newUnit);
 	}
 	updateMission(missionId: string, updates: Partial<IMission>): void {
 		const m = this.state.missions.get(missionId);

@@ -1,5 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
-import { UnitRank, UnitStatus, type IUnit } from '$lib/models/UnitModels';
+import { CoreAttribute, UnitRank, UnitStatus, type IUnit } from '$lib/models/UnitModels';
+
+const STAT_NAMES = [
+	CoreAttribute.MUSCLE,
+	CoreAttribute.BRAINS,
+	CoreAttribute.CUNNING,
+	CoreAttribute.INFLUENCE
+];
 const FIRST_NAMES = [
 	'Mikey',
 	'Jimmy',
@@ -114,3 +121,17 @@ export const STARTING_COMPOSITION: IUnitTemplate[] = [
 		tier: 1
 	}
 ];
+
+export const upgradeUnit = (unit: IUnit) => {
+	unit.experience = unit.experience - 100;
+	unit.level += 1;
+	if (unit.experience >= 100) upgradeUnit(unit);
+	unit.cut = getUnitCut(unit);
+	upgradeRandomStat(unit);
+	upgradeRandomStat(unit);
+};
+
+export const upgradeRandomStat = (unit: IUnit) => {
+	const randomStatName = STAT_NAMES[Math.floor(Math.random() * STAT_NAMES.length)];
+	unit.skills[randomStatName] += 1;
+};
