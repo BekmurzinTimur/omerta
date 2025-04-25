@@ -14,6 +14,7 @@
 	import UnitDrop from '../Unit/UnitDrop.svelte';
 	import AssignUnit from '../Unit/AssignUnit.svelte';
 	import { isNeighboringPlayerTerritory } from '$lib/utils/mapUtils';
+	import ProgressBar from '../Common/ProgressBar.svelte';
 
 	let {
 		territory,
@@ -80,10 +81,12 @@
 				/>
 			{:else if isNeighbouringMyTerritory}
 				<span class="text-lg font-bold">Capture</span>
-				<div>
-					<span>Capture progress: </span>
-					<span>{territory.captureProgress}</span>
-				</div>
+				{#if territory.captureProgress}
+					<div class="my-2 w-40">
+						<span>Capture progress: </span>
+						<ProgressBar progress={territory.captureProgress} />
+					</div>
+				{/if}
 				<AssignUnit
 					id="territory{territory.id}"
 					onDrop={handleDrop}
