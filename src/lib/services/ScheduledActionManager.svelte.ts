@@ -81,7 +81,8 @@ const setupInitialScheduledActions = (): void => {
 				gameState.updatePlayer(player.id, {
 					resources: {
 						...player.resources,
-						money: player.resources.money + income
+						money: player.resources.money + income,
+						lastIncome: income
 					}
 				});
 

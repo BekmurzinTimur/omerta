@@ -11,6 +11,7 @@ export interface Player {
 	resources: {
 		money: number;
 		heat: number;
+		lastIncome: number;
 	};
 	territories: ITerritory[];
 	units: string[];

@@ -10,7 +10,9 @@
 	<div class="flex">
 		<div class="resource rounded bg-gray-800 p-2">
 			<span class="text-sm text-yellow-400">Money</span>
-			<span class="font-semibold text-white">{player?.resources.money || 0}</span>
+			<span class="font-semibold text-white"
+				>{player?.resources.money || 0} + {player?.resources.lastIncome}</span
+			>
 		</div>
 		<div class="resource rounded bg-gray-800 p-2">
 			<span class="text-sm text-red-400">Heat</span>

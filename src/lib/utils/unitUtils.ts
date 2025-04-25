@@ -1,0 +1,116 @@
+import { v4 as uuidv4 } from 'uuid';
+import { UnitRank, UnitStatus, type IUnit } from '$lib/models/UnitModels';
+const FIRST_NAMES = [
+	'Mikey',
+	'Jimmy',
+	'Tony',
+	'Luka',
+	'Enzo',
+	'Furio',
+	'Vito',
+	'John',
+	'Carmine',
+	'Dick',
+	'Vinny',
+	'Salvatore',
+	'Tommy',
+	'Frankie'
+];
+const LAST_NAMES = [
+	'Aprile',
+	'Soprano',
+	'Palmisi',
+	'Lupertazi',
+	'Brazi',
+	'Corleone',
+	'Moltisanti',
+	'Rossi',
+	'Bianchi',
+	'Romano',
+	'Moretti',
+	'DeLuca',
+	'Lucchesi',
+	'Russo',
+	'Ricci'
+];
+const IMAGES = 4;
+
+export const generateUnit = ({
+	rank,
+	level,
+	tier
+}: {
+	rank: UnitRank;
+	level: number;
+	tier: number;
+}): IUnit => {
+	const firstName = FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)];
+	const lastName = LAST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)];
+	return {
+		id: uuidv4(),
+		name: `${firstName} ${lastName}`,
+		ownerId: undefined,
+		rank: rank,
+		skills: {
+			Muscle: Math.ceil(Math.random() * 3) + (tier - 1) * 3,
+			Brains: Math.ceil(Math.random() * 3) + (tier - 1) * 3,
+			Cunning: Math.ceil(Math.random() * 3) + (tier - 1) * 3,
+			Influence: Math.ceil(Math.random() * 3) + (tier - 1) * 3
+		},
+		experience: 0,
+		loyalty: 50,
+		heat: 0,
+		level: level,
+		cut: getUnitCut({ rank, level }),
+		status: UnitStatus.IDLE,
+		image: Math.ceil(Math.random() * IMAGES)
+	};
+};
+
+export const getUnitCut = ({ rank, level }: { rank: UnitRank; level: number }) => {
+	switch (rank) {
+		case UnitRank.ASSOCIATE:
+			return 10 + level * 2;
+		case UnitRank.SOLDIER:
+			return 15 + level * 2;
+		case UnitRank.CAPO:
+			return 20 + level * 2;
+		case UnitRank.UNDERBOSS:
+			return 40 + level * 2;
+		case UnitRank.CONSIGLIERE:
+			return 40 + level * 2;
+		default:
+			return level * 2;
+	}
+};
+interface IUnitTemplate {
+	rank: UnitRank;
+	level: number;
+	tier: number;
+}
+export const generateStartingUnits = (composition: IUnitTemplate[]) => {
+	let units: IUnit[] = [];
+	composition.forEach((template) => {
+		units.push(generateUnit(template));
+	});
+
+	return units;
+};
+
+export const STARTING_COMPOSITION: IUnitTemplate[] = [
+	{
+		rank: UnitRank.CAPO,
+		level: 3,
+		tier: 3
+	},
+	{
+		rank: UnitRank.SOLDIER,
+		level: 2,
+		tier: 2
+	},
+	{
+		rank: UnitRank.SOLDIER,
+		level: 1,
+		tier: 1
+	}
+];

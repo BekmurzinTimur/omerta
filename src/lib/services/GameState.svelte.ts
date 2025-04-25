@@ -2,13 +2,13 @@
 import { SvelteMap } from 'svelte/reactivity';
 import { type GameState as GameStateInterface, type Player } from '../models/GameModels';
 import { type IUnit } from '$lib/models/UnitModels';
-import { mockUnits } from '$lib/const/mockData';
 import type { ITerritory } from '$lib/models/TerritoryModel';
 import {
 	buildMissionFromPrototype,
 	DEFAULT_MISSIONS,
 	type IMission
 } from '$lib/models/MissionModels';
+import { generateStartingUnits, STARTING_COMPOSITION } from '$lib/utils/unitUtils';
 
 const createInitialState = () => {
 	// Start date: January 1, 1960, 00:00
@@ -20,6 +20,7 @@ const createInitialState = () => {
 		name: 'Player 1',
 		resources: {
 			money: 1000,
+			lastIncome: 0,
 			heat: 0
 		},
 		territories: [],
@@ -54,15 +55,6 @@ const createInitialState = () => {
 	// Assign owned territories to player
 	playerOne.territories = territories.filter((t) => t.ownerId === 'player1');
 
-	// Create initial units
-	const units: string[] = ['unit1', 'unit2'];
-
-	playerOne.units = units;
-
-	// Create maps for efficient lookups
-	const playerMap = new SvelteMap<string, Player>();
-	playerMap.set(playerOne.id, playerOne);
-
 	const territoryMap = new SvelteMap<string, ITerritory>();
 	territories.forEach((territory) => {
 		territoryMap.set(territory.id, territory);
@@ -70,9 +62,16 @@ const createInitialState = () => {
 
 	const unitMap = new SvelteMap<string, IUnit>();
 
-	mockUnits.forEach((unit) => {
+	const startingUnits = generateStartingUnits(STARTING_COMPOSITION);
+	startingUnits.forEach((unit) => {
 		unitMap.set(unit.id, unit);
 	});
+
+	playerOne.units = startingUnits.map((unit) => unit.id);
+
+	// Create maps for efficient lookups
+	const playerMap = new SvelteMap<string, Player>();
+	playerMap.set(playerOne.id, playerOne);
 
 	const missionMap = new SvelteMap<string, IMission>();
 	playerMap.forEach((_, playerId) => {
