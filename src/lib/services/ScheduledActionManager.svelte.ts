@@ -5,6 +5,7 @@ import type { GameState, Player } from '$lib/models/GameModels';
 import type { ITerritory } from '$lib/models/TerritoryModel';
 import { UnitStatus } from '$lib/models/UnitModels';
 import { buildMissionFromPrototype, DEFAULT_MISSIONS } from '$lib/models/MissionModels';
+import { getManagerMultiplier } from '$lib/utils/territoryUtils';
 
 let state: GameState = gameState.state;
 
@@ -73,8 +74,14 @@ const setupInitialScheduledActions = (): void => {
 				// Calculate total production from territories
 				player.territories.forEach((territory: ITerritory) => {
 					const territoryData = state.territories.get(territory.id);
+					const manager = state.units.get(territoryData?.managerId || '');
+					let territoryMultiplier = 1;
+					if (manager) {
+						territoryMultiplier = getManagerMultiplier(manager);
+						gameState.updateUnit(manager.id, { experience: manager.experience + 5 });
+					}
 					if (territoryData) {
-						income += territoryData.resources.income;
+						income += territoryData.resources.income * territoryMultiplier;
 					}
 				});
 
@@ -142,8 +149,10 @@ const setupInitialScheduledActions = (): void => {
 							territories: [...player.territories, territory]
 						});
 
-						// Unit becomes territory manager
-						state.units.set(unit.id, { ...unit, status: UnitStatus.TERRITORY });
+						gameState.updateUnit(unit.id, {
+							status: UnitStatus.TERRITORY,
+							experience: unit.experience + 25
+						});
 
 						console.log(`Player ${playerId} captured territory ${territory.id} with ${unit.name}`);
 					}

@@ -12,6 +12,7 @@ export interface MissionInfo {
 	durationTicks: number;
 	image: string;
 	repeatable?: boolean;
+	heat: number;
 }
 
 export const DEFAULT_MISSIONS: MissionInfo[] = [
@@ -26,7 +27,8 @@ export const DEFAULT_MISSIONS: MissionInfo[] = [
 		},
 		durationTicks: 2,
 		repeatable: true,
-		image: '/themes/shop_shakedown.png'
+		image: '/themes/shop_shakedown.png',
+		heat: 5
 	}
 	// …add more prototypes here
 ];

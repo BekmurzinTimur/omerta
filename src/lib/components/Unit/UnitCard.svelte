@@ -1,6 +1,7 @@
 <script lang="ts">
 	/* --------‑‑ Imports & props ‑‑-------- */
 	import { type IUnit, CoreAttribute } from '$lib/models/UnitModels';
+	import ProgressBar from '../Common/ProgressBar.svelte';
 	import { addWindow } from '../DialogWindows/windowStore.svelte';
 	import UnitCardBig from './UnitCardBig.svelte';
 
@@ -112,6 +113,7 @@
 				</div>
 			{/each}
 		</div>
+		<ProgressBar progress={unit.experience} />
 	</div>
 
 	<!-- Footer -->

@@ -440,18 +440,20 @@ const resolveMission = (state: GameState, playerId: string, activeMission: IMiss
 	}
 
 	// 3. Update each unit
-	console.log('resolveMission', unitIds, activeMission);
+	const experience = success ? 20 : 0;
+	const loyalty = 5;
 	unitIds.forEach((uid) => {
 		const unit = state.units.get(uid);
-		console.log(unit);
+
 		if (!unit) return;
 
-		const loyaltyDelta = success ? +1 : -1;
-		console.log('updateUnit', loyaltyDelta);
+		const loyaltyDelta = success ? +loyalty : -loyalty;
+
 		gameState.updateUnit(unit.id, {
 			status: UnitStatus.IDLE,
 			loyalty: unit.loyalty + loyaltyDelta,
-			heat: unit.heat + 1
+			heat: unit.heat + info.heat,
+			experience: unit.experience + experience
 		});
 	});
 
