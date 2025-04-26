@@ -6,6 +6,7 @@ import type { ITerritory } from '$lib/models/TerritoryModel';
 import { UnitStatus } from '$lib/models/UnitModels';
 import { buildMissionFromPrototype, DEFAULT_MISSIONS } from '$lib/models/MissionModels';
 import { getManagerMultiplier } from '$lib/utils/territoryUtils';
+import { getSalary } from '$lib/utils/unitUtils';
 
 let state: GameState = gameState.state;
 
@@ -83,6 +84,13 @@ const setupInitialScheduledActions = (): void => {
 					if (territoryData) {
 						income += territoryData.resources.income * territoryMultiplier;
 					}
+				});
+
+				//Pay salary
+				player.units.forEach((unitId: string) => {
+					const unit = state.units.get(unitId);
+					const salary = getSalary(unit);
+					income -= salary;
 				});
 
 				gameState.updatePlayer(player.id, {

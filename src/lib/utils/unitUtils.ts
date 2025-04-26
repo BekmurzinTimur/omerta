@@ -1,5 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
 import { CoreAttribute, UnitRank, UnitStatus, type IUnit } from '$lib/models/UnitModels';
+import {
+	BASE_SALARY_CAPO,
+	BASE_SALARY_CONSIGLIERI,
+	BASE_SALARY_SOLDIER,
+	BASE_SALARY_UNDERBOSS
+} from '$lib/const/globalConstants';
 
 const STAT_NAMES = [
 	CoreAttribute.MUSCLE,
@@ -22,7 +28,8 @@ const FIRST_NAMES = [
 	'Vinny',
 	'Salvatore',
 	'Tommy',
-	'Frankie'
+	'Frankie',
+	'Francesco'
 ];
 const LAST_NAMES = [
 	'Aprile',
@@ -39,7 +46,12 @@ const LAST_NAMES = [
 	'DeLuca',
 	'Lucchesi',
 	'Russo',
-	'Ricci'
+	'Ricci',
+	'Cusamano',
+	'DeCoco',
+	'Margharetti',
+	'Gorlami',
+	'Dimeo'
 ];
 const IMAGES = 6;
 
@@ -173,4 +185,20 @@ export const getPromotedRank = (currentRank: UnitRank) => {
 		return UnitRank.UNDERBOSS;
 	}
 	return UnitRank.SOLDIER;
+};
+
+export const getSalary = (unit?: IUnit) => {
+	if (!unit) return 0;
+	switch (unit?.rank) {
+		case UnitRank.SOLDIER:
+			return BASE_SALARY_SOLDIER;
+		case UnitRank.CAPO:
+			return BASE_SALARY_CAPO;
+		case UnitRank.UNDERBOSS:
+			return BASE_SALARY_UNDERBOSS;
+		case UnitRank.CONSIGLIERE:
+			return BASE_SALARY_CONSIGLIERI;
+		default:
+			return 0;
+	}
 };

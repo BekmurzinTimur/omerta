@@ -15,6 +15,7 @@
 	import AssignUnit from '../Unit/AssignUnit.svelte';
 	import { isNeighboringPlayerTerritory } from '$lib/utils/mapUtils';
 	import ProgressBar from '../Common/ProgressBar.svelte';
+	import { formatUSD } from '$lib/utils/moneyUtils';
 
 	let {
 		territory,
@@ -66,7 +67,7 @@
 		{#if territory}
 			<h4 class="text-lg">{territory.name}</h4>
 			<div>Owner: {territory.ownerId ? territory.ownerId : 'no one'}</div>
-			<div>Income: ${territory.resources.income}</div>
+			<div>Income: {formatUSD(territory.resources.income)}</div>
 			{#if territory.ownerId === player?.id}
 				<span class="text-lg font-bold">Manage</span>
 				<AssignUnit

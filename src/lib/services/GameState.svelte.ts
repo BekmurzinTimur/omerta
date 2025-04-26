@@ -26,7 +26,7 @@ const createInitialState = () => {
 		id: 'player1',
 		name: 'Player 1',
 		resources: {
-			money: 1000,
+			money: 10500,
 			lastIncome: 0,
 			heat: 0
 		},
@@ -48,7 +48,7 @@ const createInitialState = () => {
 					y: y
 				},
 				resources: {
-					income: 5 + Math.floor(Math.random() * 10)
+					income: 5000 + (Math.floor(Math.random() * 50) - 25) * 100
 				},
 				isBeingCaptured: false,
 				captureProgress: 0,

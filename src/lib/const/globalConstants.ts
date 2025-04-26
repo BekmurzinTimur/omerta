@@ -1,3 +1,8 @@
 //Family
 export const MAX_CREW_SIZE = 6;
 export const MAX_CREWS = 4;
+
+export const BASE_SALARY_SOLDIER = 500;
+export const BASE_SALARY_CAPO = 2000;
+export const BASE_SALARY_UNDERBOSS = 10000;
+export const BASE_SALARY_CONSIGLIERI = 10000;

@@ -8,6 +8,8 @@
 		isFamilyFull,
 		promoteUnit
 	} from '$lib/services/GameController.svelte';
+	import { formatUSD } from '$lib/utils/moneyUtils';
+	import { getSalary } from '$lib/utils/unitUtils';
 
 	let { unitId }: { unitId: string } = $props();
 
@@ -15,9 +17,10 @@
 	let player = $derived(getLocalPlayer());
 	let isPlayerUnit = $derived(player && unit && unit.ownerId === player.id);
 	let familyFull = $derived(isFamilyFull());
+	let salary = $derived(getSalary(unit));
 
 	$effect(() => {
-		console.log({ unit });
+		console.log({ unit }, unit?.loyalty);
 	});
 	$inspect(unit);
 	/* --------‑‑ Spritesheet helpers ‑‑-------- */
@@ -123,7 +126,9 @@
 				{#if unit.nickname}
 					<h3 class="text-lg text-gray-300">"{unit.nickname}"</h3>
 				{/if}
-
+				{#if salary}
+					<h4 class="text-lg text-red-300">Salary: {formatUSD(salary)}</h4>
+				{/if}
 				<div class="mt-auto flex items-center justify-between">
 					<span class="text-sm text-gray-400">ID: {unit.id}</span>
 					<button
