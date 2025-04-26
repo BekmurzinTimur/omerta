@@ -3,6 +3,7 @@
 	import { CoreAttribute } from '$lib/models/UnitModels';
 	import {
 		getLocalPlayer,
+		getMissions,
 		getUnit,
 		hireUnit,
 		isFamilyFull,
@@ -10,6 +11,7 @@
 	} from '$lib/services/GameController.svelte';
 	import { formatUSD } from '$lib/utils/moneyUtils';
 	import { getSalary } from '$lib/utils/unitUtils';
+	import MissionCard from '../Mission/MissionCard.svelte';
 
 	let { unitId }: { unitId: string } = $props();
 
@@ -18,6 +20,7 @@
 	let isPlayerUnit = $derived(player && unit && unit.ownerId === player.id);
 	let familyFull = $derived(isFamilyFull());
 	let salary = $derived(getSalary(unit));
+	let assignments = $derived(getMissions(unit?.missions || []));
 
 	$effect(() => {
 		console.log({ unit }, unit?.loyalty);
@@ -199,55 +202,12 @@
 		</div>
 
 		<!-- Right section: Current assignment and history -->
-		<div class="flex w-1/3 flex-col p-6">
+		<div class="flex h-full w-1/3 flex-col overflow-auto p-6">
 			<h3 class="mb-4 border-b border-gray-700 pb-2 text-lg font-bold">Assignments</h3>
 
-			<!-- Current assignment -->
-			<div class="mb-6">
-				<h4 class="mb-2 text-sm text-gray-400 uppercase">Current Assignment</h4>
-				<div class="rounded bg-gray-700 p-3">
-					<div class="font-bold text-yellow-300">{currentAssignment.title}</div>
-					<div class="mt-2 grid grid-cols-2 gap-1 text-sm">
-						<span class="text-gray-400">Role:</span>
-						<span>{currentAssignment.role}</span>
-
-						<span class="text-gray-400">Duration:</span>
-						<span>{currentAssignment.duration}</span>
-
-						<span class="text-gray-400">Reward:</span>
-						<span class="text-green-400">{currentAssignment.reward}</span>
-
-						<span class="text-gray-400">Risk:</span>
-						<span class="text-orange-400">{currentAssignment.risk}</span>
-					</div>
-				</div>
-			</div>
-
-			<!-- Assignment history -->
-			<div>
-				<h4 class="mb-2 text-sm text-gray-400 uppercase">Assignment History</h4>
-				<div class="max-h-[280px] space-y-2 overflow-y-auto pr-2">
-					{#each assignmentHistory as assignment}
-						<div class="rounded bg-gray-700 p-2 text-sm">
-							<div class="font-bold">{assignment.title}</div>
-							<div class="mt-1 flex justify-between text-xs">
-								<span>{assignment.role}</span>
-								<span>{assignment.completed}</span>
-							</div>
-							<div class="flex justify-between text-xs">
-								<span>{assignment.duration}</span>
-								<span
-									class:text-green-400={assignment.outcome === 'Success'}
-									class:text-yellow-400={assignment.outcome === 'Partial Success'}
-									class:text-red-400={assignment.outcome === 'Failure'}
-								>
-									{assignment.outcome}
-								</span>
-							</div>
-						</div>
-					{/each}
-				</div>
-			</div>
+			{#each assignments as assignment}
+				<MissionCard mission={assignment} />
+			{/each}
 		</div>
 	{:else}
 		Unit {unitId} not found

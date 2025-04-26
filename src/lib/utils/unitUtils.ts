@@ -53,7 +53,7 @@ const LAST_NAMES = [
 	'Gorlami',
 	'Dimeo'
 ];
-const IMAGES = 6;
+const IMAGES = 11;
 
 export const generateUnit = ({
 	rank,
@@ -83,6 +83,7 @@ export const generateUnit = ({
 		level: level,
 		cut: getUnitCut({ rank, level }),
 		status: UnitStatus.IDLE,
+		missions: [],
 		image: Math.ceil(Math.random() * IMAGES)
 	};
 };
@@ -169,7 +170,7 @@ export const imprisonUnit = (unit: IUnit) => {
 };
 
 export const disloyalUnit = (unit: IUnit) => {
-	unit.loyalty = 50;
+	unit.loyalty = 0;
 	unit.ownerId = undefined;
 };
 

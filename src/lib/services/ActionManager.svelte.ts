@@ -427,8 +427,11 @@ const processLaunchMissionAction = (action: LaunchMissionAction): void => {
 
 	// Mark units as on‑mission
 	unitIds.forEach((uid) => {
-		const unit = gameState.state.units.get(uid)!;
-		gameState.state.units.set(uid, { ...unit, status: UnitStatus.MISSION });
+		const unit = gameState.state.units.get(uid);
+		gameState.updateUnit(uid, {
+			status: UnitStatus.MISSION,
+			missions: [...unit!.missions, missionId]
+		});
 	});
 
 	const endTick = gameState.state.tickCount + mission.info.durationTicks;
@@ -485,7 +488,7 @@ const resolveMission = (state: GameState, playerId: string, activeMission: IMiss
 
 	// 3. Update each unit
 	const experience = success ? 20 : 0;
-	const loyalty = 100;
+	const loyalty = 5;
 	unitIds.forEach((uid) => {
 		const unit = state.units.get(uid);
 

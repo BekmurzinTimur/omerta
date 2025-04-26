@@ -104,6 +104,10 @@ const getFinishedMissions = (): IMission[] =>
 			m.status !== MissionStatus.AVAILABLE
 	);
 
+const getMissions = (missionsId: string[]): IMission[] => {
+	return missionsId.map((id) => gameState.state.missions.get(id)).filter((_) => !!_);
+};
+
 // Get all units
 const getAllUnits = () => {
 	return Array.from(state.units.values());
@@ -179,6 +183,7 @@ export {
 	getAvailableMissions,
 	getActiveMissions,
 	getFinishedMissions,
+	getMissions,
 	getMission,
 	isFamilyFull
 };

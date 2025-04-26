@@ -37,4 +37,5 @@ export interface IUnit {
 	cut: number;
 	image: number;
 	status: UnitStatus;
+	missions: string[];
 }
