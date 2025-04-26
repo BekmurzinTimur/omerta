@@ -1,11 +1,20 @@
 <script lang="ts">
 	/* --------‑‑ Imports & props ‑‑-------- */
 	import { CoreAttribute } from '$lib/models/UnitModels';
-	import { getUnit, hireUnit } from '$lib/services/GameController.svelte';
+	import {
+		getLocalPlayer,
+		getUnit,
+		hireUnit,
+		isFamilyFull,
+		promoteUnit
+	} from '$lib/services/GameController.svelte';
 
 	let { unitId }: { unitId: string } = $props();
 
 	let unit = $derived(getUnit(unitId));
+	let player = $derived(getLocalPlayer());
+	let isPlayerUnit = $derived(player && unit && unit.ownerId === player.id);
+	let familyFull = $derived(isFamilyFull());
 
 	$effect(() => {
 		console.log({ unit });
@@ -44,6 +53,8 @@
 
 	function handlePromote() {
 		if (!unit) return;
+		console.log(unit, isPlayerUnit, player);
+		if (isPlayerUnit) return promoteUnit(unit.id);
 		hireUnit(unit.id);
 	}
 
@@ -117,10 +128,11 @@
 					<span class="text-sm text-gray-400">ID: {unit.id}</span>
 					<button
 						type="button"
-						class="rounded bg-gray-700 px-4 py-2 text-sm hover:bg-gray-600"
+						class="rounded bg-gray-700 px-4 py-2 text-sm hover:bg-gray-600 disabled:cursor-not-allowed disabled:bg-gray-600"
 						onclick={handlePromote}
+						disabled={familyFull && !isPlayerUnit}
 					>
-						Promote
+						{isPlayerUnit ? 'Promote' : 'Recruit'}
 					</button>
 				</div>
 			</div>

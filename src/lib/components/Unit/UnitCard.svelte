@@ -63,7 +63,7 @@
 		<div class="mb-2 mb-auto text-sm leading-snug font-bold drop-shadow">
 			<div class="mb-1 flex items-center gap-2">
 				<div
-					class="flex h-6 w-6 flex-col items-center justify-center rounded-full bg-amber-600 text-lg leading-0 font-bold"
+					class="flex h-6 w-6 min-w-6 flex-col items-center justify-center rounded-full bg-amber-600 text-lg leading-0 font-bold"
 				>
 					{unit.level}
 				</div>

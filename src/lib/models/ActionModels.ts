@@ -22,6 +22,7 @@ export enum ActionType {
 
 	// Unit actions
 	HIRE_UNIT = 'HIRE_UNIT',
+	PROMOTE_UNIT = 'PROMOTE_UNIT',
 	LAUNCH_MISSION = 'LAUNCH_MISSION',
 
 	// Economy actions
@@ -69,6 +70,12 @@ export interface StartCaptureAction extends Action {
 // Hire unit action
 export interface HireUnitAction extends Action {
 	type: ActionType.HIRE_UNIT;
+	unitId: string;
+}
+
+// Promote unit action
+export interface PromoteUnitAction extends Action {
+	type: ActionType.PROMOTE_UNIT;
 	unitId: string;
 }
 

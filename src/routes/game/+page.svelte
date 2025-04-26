@@ -5,7 +5,7 @@
 </script>
 
 <div class="flex h-screen w-screen flex-col overflow-hidden">
-	<main class="flex-grow">
+	<main class="h-full flex-grow">
 		<DragAndDropProvider>
 			<GameComponent />
 			<WindowManager />

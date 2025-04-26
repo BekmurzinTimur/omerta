@@ -19,7 +19,8 @@ export enum UnitStatus {
 	MISSION = 'Mission',
 	TERRITORY = 'Territory',
 	EXPAND = 'Expand',
-	BUSINESS = 'Business'
+	BUSINESS = 'Business',
+	PRISON = 'Prison'
 }
 
 export interface IUnit {

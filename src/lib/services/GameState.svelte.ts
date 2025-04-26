@@ -8,7 +8,14 @@ import {
 	DEFAULT_MISSIONS,
 	type IMission
 } from '$lib/models/MissionModels';
-import { generateStartingUnits, STARTING_COMPOSITION, upgradeUnit } from '$lib/utils/unitUtils';
+import {
+	disloyalUnit,
+	generateStartingAssociates,
+	generateStartingUnits,
+	imprisonUnit,
+	STARTING_COMPOSITION,
+	upgradeUnit
+} from '$lib/utils/unitUtils';
 
 const createInitialState = () => {
 	// Start date: January 1, 1960, 00:00
@@ -79,6 +86,11 @@ const createInitialState = () => {
 		const proto = DEFAULT_MISSIONS[0]; // first prototype for now
 		const mission = buildMissionFromPrototype(playerMap.get(playerId)!.id, proto);
 		missionMap.set(mission.id, mission);
+	});
+
+	const startingAssociates = generateStartingAssociates(15);
+	startingAssociates.forEach((unit) => {
+		unitMap.set(unit.id, unit);
 	});
 
 	return {
@@ -164,6 +176,16 @@ class GameState {
 		if (newUnit.experience >= 100 && newUnit.level < 10) {
 			upgradeUnit(newUnit);
 		}
+		if (newUnit.heat >= 100) {
+			imprisonUnit(newUnit);
+		}
+		if (newUnit.loyalty <= 0) {
+			const player = this.state.players.get(newUnit.ownerId || '');
+			if (player) {
+				disloyalUnit(newUnit);
+				this.removeUnitFromPlayer(player.id, newUnit.id);
+			}
+		}
 		this.state.units.set(unitId, newUnit);
 	}
 	updateMission(missionId: string, updates: Partial<IMission>): void {
@@ -213,6 +235,12 @@ class GameState {
 	/** Get missions belonging to a player */
 	getPlayerMissions(playerId: string): IMission[] {
 		return Array.from(this.state.missions.values()).filter((m) => m.playerId === playerId);
+	}
+	removeUnitFromPlayer(playerId: string, unitId: string) {
+		const player = this.state.players.get(playerId);
+		if (!player) return;
+		player.units = player?.units.filter((item) => item !== unitId);
+		this.updatePlayer(playerId, player);
 	}
 }
 

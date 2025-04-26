@@ -7,11 +7,13 @@ import {
 	createHireUnitAction,
 	createAssignToTerritoryAction,
 	createRemoveFromTerritoryAction,
-	createLaunchMissionAction
+	createLaunchMissionAction,
+	createPromoteUnitAction
 } from './ActionManager.svelte';
 
 import { MissionStatus, type IMission } from '../models/MissionModels';
 import { UnitRank } from '$lib/models/UnitModels';
+import { getMaxFamilySize } from '$lib/utils/familyUtils';
 
 let state = gameState.state;
 // This controller acts as an interface between the UI and the game systems
@@ -33,6 +35,11 @@ const startCapturingTerritory = (unitId: string, territoryId: string): void => {
 // Hire a new unit
 const hireUnit = (unitId: string): void => {
 	const action = createHireUnitAction(LOCAL_PLAYER_ID, unitId);
+	queueAction(action);
+};
+
+const promoteUnit = (unitId: string): void => {
+	const action = createPromoteUnitAction(LOCAL_PLAYER_ID, unitId);
 	queueAction(action);
 };
 
@@ -142,11 +149,18 @@ const getMission = (missionId: string): IMission | undefined => {
 	return gameState.state.missions.get(missionId);
 };
 
+const isFamilyFull = () => {
+	let playerUnits = getPlayerUnits();
+	const maxFamilySize = getMaxFamilySize(playerUnits);
+	return playerUnits.length >= maxFamilySize;
+};
+
 // Export the game controller functions
 export {
 	getTick,
 	startCapturingTerritory,
 	hireUnit,
+	promoteUnit,
 	assignUnitToTerritory,
 	removeUnitFromTerritory,
 	launchMission,
@@ -165,5 +179,6 @@ export {
 	getAvailableMissions,
 	getActiveMissions,
 	getFinishedMissions,
-	getMission
+	getMission,
+	isFamilyFull
 };

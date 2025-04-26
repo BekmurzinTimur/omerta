@@ -13,14 +13,16 @@ import gameState from './GameState.svelte';
 import type {
 	AssignToTerritory,
 	LaunchMissionAction,
+	PromoteUnitAction,
 	RemoveFromTerritoryAction
 } from '../models/ActionModels';
 import { UnitStatus, UnitRank } from '$lib/models/UnitModels';
 import { MissionStatus, type IMission } from '$lib/models/MissionModels';
 import { addScheduledAction } from './ScheduledActionManager.svelte';
 import { checkMissionSuccess, getTeamStats } from '$lib/utils/common';
-import { getAllUnitsMap } from './GameController.svelte';
+import { getAllUnitsMap, isFamilyFull } from './GameController.svelte';
 import { isNeighboringPlayerTerritory } from '$lib/utils/mapUtils';
+import { _promoteUnit } from '$lib/utils/unitUtils';
 
 // Queue of actions waiting to be processed
 let actionQueue = $state<Action[]>([]);
@@ -75,6 +77,28 @@ const validateHireUnit = (
 		return { valid: false, reason: `Unit ${unitId} is already owned` };
 	if (unit.rank !== UnitRank.ASSOCIATE)
 		return { valid: false, reason: `Unit ${unitId} is not Associate` };
+	if (isFamilyFull()) {
+		return { valid: false, reason: `Family is full` };
+	}
+
+	return { valid: true };
+};
+
+// Validation for HireUnitAction
+const validatePromoteUnit = (
+	state: GameState,
+	playerId: string,
+	unitId: string
+): { valid: boolean; reason?: string } => {
+	const player = state.players.get(playerId);
+	if (!player) return { valid: false, reason: `Player ${playerId} not found` };
+
+	const unit = state.units.get(unitId);
+	if (!unit) return { valid: false, reason: `Unit ${unitId} not found` };
+	if (unit.ownerId !== playerId)
+		return { valid: false, reason: `Unit ${unitId} is not owned by player ${playerId}` };
+	if (unit.rank === UnitRank.UNDERBOSS || unit.rank === UnitRank.CONSIGLIERE)
+		return { valid: false, reason: `Unit ${unitId} cannot be promoted further` };
 
 	return { valid: true };
 };
@@ -238,7 +262,9 @@ const processActions = (): void => {
 				case ActionType.LAUNCH_MISSION:
 					processLaunchMissionAction(action as LaunchMissionAction);
 					break;
-				// Add more cases as needed
+				case ActionType.PROMOTE_UNIT:
+					processPromoteUnitAction(action as PromoteUnitAction);
+					break;
 				default:
 					console.warn(`Unknown action type: ${action.type}`);
 					action.status = ActionStatus.FAILED;
@@ -306,13 +332,31 @@ const processHireUnitAction = (action: HireUnitAction): void => {
 	const unit = gameState.state.units.get(unitId)!;
 
 	// unit.rank = UnitRank.SOLDIER;
-	gameState.updateUnit(unitId, { rank: UnitRank.SOLDIER });
+	gameState.updateUnit(unitId, { rank: UnitRank.SOLDIER, ownerId: playerId });
 
 	// Add unit to player's units
 	const updatedUnits = [...player.units, unit.id];
 	gameState.updatePlayer(playerId, { units: updatedUnits });
 
 	console.log(`Player ${playerId} hired ${unit.name} unit`);
+};
+
+const processPromoteUnitAction = (action: PromoteUnitAction): void => {
+	const { playerId, unitId } = action;
+
+	// Validate again with current state
+	const validationResult = validatePromoteUnit(gameState.state, playerId, unitId);
+	if (!validationResult.valid) {
+		throw new Error(validationResult.reason || 'Validation failed');
+	}
+
+	const unit = gameState.state.units.get(unitId)!;
+
+	_promoteUnit(unit);
+	// unit.rank = UnitRank.SOLDIER;
+	gameState.updateUnit(unitId, unit);
+
+	console.log(`Player ${playerId} promoted unit ${unit.name} to rank ${unit.rank}`);
 };
 
 const processAssignToTerritoryAction = (action: AssignToTerritory): void => {
@@ -500,6 +544,18 @@ const createHireUnitAction = (playerId: string, unitId: string): HireUnitAction 
 	};
 };
 
+const createPromoteUnitAction = (playerId: string, unitId: string): PromoteUnitAction => {
+	return {
+		id: uuidv4(),
+		type: ActionType.PROMOTE_UNIT,
+		playerId,
+		unitId,
+		timestamp: Date.now(),
+		status: ActionStatus.PENDING,
+		validate: (state: GameState) => validatePromoteUnit(state, playerId, unitId)
+	};
+};
+
 const createAssignToTerritoryAction = (
 	playerId: string,
 	unitId: string,
@@ -560,6 +616,7 @@ export {
 	getPlayerActionHistory,
 	createStartCaptureAction,
 	createHireUnitAction,
+	createPromoteUnitAction,
 	createAssignToTerritoryAction,
 	createRemoveFromTerritoryAction,
 	createLaunchMissionAction

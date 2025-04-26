@@ -89,7 +89,7 @@
 			=
 			<MissionStatusBadge status={mission.status} />=
 		</div>
-		<h4 class="text-xl font-bold">Success chance: {successChance}</h4>
+		<h4 class="text-xl font-bold">Success chance: {successChance.toFixed(0)}</h4>
 
 		<div>
 			<span class="font-semibold">Team Power:</span>

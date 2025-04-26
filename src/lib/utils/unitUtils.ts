@@ -17,7 +17,8 @@ const FIRST_NAMES = [
 	'Vito',
 	'John',
 	'Carmine',
-	'Dick',
+	'Dickie',
+	'Paulie',
 	'Vinny',
 	'Salvatore',
 	'Tommy',
@@ -40,7 +41,7 @@ const LAST_NAMES = [
 	'Russo',
 	'Ricci'
 ];
-const IMAGES = 4;
+const IMAGES = 6;
 
 export const generateUnit = ({
 	rank,
@@ -104,6 +105,20 @@ export const generateStartingUnits = (composition: IUnitTemplate[]) => {
 	return units;
 };
 
+export const generateStartingAssociates = (amount: number) => {
+	let associates: IUnit[] = [];
+	for (let i = 0; i < amount; i++) {
+		associates.push(
+			generateUnit({
+				rank: UnitRank.ASSOCIATE,
+				level: 1,
+				tier: Math.ceil(Math.random() * 3)
+			})
+		);
+	}
+	return associates;
+};
+
 export const STARTING_COMPOSITION: IUnitTemplate[] = [
 	{
 		rank: UnitRank.CAPO,
@@ -134,4 +149,28 @@ export const upgradeUnit = (unit: IUnit) => {
 export const upgradeRandomStat = (unit: IUnit) => {
 	const randomStatName = STAT_NAMES[Math.floor(Math.random() * STAT_NAMES.length)];
 	unit.skills[randomStatName] += 1;
+};
+
+export const imprisonUnit = (unit: IUnit) => {
+	unit.status = UnitStatus.PRISON;
+	unit.heat = 100;
+};
+
+export const disloyalUnit = (unit: IUnit) => {
+	unit.loyalty = 50;
+	unit.ownerId = undefined;
+};
+
+export const _promoteUnit = (unit: IUnit) => {
+	unit.rank = getPromotedRank(unit.rank);
+	unit.cut = getUnitCut(unit);
+};
+
+export const getPromotedRank = (currentRank: UnitRank) => {
+	if (currentRank === UnitRank.SOLDIER) {
+		return UnitRank.CAPO;
+	} else if (currentRank === UnitRank.CAPO) {
+		return UnitRank.UNDERBOSS;
+	}
+	return UnitRank.SOLDIER;
 };
