@@ -22,8 +22,12 @@ export interface ITerritory {
 export interface IRegion {
 	id: string;
 	name: string;
-	territoryIds: string[]; // References to all territories in this region
-	color: string; // For visualization
+	territoryIds: string[];
+	color: string;
+	controlBonus: {
+		income: number;
+	};
+	type: number;
 }
 
 interface TerritoryBorders {

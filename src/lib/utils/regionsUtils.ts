@@ -21,7 +21,11 @@ export function createRegionsFromGrid(regionGrid: number[][]): Map<string, IRegi
 					id: regionId,
 					name: `Region ${regionGrid[y][x] + 1}`, // 1-based naming for user display
 					territoryIds: [territoryId],
-					color: regionColors[regionGrid[y][x]]
+					color: regionColors[regionGrid[y][x]],
+					controlBonus: {
+						income: Math.round(50 + Math.random() * 50)
+					},
+					type: regions.size
 				});
 			} else {
 				const region = regions.get(regionId)!;

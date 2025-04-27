@@ -51,10 +51,10 @@ top: {cell.y * cellSize}px;
 	></div>
 	<div
 		class="pointer-events-none absolute top-0 left-0 h-full w-full"
-		class:border-t-2={territory?.borders.top}
-		class:border-r-2={territory?.borders.right}
-		class:border-b-2={territory?.borders.bottom}
-		class:border-l-2={territory?.borders.left}
+		class:border-t-3={territory?.borders.top}
+		class:border-r-3={territory?.borders.right}
+		class:border-b-3={territory?.borders.bottom}
+		class:border-l-3={territory?.borders.left}
 		style="border-color: {region!.color};"
 	></div>
 	<div
