@@ -6,6 +6,7 @@
 		getAllUnitsMap,
 		getLocalPlayer,
 		getRegion,
+		getRegionControl,
 		removeUnitFromTerritory,
 		startCapturingTerritory
 	} from '$lib/services/GameController.svelte';
@@ -41,6 +42,7 @@
 	);
 	let region = $derived(getRegion(territory?.regionId || ''));
 	let regionInfo = $derived(REGIONS_DATA[region?.type || 0]);
+	let regionControl = $derived(getRegionControl(region?.id));
 
 	// Handle drop events
 	function handleDrop(result: DropResult) {
@@ -82,7 +84,7 @@
 				</div>
 			</div>
 
-			<div class="p-4">
+			<div class="p-4 pb-2">
 				<div class="mt-4 flex flex-wrap gap-3">
 					<div class="rounded-md bg-gray-700 px-3 py-2">
 						<span class="text-sm font-semibold text-gray-400">Control Bonus</span>
@@ -97,6 +99,10 @@
 							</div>
 						</div>
 					{/if}
+				</div>
+				<div class="mt-2 rounded-md bg-gray-700 px-3 py-2">
+					<span class="text-sm font-semibold text-gray-400">Region control: </span>
+					<div class="text-lg font-bold">{regionControl.toFixed()}%</div>
 				</div>
 			</div>
 		</div>
@@ -113,7 +119,7 @@
 					</span>
 				</div>
 
-				<div class="mt-3 grid grid-cols-2 gap-4">
+				<div class="mt-3">
 					<div class="rounded-md bg-gray-800 p-3">
 						<span class="text-sm text-gray-400">Territory Income</span>
 						<div class="text-lg font-bold text-green-400">

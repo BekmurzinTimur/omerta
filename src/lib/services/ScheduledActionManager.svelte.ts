@@ -8,6 +8,7 @@ import { buildMissionFromPrototype, DEFAULT_MISSIONS } from '$lib/models/Mission
 import { getManagerMultiplier } from '$lib/utils/territoryUtils';
 import { getSalary } from '$lib/utils/unitUtils';
 import { getCaptureProgress } from '$lib/utils/mapUtils';
+import { getRegion, getRegionControl } from './GameController.svelte';
 
 let state: GameState = gameState.state;
 
@@ -81,6 +82,11 @@ const setupInitialScheduledActions = (): void => {
 					if (manager) {
 						territoryMultiplier = getManagerMultiplier(manager);
 						gameState.updateUnit(manager.id, { experience: manager.experience + 5 });
+					}
+					let regionControl = getRegionControl(territoryData?.regionId);
+					let region = getRegion(territoryData!.regionId);
+					if (regionControl > 51 && region) {
+						territoryMultiplier *= (100 + region.controlBonus.income) / 100;
 					}
 					if (territoryData) {
 						income += territoryData.resources.income * territoryMultiplier;

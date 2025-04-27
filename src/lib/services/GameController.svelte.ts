@@ -14,6 +14,7 @@ import {
 import { MissionStatus, type IMission } from '../models/MissionModels';
 import { UnitRank } from '$lib/models/UnitModels';
 import { getMaxFamilySize } from '$lib/utils/familyUtils';
+import { calculateRegionOwnership } from '$lib/utils/regionsUtils';
 
 let state = gameState.state;
 // This controller acts as an interface between the UI and the game systems
@@ -167,6 +168,13 @@ const isFamilyFull = () => {
 	return playerUnits.length >= maxFamilySize;
 };
 
+const getRegionControl = (regionId?: string): number => {
+	if (!regionId) return 0;
+	const player = getLocalPlayer();
+	const ownership = calculateRegionOwnership(regionId, gameState.state);
+	return ownership.get(player!.id) || 0;
+};
+
 // Export the game controller functions
 export {
 	getTick,
@@ -195,5 +203,6 @@ export {
 	getFinishedMissions,
 	getMissions,
 	getMission,
-	isFamilyFull
+	isFamilyFull,
+	getRegionControl
 };
