@@ -7,6 +7,7 @@ export interface ITerritory {
 		x: number;
 		y: number;
 	};
+	regionId: string;
 	resources: {
 		income: number;
 	};
@@ -15,4 +16,11 @@ export interface ITerritory {
 	captureInitiator: string | null;
 	capturingUnitId: string | null;
 	managerId: string | null;
+}
+
+export interface IRegion {
+	id: string;
+	name: string;
+	territoryIds: string[]; // References to all territories in this region
+	color: string; // For visualization
 }

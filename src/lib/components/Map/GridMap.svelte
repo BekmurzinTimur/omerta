@@ -9,12 +9,13 @@
 	import type { Cell, GridSize, Position } from '$lib/models/MapTypes';
 	import { onMount } from 'svelte';
 	import GridCell from './GridCell.svelte';
+	import { MAP_HEIGHT, MAP_WIDTH } from '$lib/const/globalConstants';
 
 	// Define props for background image
 	const backgroundImageUrl = '/map_background.png';
 
 	// Define grid dimensions
-	let gridSize: GridSize = $state({ width: 20, height: 20 });
+	let gridSize: GridSize = $state({ width: MAP_WIDTH, height: MAP_HEIGHT });
 	let {
 		selectedCellId,
 		onSelect
@@ -170,6 +171,7 @@
 					color={playerTerritorySet.has(id) || cellData.isBeingCaptured
 						? `${playerColor};`
 						: 'inherit;'}
+					territoryId={id}
 				/>
 			{/if}
 		{/each}

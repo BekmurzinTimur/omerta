@@ -63,6 +63,14 @@ const getPlayerColor = () => {
 	return player ? player.color : '';
 };
 
+const getTerritory = (id: string) => {
+	return state.territories.get(id);
+};
+
+const getRegion = (id: string) => {
+	return state.regions.get(id);
+};
+
 // Get all territories
 const getAllTerritories = () => {
 	return state.territories;
@@ -169,6 +177,8 @@ export {
 	removeUnitFromTerritory,
 	launchMission,
 	getLocalPlayer,
+	getTerritory,
+	getRegion,
 	getAllTerritories,
 	getPlayerTerritories,
 	getNeutralTerritories,

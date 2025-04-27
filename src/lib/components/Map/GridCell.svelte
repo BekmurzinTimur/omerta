@@ -3,6 +3,7 @@
 	import type { IUnit } from '$lib/models/UnitModels';
 	import type { Cell } from '$lib/models/MapTypes';
 	import GridCellUnit from './GridCellUnit.svelte';
+	import { getRegion, getTerritory } from '$lib/services/GameController.svelte';
 
 	let {
 		cell,
@@ -11,7 +12,8 @@
 		color,
 		selectCell,
 		unit,
-		isBeingCaptured
+		isBeingCaptured,
+		territoryId
 	}: {
 		cell: Cell;
 		cellSize: number;
@@ -20,8 +22,11 @@
 		selectCell: (cellId: string) => void;
 		unit?: IUnit;
 		isBeingCaptured: boolean;
+		territoryId: string;
 	} = $props();
 
+	let territory = $derived(getTerritory(territoryId));
+	let region = $derived(getRegion(territory!.regionId));
 	// Direct reactive property check instead of derived
 	let isSelected = $derived(selectedCellId === cell.id);
 </script>
@@ -43,6 +48,12 @@ top: {cell.y * cellSize}px;
 		class:animate-fade-in-out={isBeingCaptured}
 		class:opacity-30={!isBeingCaptured}
 		style="background-color: {color};"
+	></div>
+	<div
+		class="pointer-events-none absolute top-0 left-0 h-full w-full"
+		class:animate-fade-in-out={isBeingCaptured}
+		class:opacity-30={!isBeingCaptured}
+		style="background-color: {region!.color};"
 	></div>
 	<div
 		class="relative z-10 flex h-full w-full flex-col items-center justify-center"

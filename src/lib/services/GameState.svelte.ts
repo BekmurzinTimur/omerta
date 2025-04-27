@@ -16,6 +16,12 @@ import {
 	STARTING_COMPOSITION,
 	upgradeUnit
 } from '$lib/utils/unitUtils';
+import { BORDER_RANDOMNESS, MAP_HEIGHT, MAP_WIDTH, REGIONS } from '$lib/const/globalConstants';
+import {
+	assignRegionsToTerritories,
+	createRegionsFromGrid,
+	generateRegionGrid
+} from '$lib/utils/regionsUtils';
 
 const createInitialState = () => {
 	// Start date: January 1, 1960, 00:00
@@ -34,19 +40,21 @@ const createInitialState = () => {
 		units: [],
 		color: '#ff0000'
 	};
+	const regionGrid = generateRegionGrid(REGIONS, MAP_WIDTH, BORDER_RANDOMNESS);
 
 	// Create initial territories
 	const territories: ITerritory[] = [];
-	for (let x = 0; x < 20; x++) {
-		for (let y = 0; y < 20; y++) {
+	for (let x = 0; x < MAP_WIDTH; x++) {
+		for (let y = 0; y < MAP_HEIGHT; y++) {
 			territories.push({
 				id: `${x}-${y}`,
 				name: `Territory ${x}-${y}`,
-				ownerId: (x === 10 || x === 9) && y === 10 ? 'player1' : null, // Player 1 starts with 1 territory
+				ownerId: (x === 5 || x === 4) && y === 4 ? 'player1' : null, // Player 1 starts with 1 territory
 				position: {
 					x: x,
 					y: y
 				},
+				regionId: '',
 				resources: {
 					income: 5000 + (Math.floor(Math.random() * 50) - 25) * 100
 				},
@@ -59,6 +67,8 @@ const createInitialState = () => {
 		}
 	}
 
+	const regions = createRegionsFromGrid(regionGrid);
+
 	// Assign owned territories to player
 	playerOne.territories = territories.filter((t) => t.ownerId === 'player1');
 
@@ -66,6 +76,7 @@ const createInitialState = () => {
 	territories.forEach((territory) => {
 		territoryMap.set(territory.id, territory);
 	});
+	assignRegionsToTerritories(territoryMap, regions);
 
 	const unitMap = new SvelteMap<string, IUnit>();
 
@@ -100,7 +111,8 @@ const createInitialState = () => {
 		currentDate: startDate,
 		isRunning: false,
 		tickCount: 0,
-		missions: missionMap
+		missions: missionMap,
+		regions
 	};
 };
 /**

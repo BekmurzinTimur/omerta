@@ -11,3 +11,9 @@ export const BASE_SALARY_CONSIGLIERI = 10000;
 export const BASE_CAPTURE_PROGRESS = 10;
 export const CAPTURE_PROGRESS_PER_NEIGHBOUR = 0.25;
 export const CAPTURE_PROGRESS_PER_MUSCLE = 1;
+
+//Map
+export const MAP_WIDTH = 10;
+export const MAP_HEIGHT = 10;
+export const REGIONS = 7;
+export const BORDER_RANDOMNESS = 100;

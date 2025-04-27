@@ -1,7 +1,7 @@
 // Game entity models and interfaces
 
 import type { IMission } from './MissionModels';
-import type { ITerritory } from './TerritoryModel';
+import type { IRegion, ITerritory } from './TerritoryModel';
 import type { IUnit } from './UnitModels';
 
 // Player model
@@ -24,6 +24,7 @@ export interface GameState {
 	territories: Map<string, ITerritory>;
 	units: Map<string, IUnit>;
 	missions: Map<string, IMission>;
+	regions: Map<string, IRegion>;
 	currentDate: Date;
 	isRunning: boolean;
 	tickCount: number;
