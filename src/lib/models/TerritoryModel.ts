@@ -16,6 +16,7 @@ export interface ITerritory {
 	captureInitiator: string | null;
 	capturingUnitId: string | null;
 	managerId: string | null;
+	borders: TerritoryBorders;
 }
 
 export interface IRegion {
@@ -23,4 +24,11 @@ export interface IRegion {
 	name: string;
 	territoryIds: string[]; // References to all territories in this region
 	color: string; // For visualization
+}
+
+interface TerritoryBorders {
+	top: boolean;
+	right: boolean;
+	bottom: boolean;
+	left: boolean;
 }

@@ -18,6 +18,7 @@ import {
 } from '$lib/utils/unitUtils';
 import { BORDER_RANDOMNESS, MAP_HEIGHT, MAP_WIDTH, REGIONS } from '$lib/const/globalConstants';
 import {
+	addRegionBorders,
 	assignRegionsToTerritories,
 	createRegionsFromGrid,
 	generateRegionGrid
@@ -62,7 +63,13 @@ const createInitialState = () => {
 				captureProgress: 0,
 				captureInitiator: null,
 				managerId: null,
-				capturingUnitId: null
+				capturingUnitId: null,
+				borders: {
+					top: false,
+					right: false,
+					bottom: false,
+					left: false
+				}
 			});
 		}
 	}
@@ -77,7 +84,7 @@ const createInitialState = () => {
 		territoryMap.set(territory.id, territory);
 	});
 	assignRegionsToTerritories(territoryMap, regions);
-
+	addRegionBorders(territoryMap);
 	const unitMap = new SvelteMap<string, IUnit>();
 
 	const startingUnits = generateStartingUnits(STARTING_COMPOSITION);

@@ -287,3 +287,30 @@ export function generateRegionGrid(
 
 	return grid;
 }
+
+export const addRegionBorders = (territoriesMap: Map<string, ITerritory>) => {
+	territoriesMap.forEach((territory) => {
+		const borders = {
+			left: false,
+			right: false,
+			bottom: false,
+			top: false
+		};
+		const { x, y } = territory.position;
+
+		// Define the four adjacent positions
+		const neighborIds = {
+			top: `${x}-${y - 1}`, // up
+			right: `${x + 1}-${y}`, // right
+			bottom: `${x}-${y + 1}`, // down
+			left: `${x - 1}-${y}` // left
+		};
+
+		borders.top = territoriesMap.get(neighborIds.top)?.regionId !== territory.regionId;
+		borders.right = territoriesMap.get(neighborIds.right)?.regionId !== territory.regionId;
+		borders.bottom = territoriesMap.get(neighborIds.bottom)?.regionId !== territory.regionId;
+		borders.left = territoriesMap.get(neighborIds.left)?.regionId !== territory.regionId;
+
+		territory.borders = borders;
+	});
+};

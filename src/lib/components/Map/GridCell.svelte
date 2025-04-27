@@ -51,9 +51,11 @@ top: {cell.y * cellSize}px;
 	></div>
 	<div
 		class="pointer-events-none absolute top-0 left-0 h-full w-full"
-		class:animate-fade-in-out={isBeingCaptured}
-		class:opacity-30={!isBeingCaptured}
-		style="background-color: {region!.color};"
+		class:border-t={territory?.borders.top}
+		class:border-r={territory?.borders.right}
+		class:border-b={territory?.borders.bottom}
+		class:border-l={territory?.borders.left}
+		style="border-color: {region!.color};"
 	></div>
 	<div
 		class="relative z-10 flex h-full w-full flex-col items-center justify-center"
