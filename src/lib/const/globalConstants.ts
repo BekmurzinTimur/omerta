@@ -6,3 +6,8 @@ export const BASE_SALARY_SOLDIER = 500;
 export const BASE_SALARY_CAPO = 2000;
 export const BASE_SALARY_UNDERBOSS = 10000;
 export const BASE_SALARY_CONSIGLIERI = 10000;
+
+//Territory
+export const BASE_CAPTURE_PROGRESS = 10;
+export const CAPTURE_PROGRESS_PER_NEIGHBOUR = 0.25;
+export const CAPTURE_PROGRESS_PER_MUSCLE = 1;

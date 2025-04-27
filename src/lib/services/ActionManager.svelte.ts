@@ -54,8 +54,6 @@ const validateStartCapture = (
 		return { valid: false, reason: 'Associates cannot capture territories' };
 	if (territory.ownerId === playerId)
 		return { valid: false, reason: 'You already own this territory' };
-	if (territory.isBeingCaptured)
-		return { valid: false, reason: 'Territory is already under siege' };
 	if (!isNeighboringPlayerTerritory(territory, gameState.state.territories, player.id))
 		return { valid: false, reason: 'Territory is not neighbouring any players territory' };
 
@@ -301,17 +299,23 @@ const processStartCaptureAction = (action: StartCaptureAction): void => {
 		throw new Error(validationResult.reason || 'Validation failed');
 	}
 
-	const unit = gameState.state.units.get(unitId)!;
+	const territory = gameState.state.territories.get(territoryId)!;
 
+	// Free previous capturer
+	const previousCapturer = gameState.state.units.get(territory.capturingUnitId || '');
+	if (previousCapturer) {
+		gameState.updateUnit(previousCapturer.id, { status: UnitStatus.IDLE });
+	}
+
+	const unit = gameState.state.units.get(unitId)!;
 	// Mark territory and unit
 	gameState.updateTerritory(territoryId, {
 		isBeingCaptured: true,
-		captureProgress: 0,
 		captureInitiator: playerId,
 		capturingUnitId: unitId
 	});
 
-	gameState.state.units.set(unitId, { ...unit, status: UnitStatus.EXPAND });
+	gameState.updateUnit(unitId, { status: UnitStatus.EXPAND });
 
 	console.log(
 		`Player ${playerId} started capturing territory ${territoryId} with unit ${unit.name}`

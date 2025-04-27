@@ -7,6 +7,7 @@ import { UnitStatus } from '$lib/models/UnitModels';
 import { buildMissionFromPrototype, DEFAULT_MISSIONS } from '$lib/models/MissionModels';
 import { getManagerMultiplier } from '$lib/utils/territoryUtils';
 import { getSalary } from '$lib/utils/unitUtils';
+import { getCaptureProgress } from '$lib/utils/mapUtils';
 
 let state: GameState = gameState.state;
 
@@ -135,8 +136,10 @@ const setupInitialScheduledActions = (): void => {
 					return;
 				}
 
+				const tickProgress = getCaptureProgress(territory, gameState.state.territories, unit);
+				console.log({ tickProgress });
 				// Advance progress
-				const newProgress = territory.captureProgress + 10; // 10% per tick
+				const newProgress = territory.captureProgress + tickProgress;
 
 				if (newProgress >= 100) {
 					const playerId = unit.ownerId!;
