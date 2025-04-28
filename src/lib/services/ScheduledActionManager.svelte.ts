@@ -186,8 +186,8 @@ const setupInitialScheduledActions = (): void => {
 	addScheduledAction({
 		id: 'mission-supply',
 		type: ScheduledActionType.GENERATE_MISSIONS,
-		interval: 5,
-		nextExecutionTick: 5,
+		interval: 24,
+		nextExecutionTick: 24,
 		isRecurring: true,
 		execute: (state) => {
 			state.players.forEach((player: Player) => {
