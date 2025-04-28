@@ -4,6 +4,7 @@ import {
 	processScheduledActions,
 	setupInitialScheduledActions
 } from './ScheduledActionManager.svelte';
+import { END_DATE } from '$lib/const/globalConstants';
 
 class GameService {
 	// Game tick interval in milliseconds
@@ -39,6 +40,10 @@ class GameService {
 			console.warn('Game loop is already running');
 			return;
 		}
+		if (gameState.state.hasEnded) {
+			console.warn('Game has ended');
+			return;
+		}
 
 		console.log('Starting game loop');
 
@@ -72,11 +77,7 @@ class GameService {
 	// Main game tick function
 	private gameTick(): void {
 		const startTime = Date.now();
-		const tickDelta = startTime - this.lastTickTime;
 		this.lastTickTime = startTime;
-
-		// Calculate current FPS
-		this.currentFps = Math.round(1000 / tickDelta);
 
 		// Increment tick count
 		gameState.state.tickCount++;
@@ -86,6 +87,11 @@ class GameService {
 		// 1. Advance game date
 		gameState.advanceGameDate();
 
+		console.log(gameState.state.currentDate);
+		if (gameState.state.currentDate >= END_DATE) {
+			console.log('reached end', END_DATE);
+			this.endGame();
+		}
 		// 2. Process player-initiated actions
 		processActions();
 
@@ -97,7 +103,7 @@ class GameService {
 		const endTime = Date.now();
 		const tickProcessingTime = endTime - startTime;
 
-		console.log(`Tick processing took ${tickProcessingTime}ms (FPS: ${this.currentFps})`);
+		console.log(`Tick processing took ${tickProcessingTime}ms `);
 
 		// Check if tick took too long
 		if (tickProcessingTime > this.TICK_INTERVAL * 0.8) {
@@ -105,6 +111,12 @@ class GameService {
 				`Tick processing time (${tickProcessingTime}ms) is approaching tick interval (${this.TICK_INTERVAL}ms)`
 			);
 		}
+	}
+
+	endGame(): void {
+		console.log('ending the game');
+		this.stopGameLoop();
+		gameState.state.hasEnded = true;
 	}
 
 	// Toggle the game loop

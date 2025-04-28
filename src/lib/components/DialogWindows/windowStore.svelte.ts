@@ -5,6 +5,11 @@ let windows: WindowConfig[] = $state([]);
 let nextZIndex = $state(100);
 
 const addWindow = (windowConfig: WindowConfig) => {
+	const sameWindow = windows.find((w) => w.id === windowConfig.id);
+
+	if (sameWindow) {
+		return focusWindow(windowConfig.id);
+	}
 	const isActive = windows.length === 0;
 	const newWindow = {
 		...windowConfig,

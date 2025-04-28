@@ -28,4 +28,5 @@ export interface GameState {
 	currentDate: Date;
 	isRunning: boolean;
 	tickCount: number;
+	hasEnded: boolean;
 }

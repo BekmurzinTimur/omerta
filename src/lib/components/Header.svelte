@@ -2,6 +2,8 @@
 	import gameState from '../services/GameState.svelte';
 	import gameService from '../services/GameService.svelte';
 	import Resources from './Resources.svelte';
+	import { addWindow } from './DialogWindows/windowStore.svelte';
+	import EndGameWindow from './EndGame/EndGameWindow.svelte';
 	let state = gameState.state;
 	// Format the current game date
 	let formattedDate = $derived(gameState.formatGameDate(state.currentDate));
@@ -23,6 +25,7 @@
 				? 'bg-red-600 hover:bg-red-700'
 				: 'bg-green-600 hover:bg-green-700'}"
 			onclick={() => gameService.toggleGameLoop()}
+			disabled={state.hasEnded}
 		>
 			{gameService.isRunning ? 'Pause' : 'Start'}
 		</button>

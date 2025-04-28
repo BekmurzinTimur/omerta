@@ -119,7 +119,8 @@ const createInitialState = () => {
 		isRunning: false,
 		tickCount: 0,
 		missions: missionMap,
-		regions
+		regions,
+		hasEnded: false
 	};
 };
 /**

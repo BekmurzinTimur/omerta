@@ -17,3 +17,6 @@ export const MAP_WIDTH = 10;
 export const MAP_HEIGHT = 10;
 export const REGIONS = 7;
 export const BORDER_RANDOMNESS = 100;
+
+//Gameplay
+export const END_DATE = new Date('1960-02-01');

@@ -175,9 +175,14 @@ const getRegionControl = (regionId?: string): number => {
 	return ownership.get(player!.id) || 0;
 };
 
+const getHasGameEnded = () => {
+	return gameState.state.hasEnded;
+};
+
 // Export the game controller functions
 export {
 	getTick,
+	getHasGameEnded,
 	startCapturingTerritory,
 	hireUnit,
 	promoteUnit,

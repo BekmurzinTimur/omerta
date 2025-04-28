@@ -134,10 +134,6 @@
 		document.removeEventListener('mousemove', handleMouseMove);
 		document.removeEventListener('mouseup', handleMouseUp);
 	});
-
-	$effect(() => {
-		console.log({ zIndex, id, title });
-	});
 </script>
 
 <div
