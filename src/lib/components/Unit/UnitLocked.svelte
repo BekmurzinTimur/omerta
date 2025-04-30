@@ -16,7 +16,7 @@
 		<div class="mt-1 flex items-center justify-between text-xs">
 			<span class="rounded bg-red-900 px-2 py-[2px] text-white">{unit.rank}</span>
 			<span class="rounded bg-amber-600 px-2 py-[2px] text-white">
-				LVL {unit.level || 1}
+				{unit.level || 1}
 			</span>
 		</div>
 	</div>

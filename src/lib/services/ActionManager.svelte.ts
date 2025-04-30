@@ -474,12 +474,13 @@ const resolveMission = (state: GameState, playerId: string, activeMission: IMiss
 	const teamStats = getTeamStats(units);
 	const success = checkMissionSuccess(info.difficulty, teamStats);
 
+	let netReward = 0;
 	// 2. Apply money to player
 	if (success) {
 		// calculate total cut %
 		const totalCutPct =
 			unitIds.reduce((acc, uid) => acc + (state.units.get(uid)?.cut ?? 0), 0) / 100;
-		const netReward = Math.round(info.reward * (1 - totalCutPct));
+		netReward = Math.round(info.reward * (1 - totalCutPct));
 		console.log({ totalCutPct, netReward });
 
 		gameState.updatePlayer(playerId, {
@@ -510,7 +511,15 @@ const resolveMission = (state: GameState, playerId: string, activeMission: IMiss
 	});
 
 	const status = success ? MissionStatus.SUCCEEDED : MissionStatus.FAILED;
-	gameState.updateMission(activeMission.id, { status });
+	const results = success
+		? {
+				money: netReward
+			}
+		: undefined;
+	gameState.updateMission(activeMission.id, {
+		status,
+		results
+	});
 
 	console.log(
 		`Mission ${info.name} ${success ? 'succeeded' : 'failed'} ` + `for player ${playerId}`

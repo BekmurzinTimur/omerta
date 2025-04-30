@@ -191,6 +191,9 @@ export interface IMission {
 	startTick: number | null;
 	endTick: number | null;
 	status: MissionStatus;
+	results?: {
+		money?: number;
+	};
 }
 
 /*────────────────────────────

@@ -9,6 +9,7 @@
 		getMission
 	} from '$lib/services/GameController.svelte';
 	import { calculateMissionSuccessChance, getTeamStats } from '$lib/utils/common';
+	import { formatUSD } from '$lib/utils/moneyUtils';
 	import type { DraggableItem } from '../DragAndDrop/DragAndDropTypes';
 	import AssignUnit from '../Unit/AssignUnit.svelte';
 	import UnitLocked from '../Unit/UnitLocked.svelte';
@@ -79,16 +80,26 @@
 	<img
 		src={mission.info.image}
 		alt={mission.info.name}
-		class="absolute inset-0 h-full w-full object-cover opacity-20"
+		class="absolute inset-0 h-full w-full object-cover opacity-75"
 	/>
 
 	<div class="relative space-y-4 p-6">
 		<!-- Mission title -->
 		<div class="flex items-center justify-between">
-			<h3 class="text-3xl font-bold">{mission.info.name}</h3>
-			=
-			<MissionStatusBadge status={mission.status} />=
+			<h3 class="text-3xl font-bold">
+				{mission.info.name}
+			</h3>
+
+			<MissionStatusBadge status={mission.status} />
 		</div>
+		<div class="text-xl">
+			${mission.info.reward.toLocaleString()} ({#if mission.results?.money}<span
+					class=" text-green-500"
+				>
+					{formatUSD(mission.results.money)}
+				</span>{/if})
+		</div>
+
 		<h4 class="text-xl font-bold">Success chance: {successChance.toFixed(0)}</h4>
 
 		<div>

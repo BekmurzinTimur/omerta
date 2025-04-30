@@ -2,6 +2,7 @@
 	import { MissionStatus, type IMission } from '$lib/models/MissionModels';
 	import { getAllUnitsMap, getTick } from '$lib/services/GameController.svelte';
 	import { getUnitImage } from '$lib/utils/common';
+	import { formatUSD } from '$lib/utils/moneyUtils';
 	import ProgressBar from '../Common/ProgressBar.svelte';
 	import { addWindow } from '../DialogWindows/windowStore.svelte';
 	import AttributesList from './AttributesList.svelte';
@@ -56,28 +57,28 @@
 	<div class="relative flex flex-col gap-2 p-3 hover:bg-white/20">
 		<h3 class="font-semibold text-white drop-shadow">{mission.info.name}</h3>
 
-		{#if !isActive}
-			<div class="text-sm text-white/80">Reward: ${mission.info.reward.toLocaleString()}</div>
+		<div class="text-sm text-white/80">Reward: ${mission.info.reward.toLocaleString()}</div>
 
-			<AttributesList stats={mission.info.difficulty} />
-		{:else}
-			<div class="text-xs text-white/90">ETA: {eta}</div>
+		<AttributesList stats={mission.info.difficulty} />
 
-			<div class="flex justify-between">
-				<div class="mt-1 flex -space-x-2">
-					{#each unitImages as img}
-						<img
-							src={img}
-							alt="unit"
-							class="h-6 w-6 rounded-full border-2 border-white object-cover"
-						/>
-					{/each}
-				</div>
-				<MissionStatusBadge status={mission?.status} />
+		{#if mission.results?.money}<div class="text-xs text-white/90">
+				Results: {formatUSD(mission.results.money)}
+			</div>{/if}
+
+		<div class="flex justify-between">
+			<div class="mt-1 flex -space-x-2">
+				{#each unitImages as img}
+					<img
+						src={img}
+						alt="unit"
+						class="h-6 w-6 rounded-full border-2 border-white object-cover"
+					/>
+				{/each}
 			</div>
+			<MissionStatusBadge status={mission?.status} />
+		</div>
 
-			<!-- progress bar -->
-			<ProgressBar {progress} />
-		{/if}
+		<!-- progress bar -->
+		<ProgressBar {progress} />
 	</div>
 </div>
