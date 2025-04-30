@@ -4,7 +4,12 @@ import gameState from './GameState.svelte';
 import type { GameState, Player } from '$lib/models/GameModels';
 import type { ITerritory } from '$lib/models/TerritoryModel';
 import { UnitStatus } from '$lib/models/UnitModels';
-import { buildMissionFromPrototype, DEFAULT_MISSIONS } from '$lib/models/MissionModels';
+import {
+	BASE_TIP_LIFESPAN,
+	buildMissionFromPrototype,
+	DEFAULT_MISSIONS,
+	MissionStatus
+} from '$lib/models/MissionModels';
 import { getManagerMultiplier } from '$lib/utils/territoryUtils';
 import { getSalary } from '$lib/utils/unitUtils';
 import { getCaptureProgress } from '$lib/utils/mapUtils';
@@ -189,12 +194,27 @@ const setupInitialScheduledActions = (): void => {
 		interval: 24,
 		nextExecutionTick: 24,
 		isRecurring: true,
-		execute: (state) => {
+		execute: (state: GameState) => {
 			state.players.forEach((player: Player) => {
 				const proto = DEFAULT_MISSIONS[Math.floor(Math.random() * DEFAULT_MISSIONS.length)];
-				const mission = buildMissionFromPrototype(player.id, proto);
+				const mission = buildMissionFromPrototype(player.id, proto, state.tickCount);
 				state.missions.set(mission.id, mission);
 				console.log(`Added new mission "${mission.info.name}" for ${player.id}`);
+				addScheduledAction({
+					id: `remove-mission-${mission.id}`,
+					type: ScheduledActionType.TIP_EXPIRED,
+					interval: BASE_TIP_LIFESPAN,
+					nextExecutionTick: mission.tipExpires,
+					isRecurring: false,
+					execute: (state: GameState) => {
+						const freshMission = state.missions.get(mission.id);
+						if (!freshMission) return;
+						if (freshMission.status === MissionStatus.AVAILABLE) {
+							state.missions.delete(mission.id);
+							console.log(`Tip expired. Removed mission "${mission.id}" `);
+						}
+					}
+				});
 			});
 		}
 	});

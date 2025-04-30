@@ -3,11 +3,7 @@ import { SvelteMap } from 'svelte/reactivity';
 import { type GameState as GameStateInterface, type Player } from '../models/GameModels';
 import { type IUnit } from '$lib/models/UnitModels';
 import type { ITerritory } from '$lib/models/TerritoryModel';
-import {
-	buildMissionFromPrototype,
-	DEFAULT_MISSIONS,
-	type IMission
-} from '$lib/models/MissionModels';
+import { type IMission } from '$lib/models/MissionModels';
 import {
 	disloyalUnit,
 	generateStartingAssociates,
@@ -100,11 +96,6 @@ const createInitialState = () => {
 	playerMap.set(playerOne.id, playerOne);
 
 	const missionMap = new SvelteMap<string, IMission>();
-	playerMap.forEach((_, playerId) => {
-		const proto = DEFAULT_MISSIONS[0]; // first prototype for now
-		const mission = buildMissionFromPrototype(playerMap.get(playerId)!.id, proto);
-		missionMap.set(mission.id, mission);
-	});
 
 	const startingAssociates = generateStartingAssociates(15);
 	startingAssociates.forEach((unit) => {

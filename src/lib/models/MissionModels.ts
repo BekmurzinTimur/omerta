@@ -2,6 +2,7 @@
 import { CoreAttribute } from './UnitModels';
 import { v4 as uuidv4 } from 'uuid';
 
+export const BASE_TIP_LIFESPAN = 30;
 /*────────────────────────────
  *  Mission static prototypes
  *───────────────────────────*/
@@ -194,6 +195,7 @@ export interface IMission {
 	results?: {
 		money?: number;
 	};
+	tipExpires: number;
 }
 
 /*────────────────────────────
@@ -202,7 +204,11 @@ export interface IMission {
 const rnd = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
 /** Create a *new* mission from a prototype, applying light randomisation. */
-export function buildMissionFromPrototype(playerId: string, prototype: MissionInfo): IMission {
+export function buildMissionFromPrototype(
+	playerId: string,
+	prototype: MissionInfo,
+	currentTick: number
+): IMission {
 	const rewardVar = prototype.reward * 0.2; // ±20%
 	const reward = prototype.reward + rnd(-rewardVar, rewardVar);
 
@@ -223,6 +229,7 @@ export function buildMissionFromPrototype(playerId: string, prototype: MissionIn
 		unitIds: [],
 		startTick: null,
 		endTick: null,
-		status: MissionStatus.AVAILABLE
+		status: MissionStatus.AVAILABLE,
+		tipExpires: currentTick + BASE_TIP_LIFESPAN
 	};
 }
