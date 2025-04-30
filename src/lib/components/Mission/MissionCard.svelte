@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { BASE_TIP_LIFESPAN, MissionStatus, type IMission } from '$lib/models/MissionModels';
+	import { MissionStatus, type IMission } from '$lib/models/MissionModels';
 	import { getAllUnitsMap, getTick } from '$lib/services/GameController.svelte';
 	import { getUnitImage } from '$lib/utils/common';
 	import { formatUSD } from '$lib/utils/moneyUtils';

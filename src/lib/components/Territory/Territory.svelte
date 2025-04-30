@@ -67,10 +67,12 @@
 	};
 </script>
 
-<div class="territory-panel">
+<div class="territory-panel overflow-y-auto">
 	<!-- Region Information Section -->
 	{#if region && regionInfo}
-		<div class="region-info-container mb-6 overflow-hidden rounded-lg bg-gray-800 shadow-lg">
+		<div
+			class="region-info-container mb-6 min-h-[100px] overflow-hidden rounded-lg bg-gray-800 shadow-lg"
+		>
 			<div class="relative h-48 w-full overflow-hidden">
 				<img
 					src={regionInfo.image || `/regions/${region.type + 1}.png`}

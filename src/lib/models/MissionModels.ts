@@ -1,8 +1,8 @@
 // MissionModels.ts
+import { BASE_TIP_LIFESPAN } from '$lib/const/globalConstants';
 import { CoreAttribute } from './UnitModels';
 import { v4 as uuidv4 } from 'uuid';
 
-export const BASE_TIP_LIFESPAN = 30;
 /*────────────────────────────
  *  Mission static prototypes
  *───────────────────────────*/

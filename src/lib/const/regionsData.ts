@@ -11,14 +11,14 @@ export const REGIONS_DATA = [
 		description:
 			'Bustling docks and warehouses offering control of smuggling operations and illicit trade routes.',
 		image: '/regions/2.png',
-		bonus: 75
+		bonus: 40
 	},
 	{
 		name: 'Little Italy',
 		description:
 			'Traditional neighborhood controlling union-backed wholesale markets and citywide distribution networks.',
 		image: '/regions/3.png',
-		bonus: 70
+		bonus: 50
 	},
 	{
 		name: 'Entertainment District',
@@ -32,20 +32,20 @@ export const REGIONS_DATA = [
 		description:
 			'Affluent area with lucrative protection rackets and valuable connections to corrupt officials.',
 		image: '/regions/5.png',
-		bonus: 80
+		bonus: 50
 	},
 	{
 		name: 'Suburban Sprawl',
 		description:
 			'Expanding residential zones with profitable loan sharking operations and money laundering opportunities.',
 		image: '/regions/6.png',
-		bonus: 65
+		bonus: 15
 	},
 	{
 		name: 'East End Slums',
 		description:
 			'Impoverished district where waste management contracts provide the perfect cover for disposing of evidence.',
 		image: '/regions/7.png',
-		bonus: 50
+		bonus: 25
 	}
 ];

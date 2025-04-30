@@ -5,7 +5,6 @@ import type { GameState, Player } from '$lib/models/GameModels';
 import type { ITerritory } from '$lib/models/TerritoryModel';
 import { UnitStatus } from '$lib/models/UnitModels';
 import {
-	BASE_TIP_LIFESPAN,
 	buildMissionFromPrototype,
 	DEFAULT_MISSIONS,
 	MissionStatus
@@ -14,6 +13,12 @@ import { getManagerMultiplier } from '$lib/utils/territoryUtils';
 import { getSalary } from '$lib/utils/unitUtils';
 import { getCaptureProgress } from '$lib/utils/mapUtils';
 import { getRegion, getRegionControl } from './GameController.svelte';
+import {
+	BASE_TIP_LIFESPAN,
+	BASE_TIP_RATE,
+	CAPTURE_RATE,
+	INCOME_RATE
+} from '$lib/const/globalConstants';
 
 let state: GameState = gameState.state;
 
@@ -71,8 +76,8 @@ const setupInitialScheduledActions = (): void => {
 	addScheduledAction({
 		id: 'income-generation',
 		type: ScheduledActionType.GENERATE_INCOME,
-		interval: 5,
-		nextExecutionTick: 5,
+		interval: INCOME_RATE,
+		nextExecutionTick: INCOME_RATE,
 		isRecurring: true,
 		execute: (state: GameState) => {
 			// For each player, generate income based on their territories
@@ -122,8 +127,8 @@ const setupInitialScheduledActions = (): void => {
 	addScheduledAction({
 		id: 'capture-progress',
 		type: ScheduledActionType.INCREASE_CAPTURE_PROGRESS,
-		interval: 1,
-		nextExecutionTick: 1,
+		interval: CAPTURE_RATE,
+		nextExecutionTick: CAPTURE_RATE,
 		isRecurring: true,
 		execute: (state: GameState) => {
 			state.territories.forEach((territory: ITerritory) => {
@@ -191,8 +196,8 @@ const setupInitialScheduledActions = (): void => {
 	addScheduledAction({
 		id: 'mission-supply',
 		type: ScheduledActionType.GENERATE_MISSIONS,
-		interval: 24,
-		nextExecutionTick: 24,
+		interval: BASE_TIP_RATE,
+		nextExecutionTick: BASE_TIP_RATE,
 		isRecurring: true,
 		execute: (state: GameState) => {
 			state.players.forEach((player: Player) => {
