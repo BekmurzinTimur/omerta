@@ -41,7 +41,7 @@
 	/* --------‑‑ Window launcher ‑‑-------- */
 	function openDetails() {
 		addWindow({
-			id: `window-${Date.now()}`,
+			id: `window-${unit.id}`,
 			title: `Unit: ${unit.name}`,
 			content: { component: UnitCardBig, props: { unitId: unit.id } },
 			position: { x: Math.random() * 200 + 50, y: Math.random() * 200 + 50 },

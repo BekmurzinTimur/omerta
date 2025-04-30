@@ -34,7 +34,7 @@
 
 	function handleClick() {
 		addWindow({
-			id: `window-${Date.now()}`,
+			id: `window-${mission.id}`,
 			title: `Mission: ${mission.info.name}`,
 			content: { component: MissionCardBig, props: { missionId: mission.id } },
 			position: { x: Math.random() * 200 + 50, y: Math.random() * 200 + 50 },
