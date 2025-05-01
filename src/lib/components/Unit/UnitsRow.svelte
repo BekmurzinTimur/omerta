@@ -49,7 +49,7 @@
 			{#if associates.length > 0}
 				{#each associates as unit}
 					<Draggable
-						disabled={unit.status !== UnitStatus.IDLE}
+						disabled={unit.status !== UnitStatus.IDLE || usedUnits.has(unit.id)}
 						item={{
 							id: unit.id,
 							type: 'associate',
@@ -57,7 +57,7 @@
 						}}
 						zoneId="source"
 					>
-						<UnitCard {unit} />
+						<UnitCard {unit} assigned={usedUnits.has(unit.id)} />
 					</Draggable>
 				{/each}
 			{:else}

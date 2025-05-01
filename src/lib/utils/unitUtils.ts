@@ -55,15 +55,7 @@ const LAST_NAMES = [
 ];
 const IMAGES = 11;
 
-export const generateUnit = ({
-	rank,
-	level,
-	tier
-}: {
-	rank: UnitRank;
-	level: number;
-	tier: number;
-}): IUnit => {
+export const generateUnit = ({ rank, level }: { rank: UnitRank; level: number }): IUnit => {
 	const firstName = FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)];
 	const lastName = LAST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)];
 	return {
@@ -72,10 +64,10 @@ export const generateUnit = ({
 		ownerId: undefined,
 		rank: rank,
 		skills: {
-			Muscle: Math.ceil(Math.random() * 3) + (tier - 1) * 3,
-			Brains: Math.ceil(Math.random() * 3) + (tier - 1) * 3,
-			Cunning: Math.ceil(Math.random() * 3) + (tier - 1) * 3,
-			Influence: Math.ceil(Math.random() * 3) + (tier - 1) * 3
+			Muscle: Math.ceil(Math.random() * 10),
+			Brains: Math.ceil(Math.random() * 10),
+			Cunning: Math.ceil(Math.random() * 10),
+			Influence: Math.ceil(Math.random() * 10)
 		},
 		experience: 0,
 		loyalty: 50,
@@ -124,8 +116,7 @@ export const generateStartingAssociates = (amount: number) => {
 		associates.push(
 			generateUnit({
 				rank: UnitRank.ASSOCIATE,
-				level: 1,
-				tier: Math.ceil(Math.random() * 3)
+				level: 1
 			})
 		);
 	}

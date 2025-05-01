@@ -1,7 +1,8 @@
 <script lang="ts">
 	/* --------‑‑ Imports & props ‑‑-------- */
-	import { type IUnit, CoreAttribute } from '$lib/models/UnitModels';
+	import { type IUnit, CoreAttribute, UnitStatus } from '$lib/models/UnitModels';
 	import ProgressBar from '../Common/ProgressBar.svelte';
+	import { addToast } from '../Common/Toaster/Toaster.svelte';
 	import { addWindow } from '../DialogWindows/windowStore.svelte';
 	import UnitCardBig from './UnitCardBig.svelte';
 
@@ -38,6 +39,26 @@
 		`;
 	};
 
+	$effect(() => {
+		if (unit.status === UnitStatus.PRISON) {
+			addToast({
+				data: {
+					title: unit.name,
+					description: `Unit ${unit.name} have been imprisoned`
+				}
+			});
+		}
+	});
+	$effect(() => {
+		if (unit.loyalty === 0) {
+			addToast({
+				data: {
+					title: unit.name,
+					description: `Unit ${unit.name} became disloyal and quit family`
+				}
+			});
+		}
+	});
 	/* --------‑‑ Window launcher ‑‑-------- */
 	function openDetails() {
 		addWindow({

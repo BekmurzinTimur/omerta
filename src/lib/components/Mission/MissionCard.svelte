@@ -4,6 +4,7 @@
 	import { getUnitImage } from '$lib/utils/common';
 	import { formatUSD } from '$lib/utils/moneyUtils';
 	import ProgressBar from '../Common/ProgressBar.svelte';
+	import { addToast } from '../Common/Toaster/Toaster.svelte';
 	import { addWindow } from '../DialogWindows/windowStore.svelte';
 	import AttributesList from './AttributesList.svelte';
 	import MissionCardBig from './MissionCardBig.svelte';
@@ -27,13 +28,24 @@
 		return Math.min(Math.round((tickPassed / length) * 100), 100);
 	});
 	let allUnitsMap = $derived(getAllUnitsMap());
-	let tipTicksLeft = $derived(mission.tipExpires - tick);
+	let tipTicksLeft = $derived(
+		mission.status === MissionStatus.AVAILABLE ? mission.tipExpires - tick : null
+	);
 
 	let unitImages = $derived(
 		mission?.unitIds.map((id) => getUnitImage(allUnitsMap.get(id)?.image)) || []
 	);
-	$inspect(mission);
-	$inspect(tipTicksLeft);
+
+	$effect(() => {
+		if (mission.status === MissionStatus.FAILED || mission.status === MissionStatus.SUCCEEDED) {
+			addToast({
+				data: {
+					title: mission.status,
+					description: `Mission ${mission.info.name} has ${mission.status}`
+				}
+			});
+		}
+	});
 
 	function handleClick() {
 		addWindow({
@@ -59,12 +71,14 @@
 	<!-- overlay -->
 	<div class="relative flex flex-col gap-2 p-3 hover:bg-white/20">
 		<div class="flex">
-			<div
-				class="mr-2 flex size-6 justify-center rounded-full bg-green-500"
-				class:bg-red-500={tipTicksLeft < 5}
-			>
-				{tipTicksLeft}
-			</div>
+			{#if tipTicksLeft !== null}
+				<div
+					class="mr-2 flex size-6 justify-center rounded-full bg-green-500"
+					class:bg-red-500={tipTicksLeft < 5}
+				>
+					{tipTicksLeft}
+				</div>
+			{/if}
 			<h3 class="font-semibold text-white drop-shadow">{mission.info.name}</h3>
 		</div>
 
