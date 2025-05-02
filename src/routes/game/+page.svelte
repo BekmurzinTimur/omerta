@@ -4,7 +4,7 @@
 	import GameComponent from '$lib/components/GameComponent.svelte';
 </script>
 
-<div class="flex h-screen w-screen flex-col overflow-hidden">
+<div class="font-family: flex h-screen w-screen flex-col overflow-hidden font-serif">
 	<main class="h-full flex-grow">
 		<DragAndDropProvider>
 			<GameComponent />

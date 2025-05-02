@@ -43,7 +43,7 @@ export const DEFAULT_MISSIONS: MissionInfo[] = [
 		},
 		durationTicks: 3,
 		repeatable: true,
-		image: '/themes/sop_robbery.png',
+		image: '/themes/shop_robbery.png',
 		heat: 8
 	},
 	{

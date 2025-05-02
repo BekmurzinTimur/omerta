@@ -1,4 +1,11 @@
-export const REGIONS_DATA = [
+export type RegionData = {
+	name: string;
+	description: string;
+	image: string;
+	bonus: number;
+};
+
+export const REGIONS_DATA: RegionData[] = [
 	{
 		name: 'Downtown Financial District',
 		description:

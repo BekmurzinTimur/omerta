@@ -50,15 +50,13 @@
 
 <div class="game-container flex h-full flex-col">
 	<Header />
-	<div class="game-content flex flex-grow gap-4 bg-gray-700 p-4">
-		<!-- Right panel - Game controls and information -->
-		<div class="control-panel flex w-80 flex-col bg-gray-800 p-4">
-			<Territory territory={selectedTerritory} {allTerritories} />
-		</div>
+	<div class="game-content relative flex flex-grow gap-4">
 		<!-- Left panel - Map/Grid will go here -->
 		<div class="map-container flex-grow bg-gray-600">
 			<GridMap {selectedCellId} {onSelect} />
 		</div>
+		<!-- Right panel - Game controls and information -->
+		<Territory territory={selectedTerritory} {allTerritories} />
 		<MissionSidebar />
 	</div>
 	<UnitsRow />

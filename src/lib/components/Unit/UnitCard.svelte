@@ -63,7 +63,7 @@
 	function openDetails() {
 		addWindow({
 			id: `window-${unit.id}`,
-			title: `Unit: ${unit.name}`,
+			title: `${unit.name}`,
 			content: { component: UnitCardBig, props: { unitId: unit.id } },
 			position: { x: Math.random() * 200 + 50, y: Math.random() * 200 + 50 },
 			size: { width: 600, height: 500 }
@@ -73,7 +73,7 @@
 
 <!-- ------------‑‑ Card root ‑‑------------ -->
 <div
-	class="flex max-w-[150px] min-w-[150px] flex-col overflow-hidden rounded-lg border border-gray-700 bg-gray-800 text-white shadow-lg"
+	class="flex max-w-[180px] min-w-[180px] flex-col overflow-hidden rounded-lg border border-gray-700 bg-gray-800 text-white shadow-lg"
 	onclick={openDetails}
 >
 	<!-- Header with background image -->
@@ -88,7 +88,6 @@
 				>
 					{unit.level}
 				</div>
-				<div>{unit.name}</div>
 			</div>
 			<div class="text-gray-400">{unit.nickname}</div>
 		</div>

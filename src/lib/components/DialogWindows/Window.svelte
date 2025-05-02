@@ -144,7 +144,7 @@
 >
 	<div
 		bind:this={headerElement}
-		class="flex cursor-move items-center justify-between p-2 text-white select-none"
+		class="flex cursor-move items-center justify-between p-2 text-xl text-white select-none"
 		class:bg-amber-900={isActive}
 		class:bg-gray-500={!isActive}
 		onmousedown={handleMouseDown}
