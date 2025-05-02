@@ -27,7 +27,7 @@ export const DEFAULT_MISSIONS: MissionInfo[] = [
 			[CoreAttribute.CUNNING]: 5,
 			[CoreAttribute.INFLUENCE]: 5
 		},
-		durationTicks: 2,
+		durationTicks: 12,
 		repeatable: true,
 		image: '/themes/shop_shakedown.png',
 		heat: 5
@@ -41,7 +41,7 @@ export const DEFAULT_MISSIONS: MissionInfo[] = [
 			[CoreAttribute.CUNNING]: 10,
 			[CoreAttribute.INFLUENCE]: 4
 		},
-		durationTicks: 3,
+		durationTicks: 24,
 		repeatable: true,
 		image: '/themes/shop_robbery.png',
 		heat: 8
@@ -55,7 +55,7 @@ export const DEFAULT_MISSIONS: MissionInfo[] = [
 			[CoreAttribute.CUNNING]: 9,
 			[CoreAttribute.INFLUENCE]: 15
 		},
-		durationTicks: 8,
+		durationTicks: 48,
 		repeatable: true,
 		image: '/themes/protection_racket.png',
 		heat: 12
@@ -69,7 +69,7 @@ export const DEFAULT_MISSIONS: MissionInfo[] = [
 			[CoreAttribute.CUNNING]: 18,
 			[CoreAttribute.INFLUENCE]: 6
 		},
-		durationTicks: 5,
+		durationTicks: 48,
 		repeatable: true,
 		image: '/themes/hijack_delivery.png',
 		heat: 16
@@ -83,7 +83,7 @@ export const DEFAULT_MISSIONS: MissionInfo[] = [
 			[CoreAttribute.CUNNING]: 15,
 			[CoreAttribute.INFLUENCE]: 12
 		},
-		durationTicks: 7,
+		durationTicks: 56,
 		repeatable: true,
 		image: '/themes/drug_run.png',
 		heat: 20
@@ -97,7 +97,7 @@ export const DEFAULT_MISSIONS: MissionInfo[] = [
 			[CoreAttribute.CUNNING]: 18,
 			[CoreAttribute.INFLUENCE]: 25
 		},
-		durationTicks: 12,
+		durationTicks: 80,
 		repeatable: false,
 		image: '/themes/gambling.png',
 		heat: 25
@@ -111,7 +111,7 @@ export const DEFAULT_MISSIONS: MissionInfo[] = [
 			[CoreAttribute.CUNNING]: 12,
 			[CoreAttribute.INFLUENCE]: 18
 		},
-		durationTicks: 7,
+		durationTicks: 100,
 		repeatable: true,
 		image: '/themes/fight_club.png',
 		heat: 18
@@ -125,7 +125,7 @@ export const DEFAULT_MISSIONS: MissionInfo[] = [
 			[CoreAttribute.CUNNING]: 25,
 			[CoreAttribute.INFLUENCE]: 30
 		},
-		durationTicks: 10,
+		durationTicks: 48,
 		repeatable: false,
 		image: '/themes/blackmail.png',
 		heat: 30
@@ -139,7 +139,7 @@ export const DEFAULT_MISSIONS: MissionInfo[] = [
 			[CoreAttribute.CUNNING]: 28,
 			[CoreAttribute.INFLUENCE]: 10
 		},
-		durationTicks: 14,
+		durationTicks: 72,
 		repeatable: true,
 		image: '/themes/contraband.png',
 		heat: 22
@@ -153,7 +153,7 @@ export const DEFAULT_MISSIONS: MissionInfo[] = [
 			[CoreAttribute.CUNNING]: 30,
 			[CoreAttribute.INFLUENCE]: 8
 		},
-		durationTicks: 9,
+		durationTicks: 48,
 		repeatable: true,
 		image: '/themes/steal.png',
 		heat: 24
@@ -167,7 +167,7 @@ export const DEFAULT_MISSIONS: MissionInfo[] = [
 			[CoreAttribute.CUNNING]: 35,
 			[CoreAttribute.INFLUENCE]: 15
 		},
-		durationTicks: 6,
+		durationTicks: 100,
 		repeatable: false,
 		image: '/themes/eliminate.png',
 		heat: 40

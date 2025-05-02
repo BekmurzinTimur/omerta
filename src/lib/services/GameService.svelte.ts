@@ -8,7 +8,7 @@ import { END_DATE } from '$lib/const/globalConstants';
 
 class GameService {
 	// Game tick interval in milliseconds
-	private readonly TICK_INTERVAL: number = 1000;
+	private readonly TICK_INTERVAL: number = 500;
 
 	// Timer ID
 	private gameLoopTimerId: number | null = null;

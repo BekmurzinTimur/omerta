@@ -53,7 +53,7 @@ const createInitialState = () => {
 				},
 				regionId: '',
 				resources: {
-					income: 5000 + (Math.floor(Math.random() * 50) - 25) * 100
+					income: 1000 + (Math.floor(Math.random() * 10) - 5) * 100
 				},
 				isBeingCaptured: false,
 				captureProgress: 0,

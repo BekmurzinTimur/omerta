@@ -12,7 +12,7 @@ export const BASE_CAPTURE_PROGRESS = 8;
 export const CAPTURE_PROGRESS_PER_NEIGHBOUR = 0.25;
 export const CAPTURE_PROGRESS_PER_MUSCLE = 1;
 export const CAPTURE_RATE = 12;
-export const INCOME_RATE = 12 * 7;
+export const INCOME_RATE = 24;
 
 //Map
 export const MAP_WIDTH = 10;
@@ -24,5 +24,5 @@ export const BORDER_RANDOMNESS = 100;
 export const END_DATE = new Date('1960-02-01');
 
 //Missions
-export const BASE_TIP_LIFESPAN = 30;
-export const BASE_TIP_RATE = 24;
+export const BASE_TIP_LIFESPAN = 60;
+export const BASE_TIP_RATE = 48;
