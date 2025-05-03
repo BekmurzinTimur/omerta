@@ -161,7 +161,9 @@
 								style={iconStyle(ICON[skill])}
 							/>
 							<span class="ml-3 w-24 capitalize">{skill.toLowerCase()}</span>
-							<span class="font-mono text-lg">{value}</span>
+							<span class="font-mono text-lg"
+								>{unit.mask[skill as CoreAttribute] ? '?' : value}</span
+							>
 						</div>
 					{/each}
 				</div>

@@ -107,7 +107,7 @@
 							class="inline-block h-5 w-5 shrink-0 rounded bg-no-repeat"
 							style={iconStyle(ICON[skill])}
 						/>
-						<span class="font-mono">{value}</span>
+						<span class="font-mono">{unit.mask[skill as CoreAttribute] ? '?' : value}</span>
 					</div>
 				{/each}
 			</div>

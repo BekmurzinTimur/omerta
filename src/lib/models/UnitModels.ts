@@ -23,6 +23,8 @@ export enum UnitStatus {
 	PRISON = 'Prison'
 }
 
+export type UnitAttributeMask = Record<CoreAttribute, boolean>;
+
 export interface IUnit {
 	id: string;
 	ownerId?: string;
@@ -30,6 +32,7 @@ export interface IUnit {
 	rank: UnitRank;
 	nickname?: string;
 	skills: Record<CoreAttribute, number>;
+	mask: UnitAttributeMask;
 	experience: number;
 	level: number;
 	loyalty: number;

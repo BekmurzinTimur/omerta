@@ -22,7 +22,7 @@ import { addScheduledAction } from './ScheduledActionManager.svelte';
 import { checkMissionSuccess, getTeamStats } from '$lib/utils/common';
 import { getAllUnitsMap, isFamilyFull } from './GameController.svelte';
 import { isNeighboringPlayerTerritory } from '$lib/utils/mapUtils';
-import { _promoteUnit } from '$lib/utils/unitUtils';
+import { _promoteUnit, revealUnitAttribute } from '$lib/utils/unitUtils';
 
 // Queue of actions waiting to be processed
 let actionQueue = $state<Action[]>([]);
@@ -501,12 +501,12 @@ const resolveMission = (state: GameState, playerId: string, activeMission: IMiss
 
 		const loyaltyDelta = success ? +loyalty : -loyalty;
 
-		console.log({ loyaltyDelta });
 		gameState.updateUnit(unit.id, {
 			status: UnitStatus.IDLE,
 			loyalty: unit.loyalty + loyaltyDelta,
 			heat: unit.heat + info.heat,
-			experience: unit.experience + experience
+			experience: unit.experience + experience,
+			mask: UnitRank.ASSOCIATE ? revealUnitAttribute(unit.mask) : unit.mask
 		});
 	});
 

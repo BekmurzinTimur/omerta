@@ -1,5 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
-import { CoreAttribute, UnitRank, UnitStatus, type IUnit } from '$lib/models/UnitModels';
+import {
+	CoreAttribute,
+	UnitRank,
+	UnitStatus,
+	type IUnit,
+	type UnitAttributeMask
+} from '$lib/models/UnitModels';
 import {
 	BASE_SALARY_CAPO,
 	BASE_SALARY_CONSIGLIERI,
@@ -68,6 +74,12 @@ export const generateUnit = ({ rank, level }: { rank: UnitRank; level: number })
 			Brains: Math.ceil(Math.random() * 10),
 			Cunning: Math.ceil(Math.random() * 10),
 			Influence: Math.ceil(Math.random() * 10)
+		},
+		mask: {
+			Muscle: rank === UnitRank.ASSOCIATE ? true : false,
+			Brains: rank === UnitRank.ASSOCIATE ? true : false,
+			Cunning: rank === UnitRank.ASSOCIATE ? true : false,
+			Influence: rank === UnitRank.ASSOCIATE ? true : false
 		},
 		experience: 0,
 		loyalty: 50,
@@ -193,4 +205,16 @@ export const getSalary = (unit?: IUnit) => {
 		default:
 			return 0;
 	}
+};
+
+export const revealUnitAttribute = (mask: UnitAttributeMask) => {
+	const hiddenAttributes: CoreAttribute[] = (Object.keys(mask) as CoreAttribute[]).filter(
+		(attribute: CoreAttribute) => mask[attribute]
+	);
+	if (hiddenAttributes.length === 0) return;
+	const newMask = { ...mask };
+	const rnd = Math.floor(Math.random() * hiddenAttributes.length);
+	console.log({ hiddenAttributes, rnd });
+	newMask[hiddenAttributes[rnd] as CoreAttribute] = false;
+	return newMask;
 };
