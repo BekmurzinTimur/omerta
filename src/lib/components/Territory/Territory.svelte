@@ -67,7 +67,7 @@
 </script>
 
 {#if territory}
-	<div class="control-panel absolute top-4 left-4 flex w-80 flex-col">
+	<div class="control-panel absolute top-18 left-4 flex w-80 flex-col">
 		<div class="territory-panel overflow-y-auto">
 			<!-- Region Information Section -->
 			{#if region && regionInfo}
@@ -125,7 +125,7 @@
 					{:else if isNeighbouringMyTerritory}
 						<div class="capture-section">
 							<h5 class="mb-2 text-lg font-bold text-gray-200">Capture Territory</h5>
-							<div class="rounded-md bg-gray-800 p-3">
+							<div class="flex justify-center rounded-md bg-gray-800 p-3">
 								{#if territory.captureProgress}
 									<div class="mb-3">
 										<span class="mb-1 block text-sm text-gray-400">Capture Progress</span>
