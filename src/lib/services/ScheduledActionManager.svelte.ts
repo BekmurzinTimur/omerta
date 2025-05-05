@@ -16,6 +16,7 @@ import { getRegion, getRegionControl } from './GameController.svelte';
 import {
 	BASE_TIP_LIFESPAN,
 	BASE_TIP_RATE,
+	CALC_HEAT_RATE,
 	CAPTURE_RATE,
 	INCOME_RATE
 } from '$lib/const/globalConstants';
@@ -219,6 +220,25 @@ const setupInitialScheduledActions = (): void => {
 							console.log(`Tip expired. Removed mission "${mission.id}" `);
 						}
 					}
+				});
+			});
+		}
+	});
+
+	addScheduledAction({
+		id: 'recalculate-heat',
+		type: ScheduledActionType.CALC_HEAT,
+		interval: CALC_HEAT_RATE,
+		nextExecutionTick: CALC_HEAT_RATE,
+		isRecurring: true,
+		execute: (state: GameState) => {
+			state.players.forEach((player: Player) => {
+				const heat = player.units.reduce((prev, cur) => {
+					return prev + state.units.get(cur)!.heat;
+				}, 0);
+
+				gameState.updatePlayer(player.id, {
+					resources: { ...player.resources, heat }
 				});
 			});
 		}

@@ -22,7 +22,11 @@ export const BORDER_RANDOMNESS = 100;
 
 //Gameplay
 export const END_DATE = new Date('1960-02-01');
+export const CALC_HEAT_RATE = 12;
+
+// Heat
+export const HEAT_LEVELS = [0, 100, 500, 1000];
 
 //Missions
 export const BASE_TIP_LIFESPAN = 60;
-export const BASE_TIP_RATE = 48;
+export const BASE_TIP_RATE = 2;

@@ -211,7 +211,7 @@ export const revealUnitAttribute = (mask: UnitAttributeMask) => {
 	const hiddenAttributes: CoreAttribute[] = (Object.keys(mask) as CoreAttribute[]).filter(
 		(attribute: CoreAttribute) => mask[attribute]
 	);
-	if (hiddenAttributes.length === 0) return;
+	if (hiddenAttributes.length === 0) return mask;
 	const newMask = { ...mask };
 	const rnd = Math.floor(Math.random() * hiddenAttributes.length);
 	console.log({ hiddenAttributes, rnd });

@@ -31,13 +31,17 @@
 	let tipTicksLeft = $derived(
 		mission.status === MissionStatus.AVAILABLE ? mission.tipExpires - tick : null
 	);
+	let hasNotified = $state(false);
 
 	let unitImages = $derived(
 		mission?.unitIds.map((id) => getUnitImage(allUnitsMap.get(id)?.image)) || []
 	);
 
 	$effect(() => {
+		if (hasNotified) return;
 		if (mission.status === MissionStatus.FAILED || mission.status === MissionStatus.SUCCEEDED) {
+			console.log(mission, hasNotified);
+			hasNotified = true;
 			addToast({
 				data: {
 					title: mission.status,
@@ -83,8 +87,6 @@
 		</div>
 
 		<div class="text-sm text-white/80">Reward: ${mission.info.reward.toLocaleString()}</div>
-
-		<AttributesList stats={mission.info.difficulty} />
 
 		{#if mission.results?.money}<div class="text-xs text-white/90">
 				Results: {formatUSD(mission.results.money)}

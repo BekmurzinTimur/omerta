@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { ICON_LABELS } from '$lib/const/icons';
-	import { getLocalPlayer } from '$lib/services/GameController.svelte';
+	import { getFamilyHeat, getLocalPlayer } from '$lib/services/GameController.svelte';
+	import { getHeatLevel } from '$lib/utils/familyUtils';
 	import { formatUSD } from '$lib/utils/moneyUtils';
 	import IconTile from './Common/Icons/IconTile.svelte';
 
 	// Get the local player
 	let player = $derived(getLocalPlayer());
+	let heatLevel = $derived(player ? getHeatLevel(player.resources.heat) : 0);
 
 	// Helper function to format income with sign
 	const formatIncome = (income: number): string => {
@@ -22,14 +24,29 @@
 					<IconTile label={'MONEY'} />
 				</span>
 				<span class="font-semibold text-white"
-					>{formatUSD(player.resources.money)} {formatIncome(player.resources.lastIncome)}</span
+					>{formatUSD(player.resources.money)}
+					<span
+						class:text-green-500={player.resources.lastIncome >= 0}
+						class:text-red-400={player.resources.lastIncome < 0}
+						>{formatIncome(player.resources.lastIncome)}</span
+					></span
 				>
 			</div>
 			<div class="resource flex items-center gap-2 rounded p-2">
 				<span class="text-sm text-red-400">
 					<img src="/icons/police.png" class="size-10" />
 				</span>
-				<span class="font-semibold text-white">{player.resources.heat || 0}</span>
+				<span class="font-semibold text-white"
+					><span
+						class="inline-flex size-5 items-center justify-center rounded-full"
+						class:bg-gray-500={heatLevel === 0}
+						class:bg-yellow-400={heatLevel === 1}
+						class:bg-amber-500={heatLevel === 2}
+						class:bg-red-500={heatLevel === 3}
+						>{heatLevel}
+					</span>
+					- {player.resources.heat || 0}</span
+				>
 			</div>
 		</div>
 	{/if}

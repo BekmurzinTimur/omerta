@@ -33,10 +33,10 @@
 			{/each}
 		</div>
 
-		<div class="mt-2 flex flex-col gap-2">
+		<!-- <div class="mt-2 flex flex-col gap-2">
 			{#each finishedMissions as mission}
 				<MissionCard {mission} eta="finished" />
 			{/each}
-		</div>
+		</div> -->
 	</div>
 </Sidebar>

@@ -21,10 +21,11 @@
 		tick;
 		usedUnits.clear();
 	});
+	$inspect(displayUnits);
 </script>
 
 <footer class="absolute right-0 bottom-0 left-0 px-4 text-white">
-	<div class="flex items-center justify-center gap-4">
+	<div class="flex items-center gap-4">
 		<Button.Root
 			class="bg-dark shadow-mini hover:bg-dark/95  inline-flex h-12 items-center justify-center rounded-lg bg-white
     px-4 py-2 font-semibold 
@@ -43,8 +44,8 @@
 		>
 	</div>
 	<!-- Units list -->
-	<div class="units w-full flex-grow overflow-x-auto rounded-lg p-3">
-		<div class="flex justify-center gap-2">
+	<div class="units w-full flex-grow overflow-x-auto rounded-lg py-2">
+		<div class="flex gap-2">
 			{#if displayUnits.length > 0}
 				{#each displayUnits as unit}
 					<Draggable

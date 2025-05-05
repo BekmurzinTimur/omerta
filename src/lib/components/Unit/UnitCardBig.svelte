@@ -26,6 +26,7 @@
 		console.log({ unit }, unit?.loyalty);
 	});
 	$inspect(unit);
+	$inspect(unitId);
 	/* --------‑‑ Spritesheet helpers ‑‑-------- */
 	const ICON_SHEET = '/icons/IconPack.png'; // ✔️  adjust if you store it elsewhere
 	const TILE = 80 / 4; // 20px

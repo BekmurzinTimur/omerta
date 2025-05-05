@@ -179,6 +179,12 @@ const getHasGameEnded = () => {
 	return gameState.state.hasEnded;
 };
 
+const getFamilyHeat = () => {
+	return getPlayerUnits().reduce((prev, cur) => {
+		return prev + cur.heat;
+	}, 0);
+};
+
 // Export the game controller functions
 export {
 	getTick,
@@ -209,5 +215,6 @@ export {
 	getMissions,
 	getMission,
 	isFamilyFull,
-	getRegionControl
+	getRegionControl,
+	getFamilyHeat
 };

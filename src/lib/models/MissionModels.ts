@@ -117,7 +117,7 @@ export const DEFAULT_MISSIONS: MissionInfo[] = [
 		heat: 18
 	},
 	{
-		name: 'Blackmail Local Official',
+		name: 'Blackmail',
 		reward: 25_000,
 		difficulty: {
 			[CoreAttribute.MUSCLE]: 6,

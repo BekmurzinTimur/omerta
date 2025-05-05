@@ -203,7 +203,6 @@ class GameState {
 		const m = this.state.missions.get(missionId);
 		if (m) this.state.missions.set(missionId, { ...m, ...updates });
 	}
-
 	/**
 	 * Get a player by ID
 	 */

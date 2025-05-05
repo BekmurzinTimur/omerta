@@ -125,17 +125,15 @@
 					{:else if isNeighbouringMyTerritory}
 						<div class="capture-section">
 							<h5 class="mb-2 text-lg font-bold text-gray-200">Capture Territory</h5>
+							{#if territory.captureProgress}
+								<div class="mb-3">
+									<ProgressBar progress={territory.captureProgress} />
+									<span class="mt-1 block text-right text-sm text-gray-400"
+										>{Math.round(territory.captureProgress)}</span
+									>
+								</div>
+							{/if}
 							<div class="flex justify-center rounded-md bg-gray-800 p-3">
-								{#if territory.captureProgress}
-									<div class="mb-3">
-										<span class="mb-1 block text-sm text-gray-400">Capture Progress</span>
-										<ProgressBar progress={territory.captureProgress} />
-										<span class="mt-1 block text-right text-sm text-gray-400"
-											>{Math.round(territory.captureProgress)}</span
-										>
-									</div>
-								{/if}
-
 								<AssignUnit
 									id="territory{territory.id}"
 									onDrop={handleDrop}

@@ -1,5 +1,5 @@
 <script lang="ts"></script>
 
-<div class="absolute top-18 right-4 flex h-full w-72 flex-col text-white">
+<div class="absolute top-18 right-4 z-10 flex h-[calc(100vh-300px)] w-72 flex-col text-white">
 	<slot />
 </div>

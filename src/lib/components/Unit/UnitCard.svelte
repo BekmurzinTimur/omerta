@@ -31,6 +31,7 @@
 	});
 	/* --------‑‑ Window launcher ‑‑-------- */
 	function openDetails() {
+		console.log(unit, unit.id);
 		addWindow({
 			id: `window-${unit.id}`,
 			title: `${unit.name}`,
@@ -43,7 +44,7 @@
 
 <!-- ------------‑‑ Card root ‑‑------------ -->
 <div
-	class="flex min-w-[200px] flex-col overflow-hidden rounded-lg border border-gray-700 bg-gray-800 text-white shadow-lg"
+	class="flex w-[200px] flex-col overflow-hidden rounded-lg border border-gray-700 bg-gray-800 text-white shadow-lg"
 	onclick={openDetails}
 >
 	<!-- Header with background image -->
