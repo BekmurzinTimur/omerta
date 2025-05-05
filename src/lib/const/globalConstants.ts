@@ -26,7 +26,9 @@ export const CALC_HEAT_RATE = 12;
 
 // Heat
 export const HEAT_LEVELS = [0, 100, 500, 1000];
+export const BASE_CHANCE_TO_CAUGHT = [0, 1, 5, 20];
 
 //Missions
 export const BASE_TIP_LIFESPAN = 60;
 export const BASE_TIP_RATE = 2;
+export const MISSION_CHANCE_TO_CAUGHT = [0, 3, 9];

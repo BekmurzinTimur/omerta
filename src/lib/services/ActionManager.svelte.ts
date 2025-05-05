@@ -23,6 +23,9 @@ import { checkMissionSuccess, getTeamStats } from '$lib/utils/common';
 import { getAllUnitsMap, isFamilyFull } from './GameController.svelte';
 import { isNeighboringPlayerTerritory } from '$lib/utils/mapUtils';
 import { _promoteUnit, revealUnitAttribute } from '$lib/utils/unitUtils';
+import { getChanceToBeCaught, wasCaught } from '$lib/utils/statsUtils';
+import { BASE_CHANCE_TO_CAUGHT } from '$lib/const/globalConstants';
+import { getHeatLevel } from '$lib/utils/familyUtils';
 
 // Queue of actions waiting to be processed
 let actionQueue = $state<Action[]>([]);
@@ -500,9 +503,12 @@ const resolveMission = (state: GameState, playerId: string, activeMission: IMiss
 		if (!unit) return;
 
 		const loyaltyDelta = success ? +loyalty : -loyalty;
-
+		const heatLevel = getHeatLevel(player.resources.heat);
+		const chanceToBeCaught = getChanceToBeCaught(BASE_CHANCE_TO_CAUGHT[heatLevel], 0, unit.heat);
+		const isUnitCaught = wasCaught(chanceToBeCaught);
+		console.log(player.resources.heat, { heatLevel, chanceToBeCaught, isUnitCaught });
 		gameState.updateUnit(unit.id, {
-			status: UnitStatus.IDLE,
+			status: isUnitCaught ? UnitStatus.PRISON : UnitStatus.IDLE,
 			loyalty: unit.loyalty + loyaltyDelta,
 			heat: unit.heat + info.heat,
 			experience: unit.experience + experience,

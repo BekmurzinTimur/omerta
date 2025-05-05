@@ -8,7 +8,6 @@ import {
 	disloyalUnit,
 	generateStartingAssociates,
 	generateStartingUnits,
-	imprisonUnit,
 	STARTING_COMPOSITION,
 	upgradeUnit
 } from '$lib/utils/unitUtils';
@@ -187,9 +186,9 @@ class GameState {
 		if (newUnit.experience >= 100 && newUnit.level < 10) {
 			upgradeUnit(newUnit);
 		}
-		if (newUnit.heat >= 100) {
-			imprisonUnit(newUnit);
-		}
+		// if (newUnit.heat >= 100) {
+		// 	imprisonUnit(newUnit);
+		// }
 		if (newUnit.loyalty <= 0) {
 			const player = this.state.players.get(newUnit.ownerId || '');
 			if (player) {

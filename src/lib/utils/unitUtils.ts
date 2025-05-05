@@ -83,7 +83,7 @@ export const generateUnit = ({ rank, level }: { rank: UnitRank; level: number })
 		},
 		experience: 0,
 		loyalty: 50,
-		heat: 0,
+		heat: 50,
 		level: level,
 		cut: getUnitCut({ rank, level }),
 		status: UnitStatus.IDLE,
