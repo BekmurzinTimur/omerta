@@ -10,6 +10,7 @@
 	} from '$lib/services/GameController.svelte';
 	import { calculateMissionSuccessChance, getTeamStats } from '$lib/utils/common';
 	import { formatUSD } from '$lib/utils/moneyUtils';
+	import { hasHiddenAttribute } from '$lib/utils/unitUtils';
 	import type { DraggableItem } from '../DragAndDrop/DragAndDropTypes';
 	import AssignUnit from '../Unit/AssignUnit.svelte';
 	import UnitLocked from '../Unit/UnitLocked.svelte';
@@ -27,6 +28,16 @@
 
 	// local state of dropped units
 	let assignments: (IUnit | undefined)[] = $state(Array(maxSlots).fill(undefined));
+	let hasUnknownStats: boolean = $derived.by(() => {
+		let result = false;
+		assignments.forEach((unit) => {
+			if (!unit) return;
+			if (hasHiddenAttribute(unit.mask)) {
+				result = true;
+			}
+		});
+		return result;
+	});
 
 	let confirmed = $state(false);
 	let teamStats = $derived.by(() => {
@@ -100,11 +111,17 @@
 				</span>{/if})
 		</div>
 
-		<h4 class="text-xl font-bold">Success chance: {successChance.toFixed(0)}</h4>
+		<h4 class="text-xl font-bold">
+			Success chance: {hasUnknownStats ? 'Unknown' : successChance.toFixed(0)}
+		</h4>
 
 		<div>
 			<span class="font-semibold">Team Power:</span>
-			<AttributesList stats={teamStats} />
+			{#if hasUnknownStats}
+				<div>Unknown</div>
+			{:else}
+				<AttributesList stats={teamStats} />
+			{/if}
 			<span class="font-semibold">Difficulty:</span>
 			<AttributesList stats={mission.info.difficulty} />
 		</div>

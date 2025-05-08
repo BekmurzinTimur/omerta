@@ -218,3 +218,10 @@ export const revealUnitAttribute = (mask: UnitAttributeMask) => {
 	newMask[hiddenAttributes[rnd] as CoreAttribute] = false;
 	return newMask;
 };
+
+export const hasHiddenAttribute = (mask: UnitAttributeMask) => {
+	const hiddenAttributes: CoreAttribute[] = (Object.keys(mask) as CoreAttribute[]).filter(
+		(attribute: CoreAttribute) => mask[attribute]
+	);
+	return hiddenAttributes.length > 0;
+};

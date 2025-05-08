@@ -72,7 +72,7 @@
 		<div>
 			<div class="grid grid-cols-2 gap-x-2 gap-y-4">
 				{#each Object.entries(unit.skills) as [skill, value]}
-					<div class="flex items-center gap-8">
+					<div class="flex items-center gap-4">
 						<IconTile label={skill} />
 						<span class="text-xl font-bold">{unit.mask[skill as CoreAttribute] ? '?' : value}</span>
 					</div>
@@ -84,10 +84,10 @@
 		<!-- Misc stats -->
 		<div class="grid grid-cols-2 gap-x-2 gap-y-4">
 			{#each [['LOYALTY', `${unit.loyalty}`], ['HEAT', `${unit.heat}%`]] as [label, val]}
-				<div class="flex items-center gap-8">
+				<div class="flex items-center gap-4">
 					<IconTile {label} />
 					<span
-						class="text-xl font-bold"
+						class="text-lg font-bold"
 						class:text-green-400={label === 'LOYALTY'}
 						class:text-red-400={label === 'HEAT'}
 						class:text-yellow-400={label === 'CUT'}

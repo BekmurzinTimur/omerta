@@ -11,6 +11,7 @@
 	} from '$lib/services/GameController.svelte';
 	import { formatUSD } from '$lib/utils/moneyUtils';
 	import { getSalary } from '$lib/utils/unitUtils';
+	import IconTile from '../Common/Icons/IconTile.svelte';
 	import MissionCard from '../Mission/MissionCard.svelte';
 
 	let { unitId }: { unitId: string } = $props();
@@ -101,7 +102,7 @@
 
 <!-- ------------‑‑ Card root (larger and horizontal) ‑‑------------ -->
 <div
-	class="flex h-[550px] w-[900px] overflow-hidden rounded-lg border border-gray-700 bg-gray-800 text-white shadow-lg"
+	class="flex h-[550px] w-[900px] overflow-hidden border border-gray-700 bg-gray-800 text-white shadow-lg"
 >
 	{#if unit}
 		<!-- Left section: Image and main info -->
@@ -154,14 +155,11 @@
 			<!-- Core attributes -->
 			<div class="mb-6">
 				<h4 class="mb-2 text-sm text-gray-400 uppercase">Core Attributes</h4>
-				<div class="space-y-3">
+				<div class="space-y-6">
 					{#each Object.entries(unit.skills) as [skill, value]}
-						<div class="flex items-center">
-							<span
-								class="inline-block h-6 w-6 rounded bg-no-repeat"
-								style={iconStyle(ICON[skill])}
-							/>
-							<span class="ml-3 w-24 capitalize">{skill.toLowerCase()}</span>
+						<div class="flex items-center gap-8">
+							<IconTile label={skill} />
+							<span class="ml-3 w-24 text-lg font-bold capitalize">{skill.toLowerCase()}</span>
 							<span class="font-mono text-lg"
 								>{unit.mask[skill as CoreAttribute] ? '?' : value}</span
 							>
@@ -173,31 +171,22 @@
 			<!-- Secondary stats -->
 			<div>
 				<h4 class="mb-2 text-sm text-gray-400 uppercase">Secondary Stats</h4>
-				<div class="space-y-3">
-					<div class="flex items-center">
-						<span
-							class="inline-block h-6 w-6 rounded bg-no-repeat"
-							style={iconStyle(ICON['CUT'])}
-						/>
-						<span class="ml-3 w-24">Cut</span>
+				<div class="space-y-6">
+					<div class="flex items-center gap-8">
+						<IconTile label={'CUT'} />
+						<span class="ml-3 w-24 text-lg font-bold capitalize">Cut</span>
 						<span class="font-mono text-lg text-yellow-400">{unit.cut}%</span>
 					</div>
 
-					<div class="flex items-center">
-						<span
-							class="inline-block h-6 w-6 rounded bg-no-repeat"
-							style={iconStyle(ICON['LOYALTY'])}
-						/>
-						<span class="ml-3 w-24">Loyalty</span>
+					<div class="flex items-center gap-8">
+						<IconTile label={'LOYALTY'} />
+						<span class="ml-3 w-24 text-lg font-bold capitalize">Loyalty</span>
 						<span class="font-mono text-lg text-green-400">{unit.loyalty}</span>
 					</div>
 
-					<div class="flex items-center">
-						<span
-							class="inline-block h-6 w-6 rounded bg-no-repeat"
-							style={iconStyle(ICON['HEAT'])}
-						/>
-						<span class="ml-3 w-24">Heat</span>
+					<div class="flex items-center gap-8">
+						<IconTile label={'HEAT'} />
+						<span class="ml-3 w-24 text-lg font-bold capitalize">Heat</span>
 						<span class="font-mono text-lg text-red-400">{unit.heat}%</span>
 					</div>
 				</div>
