@@ -36,7 +36,6 @@
 	let unitImages = $derived(
 		mission?.unitIds.map((id) => getUnitImage(allUnitsMap.get(id)?.image)) || []
 	);
-
 	$effect(() => {
 		if (hasNotified) return;
 		if (mission.status === MissionStatus.FAILED || mission.status === MissionStatus.SUCCEEDED) {

@@ -16,7 +16,7 @@
 </script>
 
 <!-- Player resources -->
-<div class="resources rounded-br-xl bg-gray-700 px-2">
+<div class="resources pointer-events-auto rounded-br-xl bg-gray-700 px-2">
 	{#if player}
 		<div class="flex items-center gap-8">
 			<div class="roundedp-2">

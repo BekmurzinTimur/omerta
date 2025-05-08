@@ -481,8 +481,7 @@ const resolveMission = (state: GameState, playerId: string, activeMission: IMiss
 	// 2. Apply money to player
 	if (success) {
 		// calculate total cut %
-		const totalCutPct =
-			unitIds.reduce((acc, uid) => acc + (state.units.get(uid)?.cut ?? 0), 0) / 100;
+		const totalCutPct = units.reduce((acc, unit) => acc + (unit?.cut ?? 0), 0) / 100;
 		netReward = Math.round(info.reward * (1 - totalCutPct));
 		console.log({ totalCutPct, netReward });
 
