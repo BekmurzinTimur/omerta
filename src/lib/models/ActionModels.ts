@@ -57,7 +57,8 @@ export enum ScheduledActionType {
 	AI_DECISION = 'AI_DECISION',
 	MISSION_COMPLETE = 'MISSION_COMPLETE',
 	TIP_EXPIRED = 'TIP_EXPIRED',
-	CALC_HEAT = 'CALC_HEAT'
+	CALC_HEAT = 'CALC_HEAT',
+	CALC_LOYALITY = 'CALC_LOYALITY'
 }
 
 // Specific action implementation examples

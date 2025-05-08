@@ -28,6 +28,12 @@ export const CALC_HEAT_RATE = 12;
 export const HEAT_LEVELS = [0, 100, 500, 1000];
 export const BASE_CHANCE_TO_CAUGHT = [0, 1, 5, 20];
 
+// Loyality
+export const LOYALITY_DEGEN = 1;
+export const LOYALITY_DEGEN_RATE = 24;
+export const LOYALITY_REWARD_TERRITORY = 5;
+export const LOYALITY_REWARD_MISSION = 10;
+
 //Missions
 export const BASE_TIP_LIFESPAN = 60;
 export const BASE_TIP_RATE = 2;

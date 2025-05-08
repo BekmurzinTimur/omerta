@@ -24,7 +24,7 @@ import { getAllUnitsMap, isFamilyFull } from './GameController.svelte';
 import { isNeighboringPlayerTerritory } from '$lib/utils/mapUtils';
 import { _promoteUnit, revealUnitAttribute } from '$lib/utils/unitUtils';
 import { getChanceToBeCaught, wasCaught } from '$lib/utils/statsUtils';
-import { BASE_CHANCE_TO_CAUGHT } from '$lib/const/globalConstants';
+import { BASE_CHANCE_TO_CAUGHT, LOYALITY_REWARD_MISSION } from '$lib/const/globalConstants';
 import { getHeatLevel } from '$lib/utils/familyUtils';
 
 // Queue of actions waiting to be processed
@@ -496,13 +496,12 @@ const resolveMission = (state: GameState, playerId: string, activeMission: IMiss
 
 	// 3. Update each unit
 	const experience = success ? 20 : 0;
-	const loyalty = 5;
 	unitIds.forEach((uid) => {
 		const unit = state.units.get(uid);
 
 		if (!unit) return;
 
-		const loyaltyDelta = success ? +loyalty : -loyalty;
+		const loyaltyDelta = success ? +LOYALITY_REWARD_MISSION : -LOYALITY_REWARD_MISSION / 2;
 		const heatLevel = getHeatLevel(player.resources.heat);
 		const chanceToBeCaught = getChanceToBeCaught(BASE_CHANCE_TO_CAUGHT[heatLevel], 0, unit.heat);
 		const isUnitCaught = wasCaught(chanceToBeCaught);

@@ -3,7 +3,7 @@ import { type ScheduledAction, ScheduledActionType } from '../models/ActionModel
 import gameState from './GameState.svelte';
 import type { GameState, Player } from '$lib/models/GameModels';
 import type { ITerritory } from '$lib/models/TerritoryModel';
-import { UnitStatus } from '$lib/models/UnitModels';
+import { UnitStatus, type IUnit } from '$lib/models/UnitModels';
 import {
 	buildMissionFromPrototype,
 	DEFAULT_MISSIONS,
@@ -18,7 +18,10 @@ import {
 	BASE_TIP_RATE,
 	CALC_HEAT_RATE,
 	CAPTURE_RATE,
-	INCOME_RATE
+	INCOME_RATE,
+	LOYALITY_DEGEN,
+	LOYALITY_DEGEN_RATE,
+	LOYALITY_REWARD_TERRITORY
 } from '$lib/const/globalConstants';
 
 let state: GameState = gameState.state;
@@ -92,7 +95,10 @@ const setupInitialScheduledActions = (): void => {
 					let territoryMultiplier = 1;
 					if (manager) {
 						territoryMultiplier = getManagerMultiplier(manager);
-						gameState.updateUnit(manager.id, { experience: manager.experience + 5 });
+						gameState.updateUnit(manager.id, {
+							experience: manager.experience + 5,
+							loyalty: manager.loyalty + LOYALITY_REWARD_TERRITORY
+						});
 					}
 					let regionControl = getRegionControl(territoryData?.regionId);
 					let region = getRegion(territoryData!.regionId);
@@ -239,6 +245,21 @@ const setupInitialScheduledActions = (): void => {
 
 				gameState.updatePlayer(player.id, {
 					resources: { ...player.resources, heat }
+				});
+			});
+		}
+	});
+
+	addScheduledAction({
+		id: 'loyality-degen',
+		type: ScheduledActionType.CALC_LOYALITY,
+		interval: LOYALITY_DEGEN_RATE,
+		nextExecutionTick: LOYALITY_DEGEN_RATE,
+		isRecurring: true,
+		execute: (state: GameState) => {
+			state.units.forEach((unit: IUnit) => {
+				gameState.updateUnit(unit.id, {
+					loyalty: unit.loyalty - LOYALITY_DEGEN
 				});
 			});
 		}
