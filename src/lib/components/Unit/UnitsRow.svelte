@@ -24,7 +24,7 @@
 	$inspect(displayUnits);
 </script>
 
-<footer class="absolute right-0 bottom-0 left-0 px-4 text-white">
+<footer class="pointer-events-none absolute right-0 bottom-0 left-0 px-4 text-white">
 	<div class="flex items-center gap-4">
 		<Button.Root
 			class="bg-dark shadow-mini hover:bg-dark/95  inline-flex h-12 items-center justify-center rounded-lg bg-white

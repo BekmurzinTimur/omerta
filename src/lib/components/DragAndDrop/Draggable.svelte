@@ -27,7 +27,7 @@
 
 <div
 	bind:this={dragElement}
-	class="cursor-grab select-none active:cursor-grabbing {isDraggingThis
+	class="pointer-events-auto cursor-grab select-none active:cursor-grabbing {isDraggingThis
 		? 'opacity-50'
 		: ''} {disabled ? 'cursor-not-allowed opacity-50' : ''}"
 	class:shadow-lg={!disabled}

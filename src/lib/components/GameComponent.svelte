@@ -10,6 +10,7 @@
 	import MissionSidebar from './Mission/MissionSidebar.svelte';
 	import { addWindow } from './DialogWindows/windowStore.svelte';
 	import EndGameWindow from './EndGame/EndGameWindow.svelte';
+	import Canvas from './Canvas/Canvas.svelte';
 
 	// Store only the ID of the selected cell
 	let allTerritories = $derived(getAllTerritories());
@@ -53,7 +54,8 @@
 	<div class="game-content relative flex flex-grow gap-4">
 		<!-- Left panel - Map/Grid will go here -->
 		<div class="map-container flex-grow bg-gray-600">
-			<GridMap {selectedCellId} {onSelect} />
+			<!-- <GridMap {selectedCellId} {onSelect} /> -->
+			<Canvas {selectedCellId} {onSelect} />
 		</div>
 		<!-- Right panel - Game controls and information -->
 		<Territory territory={selectedTerritory} {allTerritories} />

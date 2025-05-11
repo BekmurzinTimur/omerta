@@ -48,6 +48,9 @@
 		]
 	},
 	"dependencies": {
+		"@threlte/core": "^8.0.2",
+		"@threlte/extras": "^9.1.4",
+		"@threlte/flex": "^2.0.1",
 		"bits-ui": "^1.4.3",
 		"melt": "^0.30.1",
 		"socket.io-client": "^4.8.1",

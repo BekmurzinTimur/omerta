@@ -11,7 +11,9 @@
 <div
 	class="game-header pointer-events-none fixed top-0 right-0 left-0 z-10 flex items-start justify-between text-white"
 >
-	<Resources />
+	<div>
+		<Resources />
+	</div>
 	<div class="pointer-events-auto flex items-center gap-4 rounded-bl-xl bg-gray-700 px-4 py-2">
 		<div class="flex items-center space-x-4">
 			<span class="text-green-400">{formattedDate}</span>
