@@ -101,9 +101,7 @@
 </script>
 
 <!-- ------------‑‑ Card root (larger and horizontal) ‑‑------------ -->
-<div
-	class="flex h-[550px] w-[900px] overflow-hidden border border-gray-700 bg-gray-800 text-white shadow-lg"
->
+<div class="flex overflow-hidden border border-gray-700 bg-gray-800 text-white shadow-lg">
 	{#if unit}
 		<!-- Left section: Image and main info -->
 		<div class="flex w-1/3 flex-col border-r border-gray-700">

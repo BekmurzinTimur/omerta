@@ -67,31 +67,27 @@
 </script>
 
 {#if territory}
-	<div class="control-panel absolute top-18 left-4 flex w-80 flex-col">
-		<div class="territory-panel overflow-y-auto">
+	<div class="absolute top-16 left-2 w-[13rem] flex-col">
+		<div class="flex flex-col gap-2 overflow-y-auto text-white">
 			<!-- Region Information Section -->
 			{#if region && regionInfo}
 				<Region {region} {regionControl} {regionInfo} />
 			{/if}
 
 			<!-- Territory Actions Section -->
-			<div class="actions-container rounded-lg bg-gray-700 p-4 shadow-md">
-				<div class="mb-4 border-b border-gray-600 pb-3">
+			<div class="rounded-lg bg-gray-700 p-2 shadow-md">
+				<div class="mb-1 border-b border-gray-600 pb-1">
 					{#if territory}
-						<div class="flex items-center justify-between">
-							<h4 class="text-xl font-bold text-gray-200">{territory.name}</h4>
-							<span class="rounded-full bg-gray-800 px-3 py-1 text-sm text-gray-300">
-								{territory.ownerId ? `${territory.ownerId}` : 'Unclaimed'}
-							</span>
-						</div>
-
-						<div class="mt-3">
-							<div class="rounded-md bg-gray-800 p-3">
+						<div class="flex items-center justify-between rounded-lg bg-gray-800 p-3">
+							<div class="rounded-md">
 								<Icon text="I" className="bg-yellow-400 mr-2" />
-								<span class="text-lg font-bold text-green-400">
-									{formatUSD(territory.resources.income)}
+								<span class="text-sm font-bold text-green-400">
+									+{formatUSD(territory.resources.income)}
 								</span>
 							</div>
+							<span class="h-full text-sm text-gray-300">
+								{territory.ownerId ? `${territory.ownerId}` : 'Unclaimed'}
+							</span>
 
 							{#if territory.isBeingCaptured}{/if}
 						</div>
@@ -107,8 +103,7 @@
 				<!-- Territory Management Section -->
 				{#if territory}
 					{#if territory.ownerId === player?.id}
-						<div class="management-section mb-4">
-							<h5 class="mb-2 text-lg font-bold text-gray-200">Territory Management</h5>
+						<div>
 							<div class="flex justify-center rounded-md bg-gray-800 p-3">
 								<AssignUnit
 									id="territory{territory.id}"
@@ -119,12 +114,12 @@
 									droppedUnit={droppedItem?.data}
 									{confirmed}
 									onRemove={handleRemove}
+									label={'Manage territory'}
 								/>
 							</div>
 						</div>
 					{:else if isNeighbouringMyTerritory}
-						<div class="capture-section">
-							<h5 class="mb-2 text-lg font-bold text-gray-200">Capture Territory</h5>
+						<div>
 							{#if territory.captureProgress}
 								<div class="mb-3">
 									<ProgressBar progress={territory.captureProgress} />
@@ -143,6 +138,7 @@
 									droppedUnit={droppedItem?.data}
 									confirmed={capturerConfirmed}
 									disableRemove
+									label={'Capture territory'}
 								/>
 							</div>
 						</div>
@@ -156,23 +152,3 @@
 		</div>
 	</div>
 {/if}
-
-<style>
-	.territory-panel {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-		color: #e2e8f0;
-	}
-
-	.management-section,
-	.capture-section {
-		transition: all 0.3s ease;
-	}
-
-	/* Subtle hover effects */
-	.actions-container:hover,
-	.region-info-container:hover {
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-	}
-</style>

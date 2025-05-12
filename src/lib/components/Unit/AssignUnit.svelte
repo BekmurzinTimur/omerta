@@ -15,7 +15,8 @@
 		onRemove,
 		accepts,
 		disableRemove,
-		disabled
+		disabled,
+		label
 	}: {
 		id: string;
 		onDrop: (result: DropResult) => void;
@@ -27,6 +28,7 @@
 		onRemove?: (unitId: string) => void;
 		disableRemove?: boolean;
 		disabled?: boolean;
+		label?: string;
 	} = $props();
 
 	let dropZonesMap = $derived(getDropZonesMap());
@@ -52,5 +54,5 @@
 </script>
 
 <DropZone {id} onDrop={handleDrop} {accepts} {disabled}>
-	<UnitDrop {unit} {confirmed} {onRemove} {disableRemove} />
+	<UnitDrop {unit} {confirmed} {onRemove} {disableRemove} {label} />
 </DropZone>

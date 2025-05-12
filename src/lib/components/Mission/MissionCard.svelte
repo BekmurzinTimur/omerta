@@ -76,13 +76,17 @@
 		<div class="flex">
 			{#if tipTicksLeft !== null}
 				<div
-					class="mr-2 flex size-6 justify-center rounded-full bg-green-500"
+					class="mr-2 flex size-6 min-w-6 justify-center rounded-full bg-green-500"
 					class:bg-red-500={tipTicksLeft < 5}
 				>
 					{tipTicksLeft}
 				</div>
 			{/if}
-			<h3 class="font-semibold text-white drop-shadow">{mission.info.name}</h3>
+			<h3
+				class="overflow-hidden text-sm font-semibold text-ellipsis whitespace-nowrap text-white drop-shadow"
+			>
+				{mission.info.name}
+			</h3>
 		</div>
 
 		<div class="text-sm text-white/80">Reward: ${mission.info.reward.toLocaleString()}</div>
@@ -101,7 +105,9 @@
 					/>
 				{/each}
 			</div>
-			<MissionStatusBadge status={mission?.status} />
+			{#if mission?.status !== MissionStatus.AVAILABLE}
+				<MissionStatusBadge status={mission?.status} />
+			{/if}
 		</div>
 
 		<!-- progress bar -->

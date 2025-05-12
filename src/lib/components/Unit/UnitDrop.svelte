@@ -7,12 +7,14 @@
 		unit,
 		confirmed,
 		onRemove,
-		disableRemove
+		disableRemove,
+		label
 	}: {
 		unit?: IUnit;
 		confirmed?: boolean;
 		onRemove?: (unitId: string) => void;
 		disableRemove?: boolean;
+		label?: string;
 	} = $props();
 </script>
 
@@ -53,6 +55,6 @@
 		{/if}
 	{:else}
 		<!-- No unit assigned - show placeholder text -->
-		<span class="text-sm font-medium text-gray-400">Assign Unit</span>
+		<span class="text-sm font-medium text-gray-400">{label ? label : 'Assign Unit'}</span>
 	{/if}
 </div>

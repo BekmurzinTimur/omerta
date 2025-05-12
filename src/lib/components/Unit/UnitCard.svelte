@@ -44,12 +44,12 @@
 
 <!-- ------------‑‑ Card root ‑‑------------ -->
 <div
-	class="flex w-[200px] flex-col overflow-hidden rounded-lg border border-gray-700 bg-gray-800 text-white shadow-lg"
+	class="flex w-[150px] flex-col overflow-hidden rounded-lg border border-gray-700 bg-gray-800 text-white shadow-lg"
 	onclick={openDetails}
 >
 	<!-- Header with background image -->
 	<div
-		class="relative flex h-36 flex-col justify-end border-b border-gray-700 px-2 py-2"
+		class="relative flex h-24 flex-col justify-end border-b border-gray-700 px-2 py-2"
 		style="background:url('/mobsters/{unit.image}.png') center/cover"
 	>
 		<div class="mb-auto flex items-center justify-between text-xs">
@@ -57,7 +57,7 @@
 		</div>
 		<div class="mb-1 flex items-end gap-2">
 			<div
-				class="flex h-6 w-6 min-w-6 flex-col items-center justify-center rounded-full bg-amber-600 text-lg leading-0 font-bold"
+				class="flex h-4 w-4 min-w-4 flex-col items-center justify-center rounded-full bg-amber-600 text-sm font-bold"
 			>
 				{unit.level}
 			</div>
@@ -67,14 +67,14 @@
 	</div>
 
 	<!-- Stats -->
-	<div class="space-y-4 px-4 py-4 text-sm">
+	<div class="space-y-2 p-2 text-sm">
 		<!-- Core skills -->
 		<div>
-			<div class="grid grid-cols-2 gap-x-2 gap-y-4">
+			<div class="grid grid-cols-2 gap-x-2 gap-y-2">
 				{#each Object.entries(unit.skills) as [skill, value]}
 					<div class="flex items-center gap-4">
 						<IconTile label={skill} />
-						<span class="text-xl font-bold">{unit.mask[skill as CoreAttribute] ? '?' : value}</span>
+						<span class="text-sm font-bold">{unit.mask[skill as CoreAttribute] ? '?' : value}</span>
 					</div>
 				{/each}
 			</div>
@@ -82,12 +82,12 @@
 		<div class="border-1 border-gray-400"></div>
 
 		<!-- Misc stats -->
-		<div class="grid grid-cols-2 gap-x-2 gap-y-4">
+		<div class="grid grid-cols-2 gap-x-2 gap-y-2">
 			{#each [['LOYALTY', `${unit.loyalty}`], ['HEAT', `${unit.heat}%`]] as [label, val]}
-				<div class="flex items-center gap-4">
+				<div class="flex items-center gap-2">
 					<IconTile {label} />
 					<span
-						class="text-lg font-bold"
+						class="text-sm font-bold"
 						class:text-green-400={label === 'LOYALTY'}
 						class:text-red-400={label === 'HEAT'}
 						class:text-yellow-400={label === 'CUT'}

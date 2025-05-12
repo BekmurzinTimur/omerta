@@ -17,7 +17,7 @@
 <Sidebar>
 	<!-- Active -->
 	<div class="flex-1 overflow-y-auto">
-		<div class="mt-2 flex flex-col gap-2">
+		<div class="flex flex-col gap-2">
 			{#if activeMissions.length === 0}
 				<p class="text-white-500 text-right text-xs">No active missions</p>
 			{:else}

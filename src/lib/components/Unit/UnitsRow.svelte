@@ -27,19 +27,21 @@
 	$inspect(displayUnits);
 </script>
 
-<footer class="pointer-events-none absolute right-0 bottom-0 left-0 px-4 text-white">
-	<div class="flex items-center gap-4">
+<footer
+	class="pointer-events-none absolute right-0 bottom-0 left-0 flex items-start p-2 text-white"
+>
+	<div class="mr-2 flex flex-col items-stretch gap-4">
 		<Button.Root
-			class="bg-dark shadow-mini hover:bg-dark/95 pointer-events-auto  inline-flex h-12 items-center justify-center rounded-lg bg-white
-    px-4 py-2 font-semibold 
+			class="bg-dark shadow-mini hover:bg-dark/95 pointer-events-auto inline-flex  h-12 items-center justify-center rounded-lg bg-white px-2
+    py-1 text-sm font-semibold 
     text-black active:scale-[0.98] active:transition-all"
 			onclick={() => {
 				tab = 'members';
-			}}>Members: {units.length} / {maxFamilySize}</Button.Root
+			}}>Members <br /> {units.length} / {maxFamilySize}</Button.Root
 		>
 		<Button.Root
-			class=" bg-dark shadow-mini hover:bg-dark/95 pointer-events-auto  inline-flex h-12 items-center justify-center rounded-lg bg-white
-    px-4 py-2 font-semibold 
+			class="bg-dark shadow-mini hover:bg-dark/95 pointer-events-auto inline-flex  h-12 items-center justify-center rounded-lg bg-white px-4
+    py-2 text-sm font-semibold 
     text-black active:scale-[0.98] active:transition-all"
 			onclick={() => {
 				tab = 'associates';
@@ -47,7 +49,7 @@
 		>
 	</div>
 	<!-- Units list -->
-	<div class="units w-full flex-grow overflow-x-auto rounded-lg py-2">
+	<div class="units w-full flex-grow overflow-x-auto rounded-lg">
 		<div class="flex gap-2">
 			{#if displayUnits.length > 0}
 				{#each displayUnits as unit}

@@ -104,10 +104,10 @@
 	<!-- Dark gradient overlay for contrast -->
 
 	<!-- Card content -->
-	<div class="relative space-y-6 p-6 text-white md:p-8">
+	<div class="relative space-y-2 p-4 text-white">
 		<!-- Header -->
 		<div class="flex flex-wrap items-center justify-between gap-4">
-			<h3 class="text-2xl leading-tight font-extrabold tracking-tight md:text-4xl">
+			<h3 class="text-xl leading-tight font-extrabold tracking-tight">
 				{mission.info.name}
 			</h3>
 			<MissionStatusBadge status={mission.status} />
@@ -119,23 +119,23 @@
 			{#if mission.results?.money}
 				<span class="text-green-400">(+{formatUSD(mission.results.money)})</span>
 			{/if}
+			<div class="flex-1 space-y-2 p-4">
+				<div class="flex items-center justify-between">
+					<div class="flex items-center gap-2 text-sm font-medium md:text-base">
+						<span>Your cut</span>
+						<span>{(100 - totalCutPct * 100).toFixed(0)}%</span>
+						<span>{formatUSD(mission.info.reward * (1 - totalCutPct))}</span>
+					</div>
+					<div class="flex items-center gap-2 text-sm font-medium md:text-base">
+						<span>Team cut</span>
+						<span>{(totalCutPct * 100).toFixed(0)}%</span>
+					</div>
+				</div>
+				<ProgressBar progress={(1 - totalCutPct) * 100} />
+			</div>
 		</div>
 
 		<!-- Cut % + internal progress bar -->
-		<div class="space-y-2 p-4 shadow-inner backdrop-blur-sm">
-			<div class="flex items-center justify-between">
-				<div class="flex items-center gap-2 text-sm font-medium md:text-base">
-					<span>Your cut</span>
-					<span>{(100 - totalCutPct * 100).toFixed(0)}%</span>
-					<span>{formatUSD(mission.info.reward * (1 - totalCutPct))}</span>
-				</div>
-				<div class="flex items-center gap-2 text-sm font-medium md:text-base">
-					<span>Team cut</span>
-					<span>{(totalCutPct * 100).toFixed(0)}%</span>
-				</div>
-			</div>
-			<ProgressBar progress={(1 - totalCutPct) * 100} />
-		</div>
 
 		<!-- Success chance & stats -->
 		<div class="space-y-4 rounded-lg bg-white/5 p-4 shadow-inner backdrop-blur-sm">
@@ -143,7 +143,7 @@
 				<span>Success chance</span>
 				<span>{hasUnknownStats ? 'Unknown' : `${successChance.toFixed(0)}%`}</span>
 			</div>
-			<div class="space-y-4 text-sm">
+			<div class="flex items-start gap-4 text-sm">
 				<div>
 					<h5 class="mb-1 font-semibold">Team Power</h5>
 					{#if hasUnknownStats}
