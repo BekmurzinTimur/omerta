@@ -1,9 +1,11 @@
 <script lang="ts">
-	import { UnitStatus } from '$lib/models/UnitModels';
+	import { UnitRank, UnitStatus } from '$lib/models/UnitModels';
 	import { getUsedUnits } from '$lib/services/UiState.svelte';
 	import { getMaxFamilySize } from '$lib/utils/familyUtils';
 	import { getAssociates, getPlayerUnits, getTick } from '../../services/GameController.svelte';
 	import Draggable from '../DragAndDrop/Draggable.svelte';
+	import AddUnit from './Crews/AddUnit.svelte';
+	import Crew from './Crews/Crew.svelte';
 	import UnitCard from './UnitCard.svelte';
 	import { Button } from 'bits-ui';
 
@@ -12,10 +14,11 @@
 	// Get all units in the game
 	let usedUnits = $derived(getUsedUnits());
 	let units = $derived(getPlayerUnits());
+	let capos = $derived(getPlayerUnits().filter((unit) => unit.rank === UnitRank.CAPO));
 	let associates = $derived(getAssociates());
 	let maxFamilySize = $derived(getMaxFamilySize(units));
 	let tab = $state<'members' | 'associates'>('members');
-	let displayUnits = $derived.by(() => (tab === 'members' ? units : associates));
+	let displayUnits = $derived.by(() => (tab === 'members' ? capos : associates));
 
 	$effect(() => {
 		tick;
@@ -27,7 +30,7 @@
 <footer class="pointer-events-none absolute right-0 bottom-0 left-0 px-4 text-white">
 	<div class="flex items-center gap-4">
 		<Button.Root
-			class="bg-dark shadow-mini hover:bg-dark/95  inline-flex h-12 items-center justify-center rounded-lg bg-white
+			class="bg-dark shadow-mini hover:bg-dark/95 pointer-events-auto  inline-flex h-12 items-center justify-center rounded-lg bg-white
     px-4 py-2 font-semibold 
     text-black active:scale-[0.98] active:transition-all"
 			onclick={() => {
@@ -35,7 +38,7 @@
 			}}>Members: {units.length} / {maxFamilySize}</Button.Root
 		>
 		<Button.Root
-			class="bg-dark shadow-mini hover:bg-dark/95  inline-flex h-12 items-center justify-center rounded-lg bg-white
+			class=" bg-dark shadow-mini hover:bg-dark/95 pointer-events-auto  inline-flex h-12 items-center justify-center rounded-lg bg-white
     px-4 py-2 font-semibold 
     text-black active:scale-[0.98] active:transition-all"
 			onclick={() => {
@@ -59,6 +62,7 @@
 					>
 						<UnitCard {unit} assigned={usedUnits.has(unit.id)} />
 					</Draggable>
+					{#if unit.rank === UnitRank.CAPO}<Crew capo={unit} />{/if}
 				{/each}
 			{:else}
 				<p class="text-sm text-gray-400">No units available</p>

@@ -88,7 +88,8 @@ export const generateUnit = ({ rank, level }: { rank: UnitRank; level: number })
 		cut: getUnitCut({ rank, level }),
 		status: UnitStatus.IDLE,
 		missions: [],
-		image: Math.ceil(Math.random() * IMAGES)
+		image: Math.ceil(Math.random() * IMAGES),
+		crew: UnitRank.CAPO ? [] : undefined
 	};
 };
 
@@ -180,6 +181,9 @@ export const disloyalUnit = (unit: IUnit) => {
 export const _promoteUnit = (unit: IUnit) => {
 	unit.rank = getPromotedRank(unit.rank);
 	unit.cut = getUnitCut(unit);
+	if (unit.rank === UnitRank.CAPO) {
+		unit.crew = [];
+	}
 };
 
 export const getPromotedRank = (currentRank: UnitRank) => {

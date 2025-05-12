@@ -41,4 +41,6 @@ export interface IUnit {
 	image: number;
 	status: UnitStatus;
 	missions: string[];
+	crew?: string[];
+	captainId?: string;
 }
