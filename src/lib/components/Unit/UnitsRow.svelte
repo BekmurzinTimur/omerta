@@ -4,7 +4,6 @@
 	import { getMaxFamilySize } from '$lib/utils/familyUtils';
 	import { getAssociates, getPlayerUnits, getTick } from '../../services/GameController.svelte';
 	import Draggable from '../DragAndDrop/Draggable.svelte';
-	import AddUnit from './Crews/AddUnit.svelte';
 	import Crew from './Crews/Crew.svelte';
 	import UnitCard from './UnitCard.svelte';
 	import { Button } from 'bits-ui';
@@ -50,21 +49,23 @@
 	</div>
 	<!-- Units list -->
 	<div class="units w-full flex-grow overflow-x-auto rounded-lg">
-		<div class="flex gap-2">
+		<div class="flex gap-8">
 			{#if displayUnits.length > 0}
 				{#each displayUnits as unit}
-					<Draggable
-						disabled={unit.status !== UnitStatus.IDLE || usedUnits.has(unit.id)}
-						item={{
-							id: unit.id,
-							type: 'member',
-							data: unit
-						}}
-						zoneId="source"
-					>
-						<UnitCard {unit} assigned={usedUnits.has(unit.id)} />
-					</Draggable>
-					{#if unit.rank === UnitRank.CAPO}<Crew capo={unit} />{/if}
+					<div class="flex gap-2">
+						<Draggable
+							disabled={unit.status !== UnitStatus.IDLE || usedUnits.has(unit.id)}
+							item={{
+								id: unit.id,
+								type: 'member',
+								data: unit
+							}}
+							zoneId="source"
+						>
+							<UnitCard {unit} assigned={usedUnits.has(unit.id)} />
+						</Draggable>
+						{#if unit.rank === UnitRank.CAPO}<Crew capo={unit} />{/if}
+					</div>
 				{/each}
 			{:else}
 				<p class="text-sm text-gray-400">No units available</p>

@@ -10,17 +10,17 @@
 	} from '$lib/services/GameController.svelte';
 	import AssignUnit from '../AssignUnit.svelte';
 	import UnitCard from '../UnitCard.svelte';
+	import UnitCardSmall from '../UnitCardSmall.svelte';
 	import { getCrewDroppedItems } from './crewStore.svelte';
 
-	let { capoId, crewIndex }: { capoId: string; crewIndex: number } = $props();
-	let droppedItemsMap = $derived(getCrewDroppedItems());
+	let { capoId }: { capoId: string; crewIndex: number } = $props();
 
 	let units = $derived(getPlayerUnits());
 	let allUnitsMap = $derived(getAllUnitsMap());
 	let unassignedSoldiers = $derived(
 		units.filter((unit) => !unit.captainId && unit.rank === UnitRank.SOLDIER)
 	);
-	let capos = $derived(getPlayerUnits().filter((unit) => unit.rank === UnitRank.CAPO));
+	let capo = $derived(allUnitsMap.get(capoId)!);
 	let crew = $state<IUnit[]>([]);
 
 	function handleDrop(slotIndex: number, captainId: string) {
@@ -33,32 +33,27 @@
 </script>
 
 <div class="bg-gray-400 p-4">
-	{#each capos as capo}
-		<div class="flex flex-col gap-2">
-			<h4 class="mb-2 w-fit rounded-lg bg-gray-700 px-2 py-1 text-white">
-				{capo.name} crew <span>{capo.crew?.length || 0} / 6</span>
-			</h4>
-			<div class="flex gap-2">
-				<UnitCard unit={capo}></UnitCard>
-				<div class="grid grid-cols-3 grid-rows-2 gap-2">
-					{#each Array.from(Array(6)) as _, index}
-						{@const assignedUnit = allUnitsMap.get(capo.crew?.[index] || '')}
-						{@const droppedUnit = crew[index]}
-						{@const confirmed = !!assignedUnit && assignedUnit.id === droppedUnit?.id}
-						<AssignUnit
-							id="crew-{capo.id}-{index}"
-							onDrop={handleDrop(index, capo.id)}
-							accepts={['member']}
-							{assignedUnit}
-							{droppedUnit}
-							{confirmed}
-						/>
-					{/each}
-				</div>
+	<div class="flex flex-col gap-2">
+		<div class="flex gap-2">
+			<UnitCard unit={capo}></UnitCard>
+			<div class="grid grid-cols-3 grid-rows-2 gap-2">
+				{#each Array.from(Array(6)) as _, index}
+					{@const assignedUnit = allUnitsMap.get(capo.crew?.[index] || '')}
+					{@const droppedUnit = crew[index]}
+					{@const confirmed = !!assignedUnit && assignedUnit.id === droppedUnit?.id}
+					<AssignUnit
+						id="crew-{capo.id}-{index}"
+						onDrop={handleDrop(index, capo.id)}
+						accepts={['member']}
+						{assignedUnit}
+						{droppedUnit}
+						{confirmed}
+					/>
+				{/each}
 			</div>
-			<div class="border"></div>
 		</div>
-	{/each}
+		<div class="border"></div>
+	</div>
 
 	<div class="units w-full flex-grow overflow-x-auto rounded-lg">
 		<h4>UNASSIGNED SOLDIERS:</h4>
@@ -73,9 +68,11 @@
 						}}
 						zoneId="source"
 					>
-						<UnitCard {unit} />
+						<UnitCardSmall {unit} />
 					</Draggable>
 				{/each}
+			{:else}
+				None
 			{/if}
 		</div>
 	</div>

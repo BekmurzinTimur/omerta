@@ -183,6 +183,7 @@ export const _promoteUnit = (unit: IUnit) => {
 	unit.cut = getUnitCut(unit);
 	if (unit.rank === UnitRank.CAPO) {
 		unit.crew = [];
+		unit.captainId = undefined;
 	}
 };
 
