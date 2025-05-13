@@ -1,20 +1,23 @@
 //GameController.svelte.ts
 
 import gameState from './GameState.svelte';
-import {
-	queueAction,
-	createStartCaptureAction,
-	createHireUnitAction,
-	createAssignToTerritoryAction,
-	createRemoveFromTerritoryAction,
-	createLaunchMissionAction,
-	createPromoteUnitAction
-} from './ActionManager.svelte';
+import { queueAction } from './ActionManager.svelte';
 
 import { MissionStatus, type IMission } from '../models/MissionModels';
 import { UnitRank } from '$lib/models/UnitModels';
 import { getMaxFamilySize } from '$lib/utils/familyUtils';
 import { calculateRegionOwnership } from '$lib/utils/regionsUtils';
+import {
+	createAssignToTerritoryAction,
+	createRemoveFromTerritoryAction,
+	createStartCaptureAction
+} from './Actions/TerritoryActions.svelte';
+import {
+	createAssignToCrewAction,
+	createHireUnitAction,
+	createPromoteUnitAction
+} from './Actions/UnitActions.svelte';
+import { createLaunchMissionAction } from './Actions/MissionActions.svelte';
 
 let state = gameState.state;
 // This controller acts as an interface between the UI and the game systems
@@ -54,6 +57,10 @@ const removeUnitFromTerritory = (unitId: string, territoryId: string): void => {
 	queueAction(action);
 };
 
+const assignToCrew = (unitId: string, captainId: string, index: number): void => {
+	const action = createAssignToCrewAction(LOCAL_PLAYER_ID, unitId, captainId, index);
+	queueAction(action);
+};
 // Get the local player
 const getLocalPlayer = () => {
 	return state.players.get(LOCAL_PLAYER_ID);
@@ -195,6 +202,7 @@ export {
 	assignUnitToTerritory,
 	removeUnitFromTerritory,
 	launchMission,
+	assignToCrew,
 	getLocalPlayer,
 	getTerritory,
 	getRegion,

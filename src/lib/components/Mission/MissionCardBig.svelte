@@ -191,7 +191,6 @@
 							<AssignUnit
 								id={'mission-' + mission.id + '-' + idx}
 								onDrop={handleDrop(idx)}
-								onClear={handleClear(idx)}
 								accepts={['member', 'associate']}
 								assignedUnit={assignments[idx]}
 								{confirmed}

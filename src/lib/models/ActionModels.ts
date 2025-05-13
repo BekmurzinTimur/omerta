@@ -24,6 +24,7 @@ export enum ActionType {
 	HIRE_UNIT = 'HIRE_UNIT',
 	PROMOTE_UNIT = 'PROMOTE_UNIT',
 	LAUNCH_MISSION = 'LAUNCH_MISSION',
+	ASSIGN_TO_CREW = 'ASSIGN_TO_CREW',
 
 	// Economy actions
 	COLLECT_RESOURCES = 'COLLECT_RESOURCES',
@@ -100,4 +101,11 @@ export interface LaunchMissionAction extends Action {
 	type: ActionType.LAUNCH_MISSION;
 	missionId: string;
 	unitIds: string[]; // 1–4 units
+}
+
+export interface AssignToCrewAction extends Action {
+	type: ActionType.ASSIGN_TO_CREW;
+	captainId: string;
+	unitId: string;
+	index: number;
 }

@@ -8,7 +8,6 @@
 	let {
 		id,
 		onDrop,
-		onClear,
 		droppedUnit,
 		assignedUnit,
 		confirmed,
@@ -20,7 +19,6 @@
 	}: {
 		id: string;
 		onDrop: (result: DropResult) => void;
-		onClear: () => void;
 		accepts: string[];
 		droppedUnit?: IUnit;
 		assignedUnit?: IUnit;
@@ -42,14 +40,6 @@
 		freeUnit(lastUsedUnit);
 		lastUsedUnit = unitId;
 	};
-	// $effect(() => {
-	// 	let droppedUnit = usedUnitsMap.get(id);
-	// 	console.log(usedUnitsMap);
-	// 	if (typeof droppedUnit === 'undefined') {
-	// 		console.log('clearing', id);
-	// 		onClear();
-	// 	}
-	// });
 	let unit = $derived(droppedUnit || assignedUnit);
 </script>
 

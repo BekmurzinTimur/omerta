@@ -61,9 +61,6 @@
 		removeUnitFromTerritory(unitId, territory.id);
 		droppedItemsMap.delete(territory.id);
 	}
-	const handleClear = () => {
-		droppedUnit = null;
-	};
 </script>
 
 {#if territory}
@@ -108,7 +105,6 @@
 								<AssignUnit
 									id="territory{territory.id}"
 									onDrop={handleDrop}
-									onClear={handleClear}
 									accepts={['member']}
 									assignedUnit={managerUnit}
 									droppedUnit={droppedItem?.data}
@@ -132,7 +128,6 @@
 								<AssignUnit
 									id="territory{territory.id}"
 									onDrop={handleDrop}
-									onClear={handleClear}
 									accepts={['member']}
 									assignedUnit={capturerUnit}
 									droppedUnit={droppedItem?.data}
