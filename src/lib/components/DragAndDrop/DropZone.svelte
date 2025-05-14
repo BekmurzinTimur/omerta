@@ -34,6 +34,7 @@
 		// If no specific types are defined, accept all
 		if (accepts.length === 0) return true;
 
+		console.log('check for valid drop', accepts, dragStore.currentItem);
 		// Check if the dragged item type is in the accepted types
 		return accepts.includes(dragStore.currentItem.type);
 	});

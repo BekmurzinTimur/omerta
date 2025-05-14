@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { addWindow } from '$lib/components/DialogWindows/windowStore.svelte';
-	import { type IUnit } from '$lib/models/UnitModels';
+	import Draggable from '$lib/components/DragAndDrop/Draggable.svelte';
+	import { UnitStatus, type IUnit } from '$lib/models/UnitModels';
 	import { getAllUnitsMap } from '$lib/services/GameController.svelte';
+	import { getUsedUnits } from '$lib/services/UiState.svelte';
 	import UnitCardSmall from '../UnitCardSmall.svelte';
 
 	import CrewModal from './CrewModal.svelte';
+	let usedUnits = $derived(getUsedUnits());
 	let { capo }: { capo: IUnit } = $props();
 	let allUnitsMap = $derived(getAllUnitsMap());
 	let units: IUnit[] = $derived(
@@ -36,7 +39,17 @@
 		class:grid-cols-3={units.length > 4}
 	>
 		{#each units as unit, index}
-			<UnitCardSmall {unit} />
+			<Draggable
+				disabled={unit.status !== UnitStatus.IDLE || usedUnits.has(unit.id)}
+				item={{
+					id: unit.id,
+					type: 'member',
+					data: unit
+				}}
+				zoneId="source"
+			>
+				<UnitCardSmall {unit} />
+			</Draggable>
 		{/each}
 	</div>
 </div>

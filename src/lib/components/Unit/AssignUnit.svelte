@@ -33,8 +33,10 @@
 	let lastUsedUnit = $state<string>('');
 
 	const handleDrop = (result: DropResult) => {
+		const unit = result.item.data as IUnit;
+		const unitId = unit.id;
+		if (!accepts.includes(result.item.type)) return;
 		onDrop(result);
-		const unitId = (result.item.data as IUnit).id;
 		useUnit(unitId, id);
 		if (unitId !== lastUsedUnit) console.log('freeing unit', lastUsedUnit);
 		freeUnit(lastUsedUnit);

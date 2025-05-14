@@ -51,7 +51,7 @@ export function setupDraggable(
 
 		// Create a drag overlay element with more prominence
 		const overlay = document.createElement('div');
-		overlay.className = 'fixed top-0 left-0 pointer-events-none z-50 shadow-lg rounded ';
+		overlay.className = 'fixed top-0 left-0 pointer-events-none z-50  rounded ';
 		overlay.innerHTML = element.innerHTML;
 		overlay.style.width = `${rect.width}px`;
 		overlay.style.height = `${rect.height}px`;

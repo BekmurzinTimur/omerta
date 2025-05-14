@@ -44,7 +44,7 @@
 					<AssignUnit
 						id="crew-{capo.id}-{index}"
 						onDrop={handleDrop(index, capo.id)}
-						accepts={['member']}
+						accepts={['member-crew']}
 						{assignedUnit}
 						{droppedUnit}
 						{confirmed}
@@ -63,7 +63,7 @@
 					<Draggable
 						item={{
 							id: unit.id,
-							type: 'member',
+							type: 'member-crew',
 							data: unit
 						}}
 						zoneId="source"
