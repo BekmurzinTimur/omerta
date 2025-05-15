@@ -76,7 +76,7 @@
 				{/each}
 			</div>
 		{:else if tab === 'soldiers'}
-			<div class="grid grid-flow-col grid-cols-[100px_auto] grid-rows-2 gap-2">
+			<div class="flex gap-2">
 				{#each soldiers as unit}
 					<Draggable
 						disabled={unit.status !== UnitStatus.IDLE || usedUnits.has(unit.id)}
@@ -87,7 +87,7 @@
 						}}
 						zoneId="source"
 					>
-						<UnitCardSmall {unit} assigned={usedUnits.has(unit.id)} />
+						<UnitCard {unit} assigned={usedUnits.has(unit.id)} />
 					</Draggable>
 				{/each}
 			</div>

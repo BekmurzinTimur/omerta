@@ -1,6 +1,7 @@
 <script lang="ts">
 	/* --------‑‑ Imports & props ‑‑-------- */
 	import { type IUnit, CoreAttribute, UnitStatus } from '$lib/models/UnitModels';
+	import { getAllUnitsMap } from '$lib/services/GameController.svelte';
 	import IconTile from '../Common/Icons/IconTile.svelte';
 	import { onMount } from 'svelte';
 	import ProgressBar from '../Common/ProgressBar.svelte';
@@ -39,6 +40,9 @@
 			background-position: -${c * TILE}px -${r * TILE}px;
 		`;
 	};
+
+	let allUnitsMap = $derived(getAllUnitsMap());
+	let capo = $derived(allUnitsMap.get(unit.captainId || ''));
 
 	$effect(() => {
 		if (unit.status === UnitStatus.PRISON) {
@@ -103,9 +107,13 @@
 		<div>
 			<div class="grid grid-cols-2 gap-x-2 gap-y-2">
 				{#each Object.entries(unit.skills) as [skill, value]}
-					<div class="flex items-center gap-4">
+					{@const bonusValue = Math.floor((capo?.skills[skill as CoreAttribute] || 0) / 5)}
+					<div class="flex items-center gap-2 whitespace-nowrap">
 						<IconTile label={skill} />
-						<span class="text-sm font-bold">{unit.mask[skill as CoreAttribute] ? '?' : value}</span>
+						<span class="text-right text-sm"
+							>{unit.mask[skill as CoreAttribute] ? '?' : value}
+							{#if bonusValue}<span class="text-sm text-green-400">+ {bonusValue}</span>{/if}</span
+						>
 					</div>
 				{/each}
 			</div>

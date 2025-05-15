@@ -110,7 +110,7 @@ const resolveMission = (state: GameState, playerId: string, activeMission: IMiss
 	const allUnits = getAllUnitsMap();
 
 	const units = unitIds.map((unitId) => allUnits.get(unitId));
-	const teamStats = getTeamStats(units);
+	const teamStats = getTeamStats(units, state.units);
 	const success = checkMissionSuccess(info.difficulty, teamStats);
 
 	let netReward = 0;
@@ -119,7 +119,6 @@ const resolveMission = (state: GameState, playerId: string, activeMission: IMiss
 		// calculate total cut %
 		const totalCutPct = units.reduce((acc, unit) => acc + (unit?.cut ?? 0), 0) / 100;
 		netReward = Math.round(info.reward * (1 - totalCutPct));
-		console.log({ totalCutPct, netReward });
 
 		gameState.updatePlayer(playerId, {
 			resources: {

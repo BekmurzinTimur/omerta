@@ -58,16 +58,29 @@ export function checkMissionSuccess(
 	return roll <= successChance;
 }
 
-export const getTeamStats = (team: (IUnit | undefined)[]) => {
+export const getTeamStats = (team: (IUnit | undefined)[], allUnits: Map<string, IUnit>) => {
 	return team.reduce(
 		(acc, cur) => {
 			if (!cur) return acc;
+			let captain = allUnits.get(cur.captainId || '');
+
 			return {
-				[CoreAttribute.MUSCLE]: cur.skills[CoreAttribute.MUSCLE] + acc[CoreAttribute.MUSCLE],
-				[CoreAttribute.BRAINS]: cur.skills[CoreAttribute.BRAINS] + acc[CoreAttribute.BRAINS],
-				[CoreAttribute.CUNNING]: cur.skills[CoreAttribute.CUNNING] + acc[CoreAttribute.CUNNING],
+				[CoreAttribute.MUSCLE]:
+					cur.skills[CoreAttribute.MUSCLE] +
+					acc[CoreAttribute.MUSCLE] +
+					(captain ? Math.floor(captain.skills[CoreAttribute.MUSCLE] / 5) : 0),
+				[CoreAttribute.BRAINS]:
+					cur.skills[CoreAttribute.BRAINS] +
+					acc[CoreAttribute.BRAINS] +
+					(captain ? Math.floor(captain.skills[CoreAttribute.BRAINS] / 5) : 0),
+				[CoreAttribute.CUNNING]:
+					cur.skills[CoreAttribute.CUNNING] +
+					acc[CoreAttribute.CUNNING] +
+					(captain ? Math.floor(captain.skills[CoreAttribute.CUNNING] / 5) : 0),
 				[CoreAttribute.INFLUENCE]:
-					cur?.skills[CoreAttribute.INFLUENCE] + acc[CoreAttribute.INFLUENCE]
+					cur?.skills[CoreAttribute.INFLUENCE] +
+					acc[CoreAttribute.INFLUENCE] +
+					(captain ? Math.floor(captain.skills[CoreAttribute.INFLUENCE] / 5) : 0)
 			};
 		},
 		{

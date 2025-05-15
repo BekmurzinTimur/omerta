@@ -32,6 +32,7 @@
 	const maxSlots = 4;
 
 	// local state of dropped units
+	let allUnitsMap = $derived(getAllUnitsMap());
 	let assignments: (IUnit | undefined)[] = $state(Array(maxSlots).fill(undefined));
 	let hasUnknownStats: boolean = $derived.by(() => {
 		let result = false;
@@ -46,7 +47,7 @@
 
 	let confirmed = $state(false);
 	let teamStats = $derived.by(() => {
-		return getTeamStats(assignments);
+		return getTeamStats(assignments, allUnitsMap);
 	});
 
 	let mission = $derived(getMission(missionId)!);
