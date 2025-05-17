@@ -8,6 +8,7 @@
 	import UnitCard from './UnitCard.svelte';
 	import { Button } from 'bits-ui';
 	import UnitCardSmall from './UnitCardSmall.svelte';
+	import MyTooltip from '../Common/Tooltip/MyTooltip.svelte';
 
 	let tick: number = $derived(getTick());
 
@@ -95,17 +96,22 @@
 			<div class="grid auto-cols-[100px] grid-flow-col grid-rows-2 gap-2">
 				{#each associates as unit}
 					<div class="h-[100px] w-[100px]">
-						<Draggable
-							disabled={unit.status !== UnitStatus.IDLE || usedUnits.has(unit.id)}
-							item={{
-								id: unit.id,
-								type: 'member',
-								data: unit
-							}}
-							zoneId="source"
-						>
-							<UnitCardSmall {unit} assigned={usedUnits.has(unit.id)} />
-						</Draggable>
+						<MyTooltip delayDuration={0}>
+							{#snippet trigger()}
+								<Draggable
+									disabled={unit.status !== UnitStatus.IDLE || usedUnits.has(unit.id)}
+									item={{
+										id: unit.id,
+										type: 'member',
+										data: unit
+									}}
+									zoneId="source"
+								>
+									<UnitCardSmall {unit} assigned={usedUnits.has(unit.id)} />
+								</Draggable>
+							{/snippet}
+							<UnitCard {unit} />
+						</MyTooltip>
 					</div>
 				{/each}
 			</div>

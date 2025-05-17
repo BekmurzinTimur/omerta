@@ -5,7 +5,10 @@
 	import ProgressBar from '../Common/ProgressBar.svelte';
 	import { addToast } from '../Common/Toaster/Toaster.svelte';
 	import { addWindow } from '../DialogWindows/windowStore.svelte';
+	import UnitCard from './UnitCard.svelte';
 	import UnitCardBig from './UnitCardBig.svelte';
+
+	import { Tooltip } from 'bits-ui';
 
 	let { unit, assigned }: { unit: IUnit; assigned?: boolean } = $props();
 
@@ -42,7 +45,6 @@
 	}
 </script>
 
-<!-- ------------‑‑ Card root ‑‑------------ -->
 <div
 	class="flex h-[100px] w-[100px] flex-col overflow-hidden rounded-lg border border-gray-700 bg-gray-800 text-white shadow-lg"
 	onclick={openDetails}

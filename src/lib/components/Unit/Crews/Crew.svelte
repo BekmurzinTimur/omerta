@@ -1,9 +1,11 @@
 <script lang="ts">
+	import MyTooltip from '$lib/components/Common/Tooltip/MyTooltip.svelte';
 	import { addWindow } from '$lib/components/DialogWindows/windowStore.svelte';
 	import Draggable from '$lib/components/DragAndDrop/Draggable.svelte';
 	import { UnitStatus, type IUnit } from '$lib/models/UnitModels';
 	import { getAllUnitsMap } from '$lib/services/GameController.svelte';
 	import { getUsedUnits } from '$lib/services/UiState.svelte';
+	import UnitCard from '../UnitCard.svelte';
 	import UnitCardSmall from '../UnitCardSmall.svelte';
 
 	import CrewModal from './CrewModal.svelte';
@@ -39,17 +41,22 @@
 		class:grid-cols-3={units.length > 4}
 	>
 		{#each units as unit, index}
-			<Draggable
-				disabled={unit.status !== UnitStatus.IDLE || usedUnits.has(unit.id)}
-				item={{
-					id: unit.id,
-					type: 'member',
-					data: unit
-				}}
-				zoneId="source"
-			>
-				<UnitCardSmall {unit} />
-			</Draggable>
+			<MyTooltip>
+				{#snippet trigger()}
+					<Draggable
+						disabled={unit.status !== UnitStatus.IDLE || usedUnits.has(unit.id)}
+						item={{
+							id: unit.id,
+							type: 'member',
+							data: unit
+						}}
+						zoneId="source"
+					>
+						<UnitCardSmall {unit} />
+					</Draggable>
+				{/snippet}
+				<UnitCard {unit} />
+			</MyTooltip>
 		{/each}
 	</div>
 </div>

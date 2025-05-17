@@ -118,12 +118,17 @@
 
 <T.PerspectiveCamera
 	makeDefault
-	position={[30, 30, 30]}
+	position={[0, 30, 30]}
 	oncreate={(ref) => {
 		ref.lookAt(0, 1, 0);
 	}}
 >
-	<OrbitControls maxPolarAngle={Math.PI / 2 - Math.PI / 16} minPolarAngle={Math.PI / 4} enablePan />
+	<OrbitControls
+		maxPolarAngle={Math.PI / 2 - Math.PI / 16}
+		minPolarAngle={Math.PI / 4}
+		enablePan
+		enableRotate={false}
+	/>
 </T.PerspectiveCamera>
 <!-- Scene lighting -->
 <T.DirectionalLight
