@@ -74,14 +74,17 @@ const getPlayerColor = () => {
 const getTerritory = (id: string) => {
 	return state.territories.get(id);
 };
+// Get all territories
+const getAllTerritories = () => {
+	return state.territories;
+};
 
 const getRegion = (id: string) => {
 	return state.regions.get(id);
 };
-
 // Get all territories
-const getAllTerritories = () => {
-	return state.territories;
+const getAllRegions = () => {
+	return state.regions;
 };
 
 // Get territories owned by the local player
@@ -205,8 +208,9 @@ export {
 	assignToCrew,
 	getLocalPlayer,
 	getTerritory,
-	getRegion,
 	getAllTerritories,
+	getRegion,
+	getAllRegions,
 	getPlayerTerritories,
 	getNeutralTerritories,
 	getCapturableTerritories,

@@ -17,6 +17,9 @@ importers:
       '@threlte/flex':
         specifier: ^2.0.1
         version: 2.0.1(svelte@5.25.6)(three@0.176.0)
+      '@types/three':
+        specifier: ^0.176.0
+        version: 0.176.0
       bits-ui:
         specifier: ^1.4.3
         version: 1.4.3(svelte@5.25.6)
@@ -26,6 +29,9 @@ importers:
       socket.io-client:
         specifier: ^4.8.1
         version: 4.8.1
+      three:
+        specifier: ^0.176.0
+        version: 0.176.0
       uuid:
         specifier: ^11.1.0
         version: 11.1.0

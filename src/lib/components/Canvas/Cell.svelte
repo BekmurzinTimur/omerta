@@ -69,7 +69,7 @@
 	}}
 >
 	<T.PlaneGeometry args={[cellSize, cellSize]} />
-	<T.MeshStandardMaterial color={region?.color} roughness={0.8} />
+	<T.MeshStandardMaterial color={color || '#999999'} roughness={0.8} opacity={0.5} transparent />
 </T.Mesh>
 
 <T.Mesh

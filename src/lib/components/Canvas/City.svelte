@@ -1,14 +1,25 @@
 <script lang="ts">
 	import { T, useThrelte } from '@threlte/core';
-	import { OrbitControls, Grid, interactivity, BakeShadows } from '@threlte/extras';
+	import {
+		OrbitControls,
+		Grid,
+		interactivity,
+		BakeShadows,
+		MeshLineGeometry,
+		MeshLineMaterial
+	} from '@threlte/extras';
 	import NeighborhoodCell from './Cell.svelte';
 	import {
+		getAllRegions,
 		getAllTerritories,
 		getAllUnitsMap,
 		getPlayerColor,
 		getPlayerTerritories
 	} from '$lib/services/GameController.svelte';
 	import type { Cell } from '$lib/models/MapTypes';
+	import { computeRegionBorders } from '$lib/utils/regionBorderUtils';
+	import { REGIONS } from '$lib/const/globalConstants';
+	import { getRegionsWithPlayerPresence } from '$lib/utils/regionsUtils';
 
 	let {
 		selectedCellId,
@@ -113,27 +124,36 @@
 	let ambientIntensity = $derived(timeOfDay === 'day' ? 0.4 : 0.1);
 
 	let skyColor = $derived(timeOfDay === 'day' ? 0x87ceeb : 0x000033);
+
+	let regions = $derived(getAllRegions());
+	let regionBorders = $derived(computeRegionBorders(territories, regions, 10));
+	$inspect(regionBorders);
 	interactivity();
 </script>
 
 <T.PerspectiveCamera
 	makeDefault
-	position={[0, 30, 30]}
+	position={[0, 30, 10]}
 	oncreate={(ref) => {
 		ref.lookAt(0, 1, 0);
 	}}
 >
-	<OrbitControls enablePan enableRotate={false} />
+	<OrbitControls enablePan enableRotate={false} screenSpacePanning />
 </T.PerspectiveCamera>
 <!-- Scene lighting -->
 <T.DirectionalLight
 	intensity={timeOfDay === 'day' ? 4 : 0.3}
 	position={[sunPosition.x, sunPosition.y, sunPosition.z]}
 	castShadow
-	shadow-mapSize-width={2048}
-	shadow-mapSize-height={2048}
+	shadow.mapSize.width={2048}
+	shadow.mapSize.height={2048}
+	shadow.bias={-0.0001}
+	shadow.normalBias={0.05}
 >
-	<T.OrthographicCamera args={[-100, 100, 100, -100, 1, 500]} attach="shadow.camera"
+	<T.OrthographicCamera
+		args={[-100, 100, 100, -100, 1, 250]}
+		attach="shadow.camera"
+		oncreate={(cam) => cam.updateProjectionMatrix()}
 	></T.OrthographicCamera>
 </T.DirectionalLight>
 
@@ -148,33 +168,6 @@
 <T.Scene>
 	<T.Color args={[100, 100, 200]}></T.Color>
 </T.Scene>
-
-<!-- Helper grid -->
-{#if showGrid}
-	<Grid
-		position={[0, 0, 0]}
-		size={gridSize * 10 * 2}
-		divisions={gridSize * 2}
-		cellColor={0x444444}
-		sectionColor={0x888888}
-		fadeDistance={80}
-	/>
-{/if}
-
-<!-- Camera controls -->
-
-<!-- City cells -->
-<!-- {#each cells as cell, index}
-	<T.Group position={[cell.x, 0, cell.z]}>
-		<NeighborhoodCell
-			density={cell.density}
-			cellSize={10}
-			cellId={cell.id}
-			{setTopHoveredCell}
-			{topHoveredCell}
-		/>
-	</T.Group>
-{/each} -->
 
 {#each territoryIds as id (id)}
 	{@const cellData = getCellData(id)}
@@ -194,19 +187,15 @@
 				territoryId={id}
 			/>
 		</T.Group>
-		<!-- <GridCell
-			cell={cellData}
-			{selectCell}
-			{cellSize}
-			{selectedCellId}
-			unit={cellData.unit}
-			isBeingCaptured={cellData.isBeingCaptured}
-			color={playerTerritorySet.has(id) || cellData.isBeingCaptured
-				? `${playerColor};`
-				: 'inherit;'}
-			territoryId={id}
-		/> -->
 	{/if}
+{/each}
+
+{#each Array.from(regionBorders) as [key, points]}
+	{@const region = regions.get(key)}
+	<T.Mesh position={[-50, 0, -50]}>
+		<MeshLineGeometry {points} />
+		<MeshLineMaterial color={region?.color} width={0.5} />
+	</T.Mesh>
 {/each}
 
 <!-- <BakeShadows /> -->

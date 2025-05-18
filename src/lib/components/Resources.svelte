@@ -5,7 +5,6 @@
 	import { formatUSD } from '$lib/utils/moneyUtils';
 	import IconTile from './Common/Icons/IconTile.svelte';
 	import { onMount } from 'svelte';
-
 	// Get the local player
 	let player = $derived(getLocalPlayer());
 	let heatLevel = $derived(player ? getHeatLevel(player.resources.heat) : 0);
@@ -18,6 +17,7 @@
 	let clickSound = $state<HTMLAudioElement | null>(null);
 	onMount(() => {
 		clickSound = new Audio('/audio/kashing');
+		clickSound.muted = true;
 	});
 	$effect(() => {
 		player?.resources.lastIncome;
