@@ -123,12 +123,7 @@
 		ref.lookAt(0, 1, 0);
 	}}
 >
-	<OrbitControls
-		maxPolarAngle={Math.PI / 2 - Math.PI / 16}
-		minPolarAngle={Math.PI / 4}
-		enablePan
-		enableRotate={false}
-	/>
+	<OrbitControls enablePan enableRotate={false} />
 </T.PerspectiveCamera>
 <!-- Scene lighting -->
 <T.DirectionalLight

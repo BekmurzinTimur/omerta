@@ -7,6 +7,8 @@
 	}: { selectedCellId: string | null; onSelect: (cellid: string | null) => void } = $props();
 </script>
 
-<Canvas shadows>
-	<City {selectedCellId} {onSelect} />
-</Canvas>
+<div class="h-screen w-screen">
+	<Canvas shadows>
+		<City {selectedCellId} {onSelect} />
+	</Canvas>
+</div>
