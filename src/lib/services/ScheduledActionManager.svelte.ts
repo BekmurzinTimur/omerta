@@ -1,6 +1,8 @@
+// ScheduledActionManager.svelte.ts
 import { v4 as uuidv4 } from 'uuid';
 import { type ScheduledAction, ScheduledActionType } from '../models/ActionModels';
 import gameState from './GameState.svelte';
+import playerManager from './PlayerManager.svelte';
 import type { GameState, Player } from '$lib/models/GameModels';
 import type { ITerritory } from '$lib/models/TerritoryModel';
 import { UnitStatus, type IUnit } from '$lib/models/UnitModels';
@@ -76,7 +78,7 @@ const setupInitialScheduledActions = (): void => {
 	// Clear existing scheduled actions
 	scheduledActions = [];
 
-	// Generate income every 5 ticks
+	// Generate income every INCOME_RATE ticks
 	addScheduledAction({
 		id: 'income-generation',
 		type: ScheduledActionType.GENERATE_INCOME,
@@ -84,8 +86,11 @@ const setupInitialScheduledActions = (): void => {
 		nextExecutionTick: INCOME_RATE,
 		isRecurring: true,
 		execute: (state: GameState) => {
-			// For each player, generate income based on their territories
-			state.players.forEach((player: Player) => {
+			// Get all active players
+			const activePlayers = playerManager.getActivePlayers();
+			
+			// For each active player, generate income based on their territories
+			activePlayers.forEach((player: Player) => {
 				let income = 0;
 
 				// Calculate total production from territories
@@ -100,7 +105,7 @@ const setupInitialScheduledActions = (): void => {
 							loyalty: manager.loyalty + LOYALITY_REWARD_TERRITORY
 						});
 					}
-					let regionControl = getRegionControl(territoryData?.regionId);
+					let regionControl = getRegionControl(player.id, territoryData?.regionId);
 					let region = getRegion(territoryData!.regionId);
 					if (regionControl > 51 && region) {
 						territoryMultiplier *= (100 + region.controlBonus.income) / 100;
@@ -200,6 +205,7 @@ const setupInitialScheduledActions = (): void => {
 		}
 	});
 
+	// Generate missions for all active players
 	addScheduledAction({
 		id: 'mission-supply',
 		type: ScheduledActionType.GENERATE_MISSIONS,
@@ -207,11 +213,15 @@ const setupInitialScheduledActions = (): void => {
 		nextExecutionTick: BASE_TIP_RATE,
 		isRecurring: true,
 		execute: (state: GameState) => {
-			state.players.forEach((player: Player) => {
+			// Get all active players
+			const activePlayers = playerManager.getActivePlayers();
+			
+			activePlayers.forEach((player: Player) => {
 				const proto = DEFAULT_MISSIONS[Math.floor(Math.random() * DEFAULT_MISSIONS.length)];
 				const mission = buildMissionFromPrototype(player.id, proto, state.tickCount);
 				state.missions.set(mission.id, mission);
 				console.log(`Added new mission "${mission.info.name}" for ${player.id}`);
+				
 				addScheduledAction({
 					id: `remove-mission-${mission.id}`,
 					type: ScheduledActionType.TIP_EXPIRED,
@@ -231,6 +241,7 @@ const setupInitialScheduledActions = (): void => {
 		}
 	});
 
+	// Calculate heat for all active players
 	addScheduledAction({
 		id: 'recalculate-heat',
 		type: ScheduledActionType.CALC_HEAT,
@@ -238,7 +249,10 @@ const setupInitialScheduledActions = (): void => {
 		nextExecutionTick: CALC_HEAT_RATE,
 		isRecurring: true,
 		execute: (state: GameState) => {
-			state.players.forEach((player: Player) => {
+			// Get all active players
+			const activePlayers = playerManager.getActivePlayers();
+			
+			activePlayers.forEach((player: Player) => {
 				const heat = player.units.reduce((prev, cur) => {
 					return prev + state.units.get(cur)!.heat;
 				}, 0);
@@ -250,6 +264,7 @@ const setupInitialScheduledActions = (): void => {
 		}
 	});
 
+	// Loyalty degradation for all units
 	addScheduledAction({
 		id: 'loyality-degen',
 		type: ScheduledActionType.CALC_LOYALITY,
@@ -258,9 +273,12 @@ const setupInitialScheduledActions = (): void => {
 		isRecurring: true,
 		execute: (state: GameState) => {
 			state.units.forEach((unit: IUnit) => {
-				gameState.updateUnit(unit.id, {
-					loyalty: unit.loyalty - LOYALITY_DEGEN
-				});
+				// Only degrade loyalty for units with owners (not neutral associates)
+				if (unit.ownerId) {
+					gameState.updateUnit(unit.id, {
+						loyalty: unit.loyalty - LOYALITY_DEGEN
+					});
+				}
 			});
 		}
 	});

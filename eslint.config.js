@@ -24,7 +24,8 @@ export default ts.config(
 			'no-undef': 'off',
 			'@typescript-eslint/no-explicit-any': 'warn',
 			'prefer-const': 'off',
-			'svelte/valid-compile': ['error', { ignoreWarnings: true }]
+			'svelte/valid-compile': ['error', { ignoreWarnings: true }],
+			'no-case-declarations': 'off'
 		}
 	},
 	{

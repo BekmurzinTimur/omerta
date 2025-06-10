@@ -3,7 +3,6 @@
 	import { onMount, onDestroy } from 'svelte';
 	import gameService from '../services/GameService.svelte';
 	import { getAllTerritories, getHasGameEnded } from '../services/GameController.svelte';
-	import GridMap from './Map/GridMap.svelte';
 	import Header from './Header.svelte';
 	import UnitsRow from './Unit/UnitsRow.svelte';
 	import Territory from './Territory/Territory.svelte';
@@ -54,7 +53,6 @@
 	<div class="game-content relative flex flex-grow gap-4">
 		<!-- Left panel - Map/Grid will go here -->
 		<div class="map-container flex-grow bg-gray-600">
-			<!-- <GridMap {selectedCellId} {onSelect} /> -->
 			<Canvas {selectedCellId} {onSelect} />
 		</div>
 		<!-- Right panel - Game controls and information -->

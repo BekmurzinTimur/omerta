@@ -18,24 +18,24 @@ import {
 	createRegionsFromGrid,
 	generateRegionGrid
 } from '$lib/utils/regionsUtils';
+import playerManager, { PlayerControllerType } from './PlayerManager.svelte';
+
+// Player colors for up to 4 players
+const playerColors = ['#ff0000', '#0000ff', '#00ff00', '#ffff00'];
+
+// Starting positions for each player (corners of the map)
+const startingPositions = [
+	{ x: 0, y: 0 }, // Top-left
+	{ x: MAP_WIDTH - 1, y: 0 }, // Top-right
+	{ x: 0, y: MAP_HEIGHT - 1 }, // Bottom-left
+	{ x: MAP_WIDTH - 1, y: MAP_HEIGHT - 1 } // Bottom-right
+];
 
 const createInitialState = () => {
 	// Start date: January 1, 1960, 00:00
 	const startDate = new Date(1960, 0, 1, 0, 0, 0, 0);
 
-	// Create initial players
-	const playerOne: Player = {
-		id: 'player1',
-		name: 'Player 1',
-		resources: {
-			money: 10500,
-			lastIncome: 0,
-			heat: 0
-		},
-		territories: [],
-		units: [],
-		color: '#ff0000'
-	};
+	const playerMap = new SvelteMap<string, Player>();
 	const regionGrid = generateRegionGrid(REGIONS, MAP_WIDTH, BORDER_RANDOMNESS);
 
 	// Create initial territories
@@ -45,7 +45,7 @@ const createInitialState = () => {
 			territories.push({
 				id: `${x}-${y}`,
 				name: `Territory ${x}-${y}`,
-				ownerId: (x === 5 || x === 4) && y === 4 ? 'player1' : null, // Player 1 starts with 1 territory
+				ownerId: null, // Will be assigned based on active players
 				position: {
 					x: x,
 					y: y
@@ -71,31 +71,17 @@ const createInitialState = () => {
 
 	const regions = createRegionsFromGrid(regionGrid);
 
-	// Assign owned territories to player
-	playerOne.territories = territories.filter((t) => t.ownerId === 'player1');
-
 	const territoryMap = new SvelteMap<string, ITerritory>();
 	territories.forEach((territory) => {
 		territoryMap.set(territory.id, territory);
 	});
 	assignRegionsToTerritories(territoryMap, regions);
 	addRegionBorders(territoryMap);
+
 	const unitMap = new SvelteMap<string, IUnit>();
-
-	const startingUnits = generateStartingUnits(STARTING_COMPOSITION);
-	startingUnits.forEach((unit) => {
-		unit.ownerId = playerOne.id;
-		unitMap.set(unit.id, unit);
-	});
-
-	playerOne.units = startingUnits.map((unit) => unit.id);
-
-	// Create maps for efficient lookups
-	const playerMap = new SvelteMap<string, Player>();
-	playerMap.set(playerOne.id, playerOne);
-
 	const missionMap = new SvelteMap<string, IMission>();
 
+	// Generate starting associates (neutral units)
 	const startingAssociates = generateStartingAssociates(15);
 	startingAssociates.forEach((unit) => {
 		unitMap.set(unit.id, unit);
@@ -113,13 +99,118 @@ const createInitialState = () => {
 		hasEnded: false
 	};
 };
+
 /**
  * GameState class - Encapsulates all game state and related operations
  */
 class GameState {
 	state: GameStateInterface = $state(createInitialState());
 
-	constructor() {}
+	constructor() {
+		this.initializeWithPlayers([
+			{
+				playerId: 'player1',
+				controllerType: PlayerControllerType.HUMAN,
+				name: 'Human player'
+			},
+			{
+				playerId: 'player2',
+				controllerType: PlayerControllerType.NONE,
+				name: 'Empty player'
+			},
+			{
+				playerId: 'player3',
+				controllerType: PlayerControllerType.NONE,
+				name: 'Empty player'
+			},
+			{
+				playerId: 'player4',
+				controllerType: PlayerControllerType.NONE,
+				name: 'Empty player'
+			}
+		]);
+	}
+
+	/**
+	 * Initialize game with specific player configuration
+	 * @param playerConfigs Array of player configurations
+	 */
+	initializeWithPlayers(
+		playerConfigs: Array<{
+			playerId: string;
+			controllerType: PlayerControllerType;
+			name?: string;
+		}>
+	): void {
+		console.log('init with players', playerConfigs);
+		// Reset player manager
+		playerManager.reset();
+		// Initialize with 4 player slots
+		playerManager.initializeSlots(4);
+
+		// Configure players
+		playerConfigs.forEach((config) => {
+			// Create a temporary player object for slot assignment
+			const tempPlayer: Player = {
+				id: config.playerId,
+				name: config.name || `Player ${config.playerId}`,
+				resources: { money: 0, lastIncome: 0, heat: 0 },
+				territories: [],
+				units: [],
+				color: '#000000'
+			};
+
+			playerManager.assignPlayerToSlot(config.playerId, tempPlayer, config.controllerType);
+		});
+		playerManager.setViewingPlayer(playerConfigs[0].playerId);
+
+		// Initialize players based on active slots
+		const activeSlots = playerManager.getSlots().filter((slot) => slot.isActive);
+
+		activeSlots.forEach((slot, index) => {
+			if (index >= startingPositions.length) return; // Safety check
+
+			const player: Player = {
+				id: slot.id,
+				name: `Player ${index + 1}`,
+				resources: {
+					money: 10500,
+					lastIncome: 0,
+					heat: 0
+				},
+				territories: [],
+				units: [],
+				color: playerColors[index] || '#888888'
+			};
+
+			// Assign starting territories
+			const startPos = startingPositions[index];
+			const startingTerritories = [
+				`${startPos.x}-${startPos.y}`,
+				`${Math.min(startPos.x + 1, MAP_WIDTH - 1)}-${startPos.y}`,
+				`${startPos.x}-${Math.min(startPos.y + 1, MAP_HEIGHT - 1)}`
+			];
+
+			startingTerritories.forEach((territoryId) => {
+				const territory = this.state.territories.get(territoryId);
+				if (territory) {
+					territory.ownerId = player.id;
+					player.territories.push(territory);
+				}
+			});
+
+			// Generate starting units for this player
+			const startingUnits = generateStartingUnits(STARTING_COMPOSITION);
+			startingUnits.forEach((unit) => {
+				unit.ownerId = player.id;
+				this.state.units.set(unit.id, unit);
+				player.units.push(unit.id);
+			});
+
+			this.state.players.set(player.id, player);
+		});
+		console.log([...this.state.players.keys()]);
+	}
 
 	/**
 	 * Get the current state
@@ -153,6 +244,7 @@ class GameState {
 	 * Reset game state
 	 */
 	resetState(): void {
+		console.log('reseting state');
 		this.state = createInitialState();
 	}
 
@@ -181,7 +273,7 @@ class GameState {
 	 */
 	updateUnit(unitId: string, updates: Partial<IUnit>): void {
 		const unit = this.state.units.get(unitId);
-		if (!unit) return console.error('Cant updat unit. Unit doesnt exist');
+		if (!unit) return console.error('Cannott update unit. Unit doesnt exist');
 		const newUnit = { ...unit, ...updates };
 		if (newUnit.experience >= 100 && newUnit.level < 10) {
 			upgradeUnit(newUnit);

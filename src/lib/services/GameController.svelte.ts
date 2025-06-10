@@ -2,6 +2,7 @@
 
 import gameState from './GameState.svelte';
 import { queueAction } from './ActionManager.svelte';
+import playerManager from './PlayerManager.svelte';
 
 import { MissionStatus, type IMission } from '../models/MissionModels';
 import { UnitRank } from '$lib/models/UnitModels';
@@ -20,60 +21,65 @@ import {
 import { createLaunchMissionAction } from './Actions/MissionActions.svelte';
 
 let state = gameState.state;
-// This controller acts as an interface between the UI and the game systems
-// It will eventually be split into client and server components
 
-// Local player ID (for now, hardcoded to player1)
-const LOCAL_PLAYER_ID = 'player1';
+// This controller acts as an interface between the UI and the game systems
+// All functions now accept playerId to support multiple players
 
 const getTick = () => {
 	return gameState.state.tickCount;
 };
 
 // Start territory capture
-const startCapturingTerritory = (unitId: string, territoryId: string): void => {
-	const action = createStartCaptureAction(LOCAL_PLAYER_ID, unitId, territoryId);
+const startCapturingTerritory = (playerId: string, unitId: string, territoryId: string): void => {
+	const action = createStartCaptureAction(playerId, unitId, territoryId);
 	queueAction(action);
 };
 
 // Hire a new unit
-const hireUnit = (unitId: string): void => {
-	const action = createHireUnitAction(LOCAL_PLAYER_ID, unitId);
+const hireUnit = (playerId: string, unitId: string): void => {
+	const action = createHireUnitAction(playerId, unitId);
 	queueAction(action);
 };
 
-const promoteUnit = (unitId: string): void => {
-	const action = createPromoteUnitAction(LOCAL_PLAYER_ID, unitId);
+const promoteUnit = (playerId: string, unitId: string): void => {
+	const action = createPromoteUnitAction(playerId, unitId);
 	queueAction(action);
 };
 
-const assignUnitToTerritory = (unitId: string, territoryId: string): void => {
-	const action = createAssignToTerritoryAction(LOCAL_PLAYER_ID, unitId, territoryId);
+const assignUnitToTerritory = (playerId: string, unitId: string, territoryId: string): void => {
+	const action = createAssignToTerritoryAction(playerId, unitId, territoryId);
 	queueAction(action);
 };
 
-const removeUnitFromTerritory = (unitId: string, territoryId: string): void => {
-	const action = createRemoveFromTerritoryAction(LOCAL_PLAYER_ID, unitId, territoryId);
+const removeUnitFromTerritory = (playerId: string, unitId: string, territoryId: string): void => {
+	const action = createRemoveFromTerritoryAction(playerId, unitId, territoryId);
 	queueAction(action);
 };
 
-const assignToCrew = (unitId: string, captainId: string, index: number): void => {
-	const action = createAssignToCrewAction(LOCAL_PLAYER_ID, unitId, captainId, index);
+const assignToCrew = (playerId: string, unitId: string, captainId: string, index: number): void => {
+	const action = createAssignToCrewAction(playerId, unitId, captainId, index);
 	queueAction(action);
 };
-// Get the local player
-const getLocalPlayer = () => {
-	return state.players.get(LOCAL_PLAYER_ID);
+
+// Get a specific player
+const getPlayer = (playerId: string) => {
+	return state.players.get(playerId);
 };
 
-const getPlayerColor = () => {
-	const player = getLocalPlayer();
+const getPlayers = () => {
+	return state.players
+}
+
+// Get the player color
+const getPlayerColor = (playerId: string) => {
+	const player = getPlayer(playerId);
 	return player ? player.color : '';
 };
 
 const getTerritory = (id: string) => {
 	return state.territories.get(id);
 };
+
 // Get all territories
 const getAllTerritories = () => {
 	return state.territories;
@@ -82,14 +88,15 @@ const getAllTerritories = () => {
 const getRegion = (id: string) => {
 	return state.regions.get(id);
 };
-// Get all territories
+
+// Get all regions
 const getAllRegions = () => {
 	return state.regions;
 };
 
-// Get territories owned by the local player
-const getPlayerTerritories = () => {
-	const player = getLocalPlayer();
+// Get territories owned by a specific player
+const getPlayerTerritories = (playerId: string) => {
+	const player = getPlayer(playerId);
 	return player ? player.territories : [];
 };
 
@@ -98,27 +105,27 @@ const getNeutralTerritories = () => {
 	return Array.from(state.territories.values()).filter((territory) => territory.ownerId === null);
 };
 
-// Get territories that can be captured
-const getCapturableTerritories = () => {
+// Get territories that can be captured by a specific player
+const getCapturableTerritories = (playerId: string) => {
 	return Array.from(state.territories.values()).filter(
-		(territory) => territory.ownerId !== LOCAL_PLAYER_ID && !territory.isBeingCaptured
+		(territory) => territory.ownerId !== playerId && !territory.isBeingCaptured
 	);
 };
 
-const getAvailableMissions = (): IMission[] =>
+const getAvailableMissions = (playerId: string): IMission[] =>
 	Array.from(gameState.state.missions.values()).filter(
-		(m) => m.playerId === LOCAL_PLAYER_ID && m.status === MissionStatus.AVAILABLE
+		(m) => m.playerId === playerId && m.status === MissionStatus.AVAILABLE
 	);
 
-const getActiveMissions = (): IMission[] =>
+const getActiveMissions = (playerId: string): IMission[] =>
 	Array.from(gameState.state.missions.values()).filter(
-		(m) => m.playerId === LOCAL_PLAYER_ID && m.status === MissionStatus.ACTIVE
+		(m) => m.playerId === playerId && m.status === MissionStatus.ACTIVE
 	);
 
-const getFinishedMissions = (): IMission[] =>
+const getFinishedMissions = (playerId: string): IMission[] =>
 	Array.from(gameState.state.missions.values()).filter(
 		(m) =>
-			m.playerId === LOCAL_PLAYER_ID &&
+			m.playerId === playerId &&
 			m.status !== MissionStatus.ACTIVE &&
 			m.status !== MissionStatus.AVAILABLE
 	);
@@ -145,10 +152,10 @@ const getAssociates = () => {
 	return Array.from(state.units.values()).filter((unit) => unit.rank === UnitRank.ASSOCIATE);
 };
 
-// Get units owned by the local player
-const getPlayerUnits = () => {
+// Get units owned by a specific player
+const getPlayerUnits = (playerId: string) => {
 	const allUnitsMap = getAllUnitsMap();
-	const player = getLocalPlayer();
+	const player = getPlayer(playerId);
 	return player ? player.units.map((unitId) => allUnitsMap.get(unitId)!) : [];
 };
 
@@ -163,8 +170,8 @@ const getCurrentDateFormatted = () => {
 	return `${year}-${month}-${day} ${hour}:00`;
 };
 
-const launchMission = (missionId: string, unitIds: string[]) => {
-	const action = createLaunchMissionAction(LOCAL_PLAYER_ID, missionId, unitIds);
+const launchMission = (playerId: string, missionId: string, unitIds: string[]) => {
+	const action = createLaunchMissionAction(playerId, missionId, unitIds);
 	queueAction(action);
 };
 
@@ -172,27 +179,65 @@ const getMission = (missionId: string): IMission | undefined => {
 	return gameState.state.missions.get(missionId);
 };
 
-const isFamilyFull = () => {
-	let playerUnits = getPlayerUnits();
+const isFamilyFull = (playerId: string) => {
+	let playerUnits = getPlayerUnits(playerId);
 	const maxFamilySize = getMaxFamilySize(playerUnits);
 	return playerUnits.length >= maxFamilySize;
 };
 
-const getRegionControl = (regionId?: string): number => {
+const getRegionControl = (playerId: string, regionId?: string): number => {
 	if (!regionId) return 0;
-	const player = getLocalPlayer();
 	const ownership = calculateRegionOwnership(regionId, gameState.state);
-	return ownership.get(player!.id) || 0;
+	return ownership.get(playerId) || 0;
 };
 
 const getHasGameEnded = () => {
 	return gameState.state.hasEnded;
 };
 
-const getFamilyHeat = () => {
-	return getPlayerUnits().reduce((prev, cur) => {
+const getFamilyHeat = (playerId: string) => {
+	return getPlayerUnits(playerId).reduce((prev, cur) => {
 		return prev + cur.heat;
 	}, 0);
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// UI-SPECIFIC FUNCTIONS
+// These functions work with the currently viewing player
+// ═══════════════════════════════════════════════════════════════════
+
+const getViewingPlayer = () => {
+	console.log('getting viewing player', playerManager)
+	return playerManager.getViewingPlayer();
+};
+
+const getViewingPlayerId = () => {
+	return playerManager.getViewingPlayerId();
+};
+
+const setViewingPlayer = (playerId: string) => {
+	playerManager.setViewingPlayer(playerId);
+};
+
+// Convenience functions for the viewing player
+const getViewingPlayerTerritories = () => {
+	const playerId = getViewingPlayerId();
+	return playerId ? getPlayerTerritories(playerId) : [];
+};
+
+const getViewingPlayerUnits = () => {
+	const playerId = getViewingPlayerId();
+	return playerId ? getPlayerUnits(playerId) : [];
+};
+
+const getViewingPlayerColor = () => {
+	const playerId = getViewingPlayerId();
+	return playerId ? getPlayerColor(playerId) : '';
+};
+
+const getViewingPlayerMissions = () => {
+	const playerId = getViewingPlayerId();
+	return playerId ? getAvailableMissions(playerId) : [];
 };
 
 // Export the game controller functions
@@ -206,7 +251,8 @@ export {
 	removeUnitFromTerritory,
 	launchMission,
 	assignToCrew,
-	getLocalPlayer,
+	getPlayer,
+	getPlayers,
 	getTerritory,
 	getAllTerritories,
 	getRegion,
@@ -228,5 +274,13 @@ export {
 	getMission,
 	isFamilyFull,
 	getRegionControl,
-	getFamilyHeat
+	getFamilyHeat,
+	// UI-specific exports
+	getViewingPlayer,
+	getViewingPlayerId,
+	setViewingPlayer,
+	getViewingPlayerTerritories,
+	getViewingPlayerUnits,
+	getViewingPlayerColor,
+	getViewingPlayerMissions
 };

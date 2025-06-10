@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { getLocalPlayer } from '$lib/services/GameController.svelte';
+	import { getViewingPlayer } from '$lib/services/GameController.svelte';
 
-	let player = $derived(getLocalPlayer()!);
+	let player = $derived(getViewingPlayer()!);
 	let score = $derived(player.resources.lastIncome / (player.resources.heat || 1));
 
 	// Function to determine color class based on score

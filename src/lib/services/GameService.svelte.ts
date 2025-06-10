@@ -1,3 +1,4 @@
+//GameService.svelte.ts
 import gameState from './GameState.svelte';
 import { processActions } from './ActionManager.svelte';
 import {
@@ -26,6 +27,7 @@ class GameService {
 
 	// Initialize the game
 	initGame(): void {
+		
 		console.log('Initializing game');
 
 		// Set up initial scheduled actions

@@ -5,13 +5,16 @@
 	import {
 		getActiveMissions,
 		getAvailableMissions,
-		getFinishedMissions
+		getFinishedMissions,
+		getViewingPlayer,
+		getViewingPlayerId
 	} from '$lib/services/GameController.svelte';
 
 	/** For now we expose an empty array – replace with real store later */
-	let activeMissions = $derived(getActiveMissions());
-	let finishedMissions = $derived(getFinishedMissions());
-	let availableMissions = $derived(getAvailableMissions());
+	let playerId = $derived(getViewingPlayerId());
+	let activeMissions = $derived(getActiveMissions(playerId));
+	let finishedMissions = $derived(getFinishedMissions(playerId));
+	let availableMissions = $derived(getAvailableMissions(playerId));
 </script>
 
 <Sidebar>

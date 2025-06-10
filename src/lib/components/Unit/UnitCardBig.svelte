@@ -2,7 +2,7 @@
 	/* --------‑‑ Imports & props ‑‑-------- */
 	import { CoreAttribute } from '$lib/models/UnitModels';
 	import {
-		getLocalPlayer,
+		getViewingPlayer,
 		getMissions,
 		getUnit,
 		hireUnit,
@@ -17,7 +17,7 @@
 	let { unitId }: { unitId: string } = $props();
 
 	let unit = $derived(getUnit(unitId));
-	let player = $derived(getLocalPlayer());
+	let player = $derived(getViewingPlayer());
 	let isPlayerUnit = $derived(player && unit && unit.ownerId === player.id);
 	let familyFull = $derived(isFamilyFull());
 	let salary = $derived(getSalary(unit));

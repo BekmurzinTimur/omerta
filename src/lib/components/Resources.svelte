@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { ICON_LABELS } from '$lib/const/icons';
-	import { getFamilyHeat, getLocalPlayer } from '$lib/services/GameController.svelte';
-	import { getHeatLevel } from '$lib/utils/familyUtils';
+	import { getViewingPlayer } from '$lib/services/GameController.svelte';
+	import { getAwarenessLevel, getHeatLevel } from '$lib/utils/familyUtils';
 	import { formatUSD } from '$lib/utils/moneyUtils';
 	import IconTile from './Common/Icons/IconTile.svelte';
 	import { onMount } from 'svelte';
 	// Get the local player
-	let player = $derived(getLocalPlayer());
+	let player = $derived(getViewingPlayer());
 	let heatLevel = $derived(player ? getHeatLevel(player.resources.heat) : 0);
+	let awarenessLevel = $derived(player ? getAwarenessLevel(player.resources.awareness) : 0);
 
 	// Helper function to format income with sign
 	const formatIncome = (income: number): string => {
@@ -56,6 +57,22 @@
 						>{heatLevel}
 					</span>
 					- {player.resources.heat || 0}</span
+				>
+			</div>
+			<div class="resource flex items-center gap-2 rounded p-2">
+				<span class="text-sm text-red-400">
+					<IconTile label={'FILES'} />
+				</span>
+				<span class="font-semibold text-white"
+					><span
+						class="inline-flex size-5 items-center justify-center rounded-full"
+						class:bg-gray-500={heatLevel === 0}
+						class:bg-yellow-400={heatLevel === 1}
+						class:bg-amber-500={heatLevel === 2}
+						class:bg-red-500={heatLevel === 3}
+						>{awarenessLevel}
+					</span>
+					- {player.resources.awareness || 0}</span
 				>
 			</div>
 		</div>

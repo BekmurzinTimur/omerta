@@ -14,5 +14,6 @@ export const ICON_LABELS: Record<string, [number, number]> = {
 	LOYALTY: [2, 3], // wiskey
 	CUT: [3, 2], // hand with cash
 	HEAT: [0, 2], // cigar
-	MONEY: [1, 0]
+	MONEY: [1, 0],
+	FILES: [2, 1]
 };

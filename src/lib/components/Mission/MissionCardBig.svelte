@@ -8,7 +8,8 @@
 		getTick,
 		launchMission,
 		getMission,
-		getLocalPlayer
+		getViewingPlayer,
+		getViewingPlayerId
 	} from '$lib/services/GameController.svelte';
 	import { calculateMissionSuccessChance, getTeamStats } from '$lib/utils/common';
 	import { getHeatLevel } from '$lib/utils/familyUtils';
@@ -24,9 +25,10 @@
 
 	/** The mission you want to display & launch */
 	let { missionId }: { missionId: string } = $props();
+	let playerId = $derived(getViewingPlayerId());
 
 	function onLaunch(missionId: string, unitIds: string[]) {
-		launchMission(missionId, unitIds);
+		launchMission(playerId, missionId, unitIds);
 	}
 
 	const maxSlots = 4;
@@ -62,7 +64,7 @@
 		return Math.min(Math.round((tickPassed / length) * 100), 100);
 	});
 
-	let playerHeat = $derived(getLocalPlayer()?.resources.heat || 0);
+	let playerHeat = $derived(getViewingPlayer()?.resources.heat || 0);
 	let totalCutPct = $derived(assignments.reduce((acc, unit) => acc + (unit?.cut ?? 0), 0) / 100);
 
 	// called by each slot when a unit is dropped

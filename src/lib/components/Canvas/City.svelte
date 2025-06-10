@@ -10,6 +10,7 @@
 	} from '@threlte/extras';
 	import NeighborhoodCell from './Cell.svelte';
 	import {
+		getPlayers,
 		getAllRegions,
 		getAllTerritories,
 		getAllUnitsMap,
@@ -28,32 +29,29 @@
 
 	let territories = $derived(getAllTerritories());
 	let units = $derived(getAllUnitsMap());
-	let playerTerritories = $derived(getPlayerTerritories());
+	let players = $derived(getPlayers())
 	let territoryIds = $derived([...territories.keys()]);
-	let playerTerritorySet = $derived(new Set(playerTerritories.map((t) => t.id)));
-	let playerColor = $derived(getPlayerColor());
-
-	function getCellData(territoryId: string): Cell | null {
+	let cellsData = $derived(territoryIds.map((territoryId: string) => {
 		const territory = territories.get(territoryId);
 		if (!territory) return null;
 
+		const owner = territory.ownerId ? players.get(territory.ownerId) : undefined
 		return {
 			id: territory.id,
 			x: territory.position.x,
 			y: territory.position.y,
 			territory,
 			unit: units.get(territory.managerId || '') || units.get(territory.capturingUnitId || ''),
-			isBeingCaptured: !!territory.capturingUnitId
+			isBeingCaptured: !!territory.capturingUnitId,
+			color: owner?.color
 		};
-	}
+	}))
 
 	const { camera, renderer } = useThrelte();
 	renderer.shadowMap.enabled = true;
 
-	// Using Svelte 5 state management
 	let density = $state(50);
-	let gridSize = $state(10); // Number of cells in each direction
-	let showGrid = $state(true);
+	let gridSize = $state(10); 
 	let timeOfDay = $state<'day' | 'night'>('day');
 	let topHoveredCell = $state(null);
 
@@ -127,7 +125,6 @@
 
 	let regions = $derived(getAllRegions());
 	let regionBorders = $derived(computeRegionBorders(territories, regions, 10));
-	$inspect(regionBorders);
 	interactivity();
 </script>
 
@@ -169,8 +166,7 @@
 	<T.Color args={[100, 100, 200]}></T.Color>
 </T.Scene>
 
-{#each territoryIds as id (id)}
-	{@const cellData = getCellData(id)}
+{#each cellsData as cellData}
 	{#if cellData}
 		<T.Group position={[cellData.x * 10 - 50, 0, cellData.y * 10 - 50]}>
 			<NeighborhoodCell
@@ -180,11 +176,11 @@
 				{selectCell}
 				{selectedCellId}
 				isBeingCaptured={cellData.isBeingCaptured}
-				color={playerTerritorySet.has(id) || cellData.isBeingCaptured
-					? parseInt(playerColor.substring(1), 16)
+				color={cellData.color 
+					? parseInt(cellData.color.substring(1), 16)
 					: 0xaaaaaa}
 				unit={cellData.unit}
-				territoryId={id}
+				territoryId={cellData.id}
 			/>
 		</T.Group>
 	{/if}

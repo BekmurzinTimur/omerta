@@ -2,7 +2,12 @@
 	import { UnitRank, UnitStatus } from '$lib/models/UnitModels';
 	import { getUsedUnits } from '$lib/services/UiState.svelte';
 	import { getMaxFamilySize } from '$lib/utils/familyUtils';
-	import { getAssociates, getPlayerUnits, getTick } from '../../services/GameController.svelte';
+	import {
+		getAssociates,
+		getPlayerUnits,
+		getTick,
+		getViewingPlayerId
+	} from '../../services/GameController.svelte';
 	import Draggable from '../DragAndDrop/Draggable.svelte';
 	import Crew from './Crews/Crew.svelte';
 	import UnitCard from './UnitCard.svelte';
@@ -13,10 +18,13 @@
 	let tick: number = $derived(getTick());
 
 	// Get all units in the game
+	let playerId = $derived(getViewingPlayerId());
 	let usedUnits = $derived(getUsedUnits());
-	let units = $derived(getPlayerUnits());
-	let capos = $derived(getPlayerUnits().filter((unit) => unit.rank === UnitRank.CAPO));
-	let soldiers = $derived(getPlayerUnits().filter((unit) => unit.rank === UnitRank.SOLDIER));
+	let units = $derived(getPlayerUnits(playerId));
+	let capos = $derived(getPlayerUnits(playerId).filter((unit) => unit.rank === UnitRank.CAPO));
+	let soldiers = $derived(
+		getPlayerUnits(playerId).filter((unit) => unit.rank === UnitRank.SOLDIER)
+	);
 	let associates = $derived(getAssociates());
 	let maxFamilySize = $derived(getMaxFamilySize(units));
 	let tab = $state<'crews' | 'soldiers' | 'associates'>('crews');

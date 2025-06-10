@@ -4,7 +4,7 @@
 	import {
 		assignUnitToTerritory,
 		getAllUnitsMap,
-		getLocalPlayer,
+		getViewingPlayer,
 		getRegion,
 		getRegionControl,
 		removeUnitFromTerritory,
@@ -31,7 +31,7 @@
 	let droppedUnit = $derived<IUnit | null>(droppedItem?.data);
 	let confirmed = $derived(droppedUnit?.id === territory?.managerId);
 	let capturerConfirmed = $derived(droppedUnit?.id === territory?.capturingUnitId);
-	let player = $derived(getLocalPlayer());
+	let player = $derived(getViewingPlayer());
 
 	let managerUnit = $derived(getAllUnitsMap().get(territory?.managerId || ''));
 	let capturerUnit = $derived(getAllUnitsMap().get(territory?.capturingUnitId || ''));
@@ -41,7 +41,7 @@
 	);
 	let region = $derived(getRegion(territory?.regionId || ''));
 	let regionInfo = $derived(REGIONS_DATA[region?.type || 0]);
-	let regionControl = $derived(getRegionControl(region?.id));
+	let regionControl = $derived(getRegionControl(player?.id || '', region?.id));
 
 	// Handle drop events
 	function handleDrop(result: DropResult) {
@@ -52,13 +52,15 @@
 		droppedItemsMap.set(territory.id, item);
 		if (!unitId) return;
 		if (territory.managerId === unitId) return console.log('Same unit', item);
+		if (!player) return;
 
-		if (territory.ownerId === player?.id) assignUnitToTerritory(unitId, territory.id);
-		else startCapturingTerritory(unitId, territory.id);
+		if (territory.ownerId === player.id) assignUnitToTerritory(player.id, unitId, territory.id);
+		else startCapturingTerritory(player.id, unitId, territory.id);
 	}
 	function handleRemove(unitId: string) {
 		if (!territory?.id) return;
-		removeUnitFromTerritory(unitId, territory.id);
+		if (!player) return;
+		removeUnitFromTerritory(player.id, unitId, territory.id);
 		droppedItemsMap.delete(territory.id);
 	}
 </script>
@@ -116,12 +118,14 @@
 						</div>
 					{:else if isNeighbouringMyTerritory}
 						<div>
-							{#if territory.captureProgress}
+							{#if territory.isBeingCaptured}
 								<div class="mb-3">
 									<ProgressBar progress={territory.captureProgress} />
-									<span class="mt-1 block text-right text-sm text-gray-400"
-										>{Math.round(territory.captureProgress)}</span
-									>
+									<div class="mt-1 text-sm">
+										<span>Capture progress:</span>
+
+										<span class="text-sm">{Math.round(territory.captureProgress)}%</span>
+									</div>
 								</div>
 							{/if}
 							<div class="flex justify-center rounded-md bg-gray-800 p-3">

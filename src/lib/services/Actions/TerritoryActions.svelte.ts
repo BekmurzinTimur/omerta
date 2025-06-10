@@ -45,6 +45,7 @@ export const validateAssignToTerritory = (
 	territoryId: string
 ): { valid: boolean; reason?: string } => {
 	const player = state.players.get(playerId);
+	console.log(state.players.keys());
 	if (!player) return { valid: false, reason: `Player ${playerId} not found` };
 
 	const unit = state.units.get(unitId);

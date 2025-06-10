@@ -36,5 +36,6 @@ export const LOYALITY_REWARD_MISSION = 10;
 
 //Missions
 export const BASE_TIP_LIFESPAN = 60;
-export const BASE_TIP_RATE = 2;
+export const BASE_TIP_RATE = 30;
 export const MISSION_CHANCE_TO_CAUGHT = [0, 3, 9];
+export const AWARENESS_LEVELS = [0, 20, 50, 100];
