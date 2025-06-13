@@ -1,206 +1,160 @@
-// PlayerManager.svelte.ts
+// PlayerManager.svelte.ts (Updated to support AI)
 import type { Player } from '../models/GameModels';
 
 export enum PlayerControllerType {
 	HUMAN = 'HUMAN',
 	AI = 'AI',
-	NONE = 'NONE' // Empty slot
+	NONE = 'NONE'
 }
 
 export interface PlayerSlot {
 	id: string;
-	controllerType: PlayerControllerType;
-	player: Player | null;
 	isActive: boolean;
+	player: Player | null;
+	controllerType: PlayerControllerType;
 }
 
-export interface IPlayerController {
-	playerId: string;
-	type: PlayerControllerType;
-	// Future AI/Network controllers will implement this interface
-	// requestActions?: () => Action[];
-}
-
-/**
- * PlayerManager - Central registry for all players in the game
- *
- * This manager handles player slots, controller types, and provides
- * a unified API for querying and mutating player state. It's designed
- * to support both human and AI players transparently.
- *
- * Following the Paradox Interactive model, any slot can be:
- * - Controlled by a human player
- * - Controlled by an AI
- * - Empty (no player)
- */
 class PlayerManager {
 	private slots = $state<PlayerSlot[]>([]);
-	private controllers = new Map<string, IPlayerController>();
-	private viewingPlayerId = $state<string>('');
+	private viewingPlayerId = $state<string | null>(null);
 
-	constructor() {}
+	constructor() {
+		console.log('PlayerManager created');
+	}
 
 	/**
 	 * Initialize player slots
 	 */
 	initializeSlots(count: number): void {
-		this.slots = [];
-		for (let i = 0; i < count; i++) {
-			this.slots.push({
-				id: `player${i + 1}`,
-				controllerType: PlayerControllerType.NONE,
-				player: null,
-				isActive: false
-			});
-		}
+		this.slots = Array.from({ length: count }, (_, index) => ({
+			id: `player${index + 1}`,
+			isActive: false,
+			player: null,
+			controllerType: PlayerControllerType.NONE
+		}));
 	}
 
 	/**
-	 * Get all player slots
+	 * Assign a player to a slot
+	 */
+	assignPlayerToSlot(
+		slotId: string,
+		player: Player,
+		controllerType: PlayerControllerType
+	): boolean {
+		const slot = this.slots.find((s) => s.id === slotId);
+		if (!slot) return false;
+
+		slot.isActive = true;
+		slot.player = player;
+		slot.controllerType = controllerType;
+		return true;
+	}
+
+	/**
+	 * Remove player from slot
+	 */
+	removePlayerFromSlot(slotId: string): boolean {
+		const slot = this.slots.find((s) => s.id === slotId);
+		if (!slot) return false;
+
+		slot.isActive = false;
+		slot.player = null;
+		slot.controllerType = PlayerControllerType.NONE;
+		return true;
+	}
+
+	/**
+	 * Get all slots
 	 */
 	getSlots(): PlayerSlot[] {
 		return this.slots;
 	}
 
 	/**
-	 * Get active players (slots with players assigned)
+	 * Get active slots only
 	 */
-	getActivePlayers(): Player[] {
-		return this.slots.filter((slot) => slot.isActive && slot.player).map((slot) => slot.player!);
+	getActiveSlots(): PlayerSlot[] {
+		return this.slots.filter((slot) => slot.isActive);
 	}
 
 	/**
-	 * Get active player IDs
+	 * Get AI player slots
 	 */
-	getActivePlayerIds(): string[] {
-		return this.slots.filter((slot) => slot.isActive).map((slot) => slot.id);
+	getAISlots(): PlayerSlot[] {
+		return this.slots.filter(
+			(slot) => slot.isActive && slot.controllerType === PlayerControllerType.AI
+		);
+	}
+
+	getAIPlayersId(): string[] {
+		return this.getAISlots().map((slot) => slot.id);
+	}
+
+	getAIPlayers(): Player[] {
+		return this.getAISlots()
+			.map((slot) => slot.player)
+			.filter((_) => !!_);
+	}
+	/**
+	 * Get human player slots
+	 */
+	getHumanSlots(): PlayerSlot[] {
+		return this.slots.filter(
+			(slot) => slot.isActive && slot.controllerType === PlayerControllerType.HUMAN
+		);
 	}
 
 	/**
-	 * Get a specific player by ID
+	 * Check if a player is AI controlled
 	 */
-	getPlayer(playerId: string): Player | null {
+	isAIPlayer(playerId: string): boolean {
 		const slot = this.slots.find((s) => s.id === playerId);
-		return slot?.player || null;
+		return slot?.controllerType === PlayerControllerType.AI || false;
 	}
 
 	/**
-	 * Get a player slot by ID
-	 */
-	getSlot(playerId: string): PlayerSlot | null {
-		return this.slots.find((s) => s.id === playerId) || null;
-	}
-
-	/**
-	 * Assign a player to a slot
-	 */
-	assignPlayerToSlot(playerId: string, player: Player, controllerType: PlayerControllerType): void {
-		const slot = this.slots.find((s) => s.id === playerId);
-		console.log('assigning', playerId, player, controllerType, slot);
-		if (slot) {
-			slot.player = player;
-			slot.controllerType = controllerType;
-			slot.isActive = true;
-
-			// Create controller
-			this.controllers.set(playerId, {
-				playerId,
-				type: controllerType
-			});
-		}
-	}
-
-	/**
-	 * Remove a player from a slot
-	 */
-	removePlayerFromSlot(playerId: string): void {
-		const slot = this.slots.find((s) => s.id === playerId);
-		if (slot) {
-			slot.player = null;
-			slot.controllerType = PlayerControllerType.NONE;
-			slot.isActive = false;
-			this.controllers.delete(playerId);
-		}
-	}
-
-	/**
-	 * Get controller for a player
-	 */
-	getController(playerId: string): IPlayerController | null {
-		return this.controllers.get(playerId) || null;
-	}
-
-	/**
-	 * Set which player the human is currently viewing/controlling
-	 * (For UI purposes - doesn't affect game logic)
+	 * Set the viewing player (for UI)
 	 */
 	setViewingPlayer(playerId: string): void {
-		if (this.getSlot(playerId)?.isActive) {
-			this.viewingPlayerId = playerId;
-		}
+		this.viewingPlayerId = playerId;
 	}
 
 	/**
-	 * Get the currently viewing player ID
+	 * Get the viewing player ID
 	 */
-	getViewingPlayerId(): string {
+	getViewingPlayerId(): string | null {
 		return this.viewingPlayerId;
 	}
 
 	/**
-	 * Get the currently viewing player
+	 * Get the viewing player object
 	 */
 	getViewingPlayer(): Player | null {
-		return this.getPlayer(this.viewingPlayerId);
+		if (!this.viewingPlayerId) return null;
+		const slot = this.slots.find((s) => s.id === this.viewingPlayerId);
+		return slot?.player || null;
 	}
 
 	/**
-	 * Check if a player is human-controlled
-	 */
-	isHumanPlayer(playerId: string): boolean {
-		const slot = this.getSlot(playerId);
-		return slot?.controllerType === PlayerControllerType.HUMAN;
-	}
-
-	/**
-	 * Check if a player is AI-controlled
-	 */
-	isAIPlayer(playerId: string): boolean {
-		const slot = this.getSlot(playerId);
-		return slot?.controllerType === PlayerControllerType.AI;
-	}
-
-	/**
-	 * Get all human players
-	 */
-	getHumanPlayers(): Player[] {
-		return this.slots
-			.filter((slot) => slot.controllerType === PlayerControllerType.HUMAN && slot.player)
-			.map((slot) => slot.player!);
-	}
-
-	/**
-	 * Get all AI players
-	 */
-	getAIPlayers(): Player[] {
-		return this.slots
-			.filter((slot) => slot.controllerType === PlayerControllerType.AI && slot.player)
-			.map((slot) => slot.player!);
-	}
-
-	/**
-	 * Reset all slots
+	 * Reset player manager
 	 */
 	reset(): void {
-		this.initializeSlots(4);
-		this.controllers.clear();
-		this.viewingPlayerId = '';
+		this.slots = [];
+		this.viewingPlayerId = null;
+	}
+
+	/**
+	 * Update player in slot
+	 */
+	updatePlayerInSlot(playerId: string, player: Player): void {
+		const slot = this.slots.find((s) => s.id === playerId);
+		if (slot) {
+			slot.player = player;
+		}
 	}
 }
 
-// Export singleton instance
+// Create and export a single instance
 const playerManager = new PlayerManager();
 export default playerManager;
-
-// Export type for dependency injection
-export type PlayerManagerType = InstanceType<typeof PlayerManager>;

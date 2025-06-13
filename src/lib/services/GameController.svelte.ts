@@ -1,4 +1,4 @@
-//GameController.svelte.ts
+//GameController.svelte.ts (Updated with AI helper functions)
 
 import gameState from './GameState.svelte';
 import { queueAction } from './ActionManager.svelte';
@@ -67,8 +67,8 @@ const getPlayer = (playerId: string) => {
 };
 
 const getPlayers = () => {
-	return state.players
-}
+	return state.players;
+};
 
 // Get the player color
 const getPlayerColor = (playerId: string) => {
@@ -202,12 +202,43 @@ const getFamilyHeat = (playerId: string) => {
 };
 
 // ═══════════════════════════════════════════════════════════════════
+// AI-RELATED FUNCTIONS
+// ═══════════════════════════════════════════════════════════════════
+
+// Check if a player is AI controlled
+const isAIPlayer = (playerId: string): boolean => {
+	return playerManager.isAIPlayer(playerId);
+};
+
+// Get all AI player IDs
+const getAIPlayerIds = (): string[] => {
+	return playerManager.getAIPlayersId();
+};
+
+// Get all AI players
+const getAIPlayers = () => {
+	return playerManager.getAIPlayers();
+};
+
+// Get all human players
+const getHumanPlayers = () => {
+	return Array.from(state.players.values()).filter((player) => !isAIPlayer(player.id));
+};
+
+// Get player type for display
+const getPlayerType = (playerId: string): 'Human' | 'AI' | 'Unknown' => {
+	const player = getPlayer(playerId);
+	if (!player) return 'Unknown';
+	return isAIPlayer(playerId) ? 'AI' : 'Human';
+};
+
+// ═══════════════════════════════════════════════════════════════════
 // UI-SPECIFIC FUNCTIONS
 // These functions work with the currently viewing player
 // ═══════════════════════════════════════════════════════════════════
 
 const getViewingPlayer = () => {
-	console.log('getting viewing player', playerManager)
+	console.log('getting viewing player', playerManager);
 	return playerManager.getViewingPlayer();
 };
 
@@ -275,6 +306,12 @@ export {
 	isFamilyFull,
 	getRegionControl,
 	getFamilyHeat,
+	// AI-related exports
+	isAIPlayer,
+	getAIPlayerIds,
+	getAIPlayers,
+	getHumanPlayers,
+	getPlayerType,
 	// UI-specific exports
 	getViewingPlayer,
 	getViewingPlayerId,

@@ -1,4 +1,4 @@
-//GameState.svelte.ts
+// GameState.svelte.ts (Updated with AI support)
 import { SvelteMap } from 'svelte/reactivity';
 import { type GameState as GameStateInterface, type Player } from '../models/GameModels';
 import { type IUnit } from '$lib/models/UnitModels';
@@ -115,13 +115,13 @@ class GameState {
 			},
 			{
 				playerId: 'player2',
-				controllerType: PlayerControllerType.NONE,
-				name: 'Empty player'
+				controllerType: PlayerControllerType.AI,
+				name: 'AI Player 1'
 			},
 			{
 				playerId: 'player3',
-				controllerType: PlayerControllerType.NONE,
-				name: 'Empty player'
+				controllerType: PlayerControllerType.AI,
+				name: 'AI Player 2'
 			},
 			{
 				playerId: 'player4',
@@ -143,8 +143,9 @@ class GameState {
 		}>
 	): void {
 		console.log('init with players', playerConfigs);
-		// Reset player manager
+		// Reset player manager and AI service
 		playerManager.reset();
+
 		// Initialize with 4 player slots
 		playerManager.initializeSlots(4);
 
@@ -154,7 +155,7 @@ class GameState {
 			const tempPlayer: Player = {
 				id: config.playerId,
 				name: config.name || `Player ${config.playerId}`,
-				resources: { money: 0, lastIncome: 0, heat: 0 },
+				resources: { money: 0, lastIncome: 0, heat: 0, awareness: 0 },
 				territories: [],
 				units: [],
 				color: '#000000'
@@ -165,18 +166,24 @@ class GameState {
 		playerManager.setViewingPlayer(playerConfigs[0].playerId);
 
 		// Initialize players based on active slots
-		const activeSlots = playerManager.getSlots().filter((slot) => slot.isActive);
+		const activeSlots = playerManager.getActiveSlots();
 
 		activeSlots.forEach((slot, index) => {
 			if (index >= startingPositions.length) return; // Safety check
 
+			const playerName =
+				slot.controllerType === PlayerControllerType.AI
+					? `AI Family ${index}`
+					: `Player ${index + 1}`;
+
 			const player: Player = {
 				id: slot.id,
-				name: `Player ${index + 1}`,
+				name: playerName,
 				resources: {
 					money: 10500,
 					lastIncome: 0,
-					heat: 0
+					heat: 0,
+					awareness: 0
 				},
 				territories: [],
 				units: [],

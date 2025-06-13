@@ -1,4 +1,4 @@
-//GameService.svelte.ts
+//GameService.svelte.ts (Updated with AI integration)
 import gameState from './GameState.svelte';
 import { processActions } from './ActionManager.svelte';
 import {
@@ -6,6 +6,8 @@ import {
 	setupInitialScheduledActions
 } from './ScheduledActionManager.svelte';
 import { END_DATE } from '$lib/const/globalConstants';
+import aiService from './AI/AIService.svelte';
+import playerManager from './PlayerManager.svelte';
 
 class GameService {
 	// Game tick interval in milliseconds
@@ -27,11 +29,14 @@ class GameService {
 
 	// Initialize the game
 	initGame(): void {
-		
 		console.log('Initializing game');
 
 		// Set up initial scheduled actions
 		setupInitialScheduledActions();
+
+		const aiPlayers = playerManager.getAIPlayers();
+		console.log({ aiPlayers });
+		aiPlayers.forEach((aiPlayer) => aiService.addAIPlayer(aiPlayer.id));
 
 		console.log('Game initialized');
 	}
@@ -94,13 +99,22 @@ class GameService {
 			console.log('reached end', END_DATE);
 			this.endGame();
 		}
-		// 2. Process player-initiated actions
+
+		// 2. Process AI decisions (before player actions)
+		// This allows AI to queue actions that will be processed with player actions
+		try {
+			aiService.tick(gameState.state);
+		} catch (error) {
+			console.error('Error processing AI decisions:', error);
+		}
+
+		// 3. Process player-initiated actions (including AI actions)
 		processActions();
 
-		// 3. Process scheduled actions
+		// 4. Process scheduled actions
 		processScheduledActions(gameState.state.tickCount);
 
-		// 4. Any additional processing needed
+		// 5. Any additional processing needed
 
 		const endTime = Date.now();
 		const tickProcessingTime = endTime - startTime;
@@ -138,6 +152,15 @@ class GameService {
 			fps: this.currentFps,
 			gameDate: gameState.state.currentDate
 		};
+	}
+
+	// AI-related helper methods
+	getAIPlayerIds(): string[] {
+		return aiService.getAIPlayers();
+	}
+
+	isAIPlayer(playerId: string): boolean {
+		return aiService.isAIPlayer(playerId);
 	}
 }
 

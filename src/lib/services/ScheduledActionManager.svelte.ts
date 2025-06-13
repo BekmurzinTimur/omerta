@@ -2,7 +2,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { type ScheduledAction, ScheduledActionType } from '../models/ActionModels';
 import gameState from './GameState.svelte';
-import playerManager from './PlayerManager.svelte';
 import type { GameState, Player } from '$lib/models/GameModels';
 import type { ITerritory } from '$lib/models/TerritoryModel';
 import { UnitStatus, type IUnit } from '$lib/models/UnitModels';
@@ -87,8 +86,8 @@ const setupInitialScheduledActions = (): void => {
 		isRecurring: true,
 		execute: (state: GameState) => {
 			// Get all active players
-			const activePlayers = playerManager.getActivePlayers();
-			
+			const activePlayers = state.players;
+
 			// For each active player, generate income based on their territories
 			activePlayers.forEach((player: Player) => {
 				let income = 0;
@@ -164,7 +163,7 @@ const setupInitialScheduledActions = (): void => {
 					return;
 				}
 
-				const tickProgress = getCaptureProgress(territory, gameState.state.territories, unit);
+				const tickProgress = getCaptureProgress(territory, state.territories, unit);
 				console.log({ tickProgress });
 				// Advance progress
 				const newProgress = territory.captureProgress + tickProgress;
@@ -214,14 +213,14 @@ const setupInitialScheduledActions = (): void => {
 		isRecurring: true,
 		execute: (state: GameState) => {
 			// Get all active players
-			const activePlayers = playerManager.getActivePlayers();
-			
+			const activePlayers = state.players;
+
 			activePlayers.forEach((player: Player) => {
 				const proto = DEFAULT_MISSIONS[Math.floor(Math.random() * DEFAULT_MISSIONS.length)];
 				const mission = buildMissionFromPrototype(player.id, proto, state.tickCount);
 				state.missions.set(mission.id, mission);
 				console.log(`Added new mission "${mission.info.name}" for ${player.id}`);
-				
+
 				addScheduledAction({
 					id: `remove-mission-${mission.id}`,
 					type: ScheduledActionType.TIP_EXPIRED,
@@ -250,8 +249,8 @@ const setupInitialScheduledActions = (): void => {
 		isRecurring: true,
 		execute: (state: GameState) => {
 			// Get all active players
-			const activePlayers = playerManager.getActivePlayers();
-			
+			const activePlayers = state.players;
+
 			activePlayers.forEach((player: Player) => {
 				const heat = player.units.reduce((prev, cur) => {
 					return prev + state.units.get(cur)!.heat;
