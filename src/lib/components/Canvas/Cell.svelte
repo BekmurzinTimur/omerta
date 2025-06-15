@@ -6,6 +6,33 @@
 	import { interactivity } from '@threlte/extras';
 	import { Spring } from 'svelte/motion';
 	import Buildings from './Buildings.svelte';
+	import { Tween } from 'svelte/motion';
+	import { cubicOut } from 'svelte/easing';
+
+	let opacity = new Tween(0, {
+		duration: 1000,
+		easing: cubicOut
+	});
+
+	// State to track animation direction
+	let isIncreasing = $state(true);
+
+	// Effect to handle the infinite loop
+	$effect(() => {
+		const animate = async () => {
+			while (true) {
+				if (isIncreasing) {
+					await opacity.set(0.6);
+					isIncreasing = false;
+				} else {
+					await opacity.set(0);
+					isIncreasing = true;
+				}
+			}
+		};
+
+		animate();
+	});
 
 	// Props with TypeScript types
 	let {
@@ -80,7 +107,7 @@
 	<T.BoxGeometry args={[cellSize, cellSize, cellSize]} />
 	<T.MeshStandardMaterial
 		color={color || 0xaaaaaa}
-		opacity={isSelected ? 0.6 : 0.2}
+		opacity={isSelected ? 0.6 : isBeingCaptured ? opacity.current : 0.2}
 		transparent={true}
 	/>
 </T.Mesh>

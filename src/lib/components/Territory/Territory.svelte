@@ -152,7 +152,18 @@
 						</div>
 					{:else}
 						<div class="p-3 text-center text-gray-400">
-							<p>You must control a neighboring territory to capture this area.</p>
+							{#if territory.isBeingCaptured}
+								<div class="mb-3">
+									<ProgressBar progress={territory.captureProgress} />
+									<div class="mt-1 text-sm">
+										<span>Capture progress:</span>
+
+										<span class="text-sm">{Math.round(territory.captureProgress)}%</span>
+									</div>
+								</div>
+							{:else}
+								<p>You must control a neighboring territory to capture this area.</p>
+							{/if}
 						</div>
 					{/if}
 				{/if}

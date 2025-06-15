@@ -21,6 +21,7 @@
 	import { computeRegionBorders } from '$lib/utils/regionBorderUtils';
 	import { REGIONS } from '$lib/const/globalConstants';
 	import { getRegionsWithPlayerPresence } from '$lib/utils/regionsUtils';
+	import type { Player } from '$lib/models/GameModels';
 
 	let {
 		selectedCellId,
@@ -29,29 +30,37 @@
 
 	let territories = $derived(getAllTerritories());
 	let units = $derived(getAllUnitsMap());
-	let players = $derived(getPlayers())
+	let players = $derived(getPlayers());
 	let territoryIds = $derived([...territories.keys()]);
-	let cellsData = $derived(territoryIds.map((territoryId: string) => {
-		const territory = territories.get(territoryId);
-		if (!territory) return null;
+	let cellsData = $derived(
+		territoryIds.map((territoryId: string) => {
+			const territory = territories.get(territoryId);
+			if (!territory) return null;
 
-		const owner = territory.ownerId ? players.get(territory.ownerId) : undefined
-		return {
-			id: territory.id,
-			x: territory.position.x,
-			y: territory.position.y,
-			territory,
-			unit: units.get(territory.managerId || '') || units.get(territory.capturingUnitId || ''),
-			isBeingCaptured: !!territory.capturingUnitId,
-			color: owner?.color
-		};
-	}))
+			const owner = territory.ownerId ? players.get(territory.ownerId) : undefined;
+			const unit =
+				units.get(territory.managerId || '') || units.get(territory.capturingUnitId || '');
+			let capturer: Player | undefined;
+			if (!owner && unit) {
+				capturer = players.get(unit.ownerId!);
+			}
+			return {
+				id: territory.id,
+				x: territory.position.x,
+				y: territory.position.y,
+				territory,
+				unit,
+				isBeingCaptured: !!territory.capturingUnitId,
+				color: owner?.color || capturer?.color
+			};
+		})
+	);
 
 	const { camera, renderer } = useThrelte();
 	renderer.shadowMap.enabled = true;
 
 	let density = $state(50);
-	let gridSize = $state(10); 
+	let gridSize = $state(10);
 	let timeOfDay = $state<'day' | 'night'>('day');
 	let topHoveredCell = $state(null);
 
@@ -176,9 +185,7 @@
 				{selectCell}
 				{selectedCellId}
 				isBeingCaptured={cellData.isBeingCaptured}
-				color={cellData.color 
-					? parseInt(cellData.color.substring(1), 16)
-					: 0xaaaaaa}
+				color={cellData.color ? parseInt(cellData.color.substring(1), 16) : 0xaaaaaa}
 				unit={cellData.unit}
 				territoryId={cellData.id}
 			/>
