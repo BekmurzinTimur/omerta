@@ -19,6 +19,7 @@
 	import { REGIONS_DATA } from '$lib/const/regionsData';
 	import Icon from '../Common/Icons/Icon.svelte';
 	import Region from './Region.svelte';
+	import BasicUnit from '../Unit/BasicUnit.svelte';
 
 	let {
 		territory,
@@ -101,6 +102,14 @@
 
 				<!-- Territory Management Section -->
 				{#if territory}
+					{#if !!managerUnit}
+						<div>
+							{#if !!territory.managerId}
+								<div class="mb-2 text-sm">Overseer: {managerUnit.name}</div>
+								<BasicUnit unit={managerUnit} />
+							{/if}
+						</div>
+					{/if}
 					{#if territory.ownerId === player?.id}
 						<div>
 							<div class="flex justify-center rounded-md bg-gray-800 p-3">

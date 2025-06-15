@@ -19,7 +19,7 @@
 	let unit = $derived(getUnit(unitId));
 	let player = $derived(getViewingPlayer());
 	let isPlayerUnit = $derived(player && unit && unit.ownerId === player.id);
-	let familyFull = $derived(isFamilyFull());
+	let familyFull = $derived(isFamilyFull(player?.id || ''));
 	let salary = $derived(getSalary(unit));
 	let assignments = $derived(getMissions(unit?.missions || []));
 
@@ -61,9 +61,10 @@
 
 	function handlePromote() {
 		if (!unit) return;
+		if (!player) return;
 		console.log(unit, isPlayerUnit, player);
-		if (isPlayerUnit) return promoteUnit(unit.id);
-		hireUnit(unit.id);
+		if (isPlayerUnit) return promoteUnit(player.id, unit.id);
+		hireUnit(player.id, unit.id);
 	}
 
 	// Mock data for assignments

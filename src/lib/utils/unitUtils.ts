@@ -224,6 +224,13 @@ export const revealUnitAttribute = (mask: UnitAttributeMask) => {
 	return newMask;
 };
 
+export const EMPTY_MASK: Record<CoreAttribute, boolean> = {
+	Muscle: false,
+	Brains: false,
+	Cunning: false,
+	Influence: false
+};
+
 export const hasHiddenAttribute = (mask: UnitAttributeMask) => {
 	const hiddenAttributes: CoreAttribute[] = (Object.keys(mask) as CoreAttribute[]).filter(
 		(attribute: CoreAttribute) => mask[attribute]

@@ -192,11 +192,7 @@ class GameState {
 
 			// Assign starting territories
 			const startPos = startingPositions[index];
-			const startingTerritories = [
-				`${startPos.x}-${startPos.y}`,
-				`${Math.min(startPos.x + 1, MAP_WIDTH - 1)}-${startPos.y}`,
-				`${startPos.x}-${Math.min(startPos.y + 1, MAP_HEIGHT - 1)}`
-			];
+			const startingTerritories = [`${startPos.x}-${startPos.y}`];
 
 			startingTerritories.forEach((territoryId) => {
 				const territory = this.state.territories.get(territoryId);

@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 import gameState from '../GameState.svelte';
 import { UnitRank } from '$lib/models/UnitModels';
 import { isFamilyFull } from '../GameController.svelte';
-import { _promoteUnit } from '$lib/utils/unitUtils';
+import { _promoteUnit, EMPTY_MASK } from '$lib/utils/unitUtils';
 
 export const validateAssignToCrew = (
 	state: GameState,
@@ -60,7 +60,7 @@ const validateHireUnit = (
 		return { valid: false, reason: `Unit ${unitId} is already owned` };
 	if (unit.rank !== UnitRank.ASSOCIATE)
 		return { valid: false, reason: `Unit ${unitId} is not Associate` };
-	if (isFamilyFull()) {
+	if (isFamilyFull(playerId)) {
 		return { valid: false, reason: `Family is full` };
 	}
 
@@ -138,7 +138,11 @@ export const processHireUnitAction = (action: HireUnitAction): void => {
 	const unit = gameState.state.units.get(unitId)!;
 
 	// unit.rank = UnitRank.SOLDIER;
-	gameState.updateUnit(unitId, { rank: UnitRank.SOLDIER, ownerId: playerId });
+	gameState.updateUnit(unitId, {
+		rank: UnitRank.SOLDIER,
+		ownerId: playerId,
+		mask: { ...EMPTY_MASK }
+	});
 
 	// Add unit to player's units
 	const updatedUnits = [...player.units, unit.id];
