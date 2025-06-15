@@ -8,7 +8,8 @@
 		getRegion,
 		getRegionControl,
 		removeUnitFromTerritory,
-		startCapturingTerritory
+		startCapturingTerritory,
+		getPlayer
 	} from '$lib/services/GameController.svelte';
 	import { SvelteMap } from 'svelte/reactivity';
 	import { type DraggableItem, type DropResult } from '../DragAndDrop/DragAndDropTypes';
@@ -20,6 +21,7 @@
 	import Icon from '../Common/Icons/Icon.svelte';
 	import Region from './Region.svelte';
 	import BasicUnit from '../Unit/BasicUnit.svelte';
+	import StatsButton from '../Stats/StatsButton.svelte';
 
 	let {
 		territory,
@@ -43,6 +45,8 @@
 	let region = $derived(getRegion(territory?.regionId || ''));
 	let regionInfo = $derived(REGIONS_DATA[region?.type || 0]);
 	let regionControl = $derived(getRegionControl(player?.id || '', region?.id));
+
+	let owner = $derived(getPlayer(territory?.ownerId || ''));
 
 	// Handle drop events
 	function handleDrop(result: DropResult) {
@@ -85,8 +89,9 @@
 									+{formatUSD(territory.resources.income)}
 								</span>
 							</div>
-							<span class="h-full text-sm text-gray-300">
+							<span class="flex h-full items-center gap-2 text-sm text-gray-300">
 								{territory.ownerId ? `${territory.ownerId}` : 'Unclaimed'}
+								{#if owner}<StatsButton player={owner} />{/if}
 							</span>
 
 							{#if territory.isBeingCaptured}{/if}

@@ -20,10 +20,12 @@
 	// Get all units in the game
 	let playerId = $derived(getViewingPlayerId());
 	let usedUnits = $derived(getUsedUnits());
-	let units = $derived(getPlayerUnits(playerId));
-	let capos = $derived(getPlayerUnits(playerId).filter((unit) => unit.rank === UnitRank.CAPO));
+	let units = $derived(getPlayerUnits(playerId || ''));
+	let capos = $derived(
+		getPlayerUnits(playerId || '').filter((unit) => unit.rank === UnitRank.CAPO)
+	);
 	let soldiers = $derived(
-		getPlayerUnits(playerId).filter((unit) => unit.rank === UnitRank.SOLDIER)
+		getPlayerUnits(playerId || '').filter((unit) => unit.rank === UnitRank.SOLDIER)
 	);
 	let associates = $derived(getAssociates());
 	let maxFamilySize = $derived(getMaxFamilySize(units));

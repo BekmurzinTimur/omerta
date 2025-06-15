@@ -6,7 +6,9 @@
 		assignToCrew,
 		getAllUnits,
 		getAllUnitsMap,
-		getPlayerUnits
+		getPlayerUnits,
+		getViewingPlayer,
+		getViewingPlayerId
 	} from '$lib/services/GameController.svelte';
 	import AssignUnit from '../AssignUnit.svelte';
 	import UnitCard from '../UnitCard.svelte';
@@ -15,7 +17,8 @@
 
 	let { capoId }: { capoId: string; crewIndex: number } = $props();
 
-	let units = $derived(getPlayerUnits());
+	let playerId = $derived(getViewingPlayerId());
+	let units = $derived(getPlayerUnits(playerId || ''));
 	let allUnitsMap = $derived(getAllUnitsMap());
 	let unassignedSoldiers = $derived(
 		units.filter((unit) => !unit.captainId && unit.rank === UnitRank.SOLDIER)
@@ -25,9 +28,10 @@
 
 	function handleDrop(slotIndex: number, captainId: string) {
 		return (result: { item: DraggableItem }) => {
+			if (!playerId) return;
 			const unit = result.item.data as IUnit;
 			crew[slotIndex] = unit;
-			assignToCrew(unit.id, captainId, slotIndex);
+			assignToCrew(playerId, unit.id, captainId, slotIndex);
 		};
 	}
 </script>
